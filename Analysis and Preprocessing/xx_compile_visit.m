@@ -1,4 +1,4 @@
-function compile_visit(dataDir, outputDir)
+function compile_visit(visitList, dataDir, outputDir)
 %Description: Compiles all the data from a specified ARDC visit directory
 %   into a .mat file that can easily be accessed. Default directory outputDir
 %   is the 'Visits_Compiled' directory, unless otherwise specified. It is
@@ -19,29 +19,27 @@ function compile_visit(dataDir, outputDir)
 
 %File Text Pattern:
 
-if nargin == 1
-    outputDir = '2_Visits_Compiled';
+if nargin == 2
+    outputDir = 'Visits_Compiled';
 end
 
-addpath(pwd);
-addpath(genpath(dataDir));
+addpath(cwd)
 
-%get all unique Visit IDs
-All_IDs = getUniqueVisitID(dataDir);
+for n = 1:length(visitList)
 
-for n = 1:length(All_IDs)
+    visitID = char(visitList(n))
 
-    visitID = All_IDs{n};
     pd = pwd;
-%     subj_dir = [dataDir, '/', visitID];
-%     cd(subj_dir);
+    subj_dir = [dataDir, '/', visitID];
+    cd(subj_dir);
 
-    %Find ARCDC Prefix, these are the files for a given visit:
-    fnames = dir(strcat([dataDir,'*\*\',All_IDs{1},'*']));
-    files = {fnames.name}';
-    folders = {fnames.folder}';
+    %Find ARCDC Prefix, get subject ID:
+
+    files = ls('NS*');
+    files = split(files);
+
     underscore = strfind(files{1},'_');
-    subjectID = ['ARDC',files{1}(1:(underscore(1)-1))];
+    subjectID = files{1}(1:(underscore(1)-1));
 
     %Also declares the Visit struct
 
@@ -50,23 +48,23 @@ for n = 1:length(All_IDs)
     %At this time, 
     visit.researcher = 'Unknown';
     visit.time = 'Unknown';
-    
+
     for i = 1:length(files) 
         if ~isempty(files{i})
 
             underscore = strfind(files{i},'_');
-            dataType = files{i}(underscore(2)+1:underscore(2)+3);
+            dataType = files{i}(underscore(1)+1:underscore(2)-1);
 
             switch dataType
 
-                case 'AUD'
-                    [AC_R, BC_R, AC_L, BC_L] = parseAudiogram(files{i}, folders{i});
+                case 'ACBC'
+                    [AC_R, BC_R, AC_L, BC_L] = parseAudiogram(files{i}, subj_dir);
                     visit.Audiogram.AC.R = AC_R;
                     visit.Audiogram.AC.L = AC_L;
                     visit.Audiogram.BC.R = BC_R;
                     visit.Audiogram.BC.L = BC_L;
 
-                    disp('Audiometry Loaded');
+                    disp('Audiometry Found');
                 case 'WBT'
                     %CHECK LR
                     run(files{i});
@@ -80,7 +78,7 @@ for n = 1:length(All_IDs)
                             eval(['visit.WBT.L.FREQ = ',structname,'.FREQ;']);
                             eval(['visit.WBT.L.ABSORBANCE = ', structname,'.ABSORBANCE;']);
                             clear(vars{:})
-                            disp('Left WBT Loaded');
+                            disp('Left WBT Found');
 
 
                         case 'R'
@@ -88,7 +86,7 @@ for n = 1:length(All_IDs)
                             eval(['visit.WBT.R.FREQ = ',structname,'.FREQ;']);
                             eval(['visit.WBT.R.ABSORBANCE = ', structname,'.ABSORBANCE;']);
                             clear(vars{:})
-                            disp('Right WBT Loaded');
+                            disp('Right WBT Found');
                     end
 
                 case 'OAE'
@@ -106,7 +104,7 @@ for n = 1:length(All_IDs)
                             visit.dpOAE.L.DP = DP;
                             visit.dpOAE.L.f1_rec_dB = f1_rec_dB;
                             visit.dpOAE.L.f2_rec_dB = f2_rec_dB;
-                            disp('Left OAE Loaded');
+                            disp('Left OAE Found');
 
                         case 'R'
                             visit.dpOAE.R.noisefloor = noisefloor_dp;
@@ -116,7 +114,7 @@ for n = 1:length(All_IDs)
                             visit.dpOAE.R.DP = DP;
                             visit.dpOAE.R.f1_rec_dB = f1_rec_dB;
                             visit.dpOAE.R.f2_rec_dB = f2_rec_dB;
-                            disp('Right OAE Loaded');
+                            disp('Right OAE Found');
                     end
             end
         end
