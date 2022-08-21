@@ -1,22 +1,21 @@
-function [idStrings] = getUniqueVisitID(dataDir)
+function [subjectID,idStrings] = getUniqueVisitID(dataDir)
 %This could use some improvement...not efficient but gets the job done
 %checks the entire data directory and subdirectories 
-    fnames = dir(strcat([dataDir,'*\*\*']));
+    fnames = dir(strcat([dataDir,'*/*/*']));
     nms = {fnames.name}';
-    pat = '(?<subjID>\d+)_(?<date>\d+)';
+    pat = '(?<subjID>\w+)_(?<date>\d+)';
     idinfo = regexp(nms,pat,'names');
-    allids = cell(length(idinfo),1);
-    
+
     %this is dumb...if Windows supported UNIX wouldn't have to do this
+    ind = 0;
     for i = 1:length(idinfo)
-        allids{i} = [idinfo{i}.subjID,'_',idinfo{i}.date];
-    end    
-    temp = unique(allids);
-    for i = 1:length(temp)
-        if(~strcmp(temp{i},'_'))
-            idStrings{i} = temp{i};
+        if ~isempty(idinfo{i})
+            ind = ind + 1;
+            allids{ind} = [idinfo{i}.subjID,'_',idinfo{i}.date];
+            allsubs{ind} = idinfo{i}.subjID;
         end
-    end
-    idStrings = idStrings';
+    end    
+    idStrings = unique(allids)';
+    subjectID = unique(allsubs)';
 end
 
