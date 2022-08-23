@@ -18,28 +18,33 @@ function compile_visit(dataDir, outputDir)
 % - Re-format file names
 
 %File Text Pattern:
+if nargin == 0
+    dataDir = 'D:\ARDC\Pilot Study Example\1_Raw_Data'
+end 
 
-if nargin == 1
-    outputDir = '2_Visits_Compiled';
+if nargin == 1 || nargin == 0
+    outputDir = 'D:\ARDC\Pilot Study Example\2_Visits_Compiled';
 end
 
 addpath(pwd);
 addpath(genpath(dataDir));
 
 %get all unique Visit IDs
-[All_ARDC_IDs, All_IDs] = getUniqueVisitID(dataDir);
+All_IDs = getUniqueVisitID(dataDir);
 
 for n = 1:length(All_IDs)
 
     visitID = All_IDs{n};
     %AGH just fix this to pull from All_IDs...
-    subjectID = All_ARDC_IDs{n};
+    scors = strfind(visitID,'_');
+    subjectID = visitID(1:scors(1)-1)
+    
     pd = pwd;
 %     subj_dir = [dataDir, '/', visitID];
 %     cd(subj_dir);
 
     %Find ARCDC Prefix, these are the files for a given visit:
-    fnames = dir(strcat([dataDir,'*/*/',All_IDs{1},'*']));
+    fnames = dir(strcat([dataDir,'*/*/',All_IDs{n},'*']));
     files = {fnames.name}';
     folders = {fnames.folder}';
 
@@ -54,11 +59,11 @@ for n = 1:length(All_IDs)
         if ~isempty(files{i})
 
             underscore = strfind(files{i},'_');
-            dataType = files{i}(underscore(2)+1:underscore(2)+3)
+            dataType = files{i}(underscore(2)+1:underscore(2)+3);
 
             switch dataType
 
-                case 'AUDL'
+                case 'AUD'
                     [AC_R, BC_R, AC_L, BC_L] = parseAudiogram(files{i}, folders{i});
                     visit.Audiogram.AC.R = AC_R;
                     visit.Audiogram.AC.L = AC_L;
@@ -121,63 +126,36 @@ for n = 1:length(All_IDs)
         end
     end
 
-
     %Date/Time/Researcher/Reflexes/QuickSIN Performance
     %Assumes that Qualtrics Survey Results are saved in directory directly
     %above.
 
-%     cd(dataDir)
-%     %datetime and string inputs for Date and Researcher
-%     visitID_char = char(visitID);
-%     visitNum = str2num(visitID_char(2:end));
-% 
-%     datafiles = ls('ARDC*');
-%     datafiles = split(datafiles);
-% 
-%     csv_string = readmatrix(datafiles{1}, 'OutputType', 'string');
-%     csv_double = readmatrix(datafiles{1}, 'OutputType', 'double');
-%     csv_dt = readmatrix(datafiles{1}, 'OutputType', 'datetime');
-% 
-%     total_visits = size(csv_string,1);
-% 
-% 
-%     %Visits are listed in opposite descending order
-%     visit_row = n;
-% 
-%     if ~(csv_string(visit_row,18)==subjectID)||visitNum>total_visits
-%         error('The QuickSIN/Reflex CSV is not up to date. Check and re-run.')
-%     end
-% 
-%     date_time = csv_dt(visit_row,1);
-%     researcher = csv_string(visit_row,19);
-% 
-%     visit.time = date_time;
-%     visit.researcher = researcher;
-% 
-%     R_QuickSIN = mean(csv_double(visit_row,20:21));
-%     L_QuickSIN = mean(csv_double(visit_row,22:23));
-%     disp('QuickSIN Found');
-% 
-%     Reflex_Frequencies = [500, 1e3, 2e3, 4e3];
-%     Probe_R_Ipsi = csv_double(visit_row,24:27);
-%     Probe_R_Contr = csv_double(visit_row,28:31);
-%     Probe_L_Ipsi = csv_double(visit_row,32:35);
-%     Probe_L_Contr = csv_double(visit_row,36:39);
-%     disp('Reflexes Found');
-% 
-%     visit.QuickSIN.R = R_QuickSIN;
-%     visit.QuickSIN.L = L_QuickSIN;
-% 
-%     visit.Reflexes.Frequencies = Reflex_Frequencies;
-%     visit.Reflexes.ProbeR.Ipsi = Probe_R_Ipsi;
-%     visit.Reflexes.ProbeR.Contra = Probe_R_Contr;
-%     visit.Reflexes.ProbeL.Ipsi = Probe_L_Ipsi;
-%     visit.Reflexes.ProbeL.Contra = Probe_L_Contr;
-% 
+    cd([dataDir,'/Reflexes'])
+    %datetime and string inputs for Date and Researcher
+    dataCSV = 'Reflex_Entry.csv';
+   
+    [researcher,datetime,R_QuickSIN,L_QuickSIN,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Contr]...
+        = parseReflexQualtrics(dataCSV, visitID);
+    
+    %Visits are listed in opposite descending order
+
+    visit.time = datetime;
+    visit.researcher = researcher;
+
+    Reflex_Frequencies = [500, 1e3, 2e3, 4e3];
+
+    visit.QuickSIN.R = R_QuickSIN;
+    visit.QuickSIN.L = L_QuickSIN;
+
+    visit.Reflexes.Frequencies = Reflex_Frequencies;
+    visit.Reflexes.ProbeR.Ipsi = Probe_R_Ipsi;
+    visit.Reflexes.ProbeR.Contra = Probe_R_Contr;
+    visit.Reflexes.ProbeL.Ipsi = Probe_L_Ipsi;
+    visit.Reflexes.ProbeL.Contra = Probe_L_Contr;
+
 %     %Saving (This may need to be edited depending on file structure)
-%     cd(dataDir);
-%     cd ../
-%     cd(outputDir);
+    cd(dataDir);
+    cd(outputDir);
 
     save([visitID,'.mat'], 'visit');
 
