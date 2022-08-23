@@ -4,14 +4,21 @@ close all
 subject = 'ARDC2';
 
 start_path = pwd;
+dataDir = 'D:\ARDC\Pilot Study Example\2_Visits_Compiled';
 
-cd ../
-cd Data/Visits_Compiled
+cd(dataDir)
 
-fnames = ls("V*");
+fnames = ls([subject,'*.mat']);
 %fnames = split(fnames(1:end-1));
 freq_ac = [250,500,1e3,2e3,3e3,4e3,6e3,8e3,10e3,11.2e3,12.5e3,14e3,16e3];
 freq_bc = [250,500,1e3,2e3,3e3,4e3];
+
+ac_L = zeros(length(freq_ac),1);
+bc_L = zeros(length(freq_bc),1);
+
+ac_R = zeros(length(freq_ac),1);
+bc_R = zeros(length(freq_bc),1);
+
 dpoae_f2 = [1000,2344,3750,4781,6000,8000];
 rflx_f =   [500 1000 2000 4000];
 
@@ -19,7 +26,7 @@ range_WBT = -300:1:150;
 freq_226 = 1;
 n = 0;
 
-for i = 1:length(fnames)
+for i = 1:size(fnames,1)
  
     load(fnames(i,:));
     
@@ -31,19 +38,19 @@ for i = 1:length(fnames)
          %Left
          agram = visit.Audiogram.AC.L;
          %make sure correct frequencies are included
-         [~,agram_ind] = intersect(agram(:,1),freq_ac);
-         ac_L(1:length(agram_ind),n) = agram(agram_ind,2);
+         [~,agram_ind_a,agram_ind_b] = intersect(agram(:,1),freq_ac);
+         ac_L(agram_ind_b,n) = agram(agram_ind_a,2);
          
          %Right
          agram = visit.Audiogram.AC.R;
          %make sure correct frequencies are included
-         [~,agram_ind] = intersect(agram(:,1),freq_ac);
-         ac_R(1:length(agram_ind),n) = agram(agram_ind,2);
+         [~,agram_ind_a,agram_ind_b] = intersect(agram(:,1),freq_ac);
+         ac_R(agram_ind_b,n) = agram(agram_ind_a,2);
         
          agram = visit.Audiogram.BC.R;
          %make sure correct frequencies are included
-         [~,agram_ind] = intersect(agram(:,1),freq_bc);
-         bc_R(1:length(agram_ind),n) = agram(agram_ind,2);
+         [~,agram_ind_a,agram_ind_b] = intersect(agram(:,1),freq_bc);
+         bc_R(agram_ind_b,n) = agram(agram_ind_a,2);
          
        %dpoae
         %Left:
@@ -117,7 +124,10 @@ xlabel('Frequency (Hz)');
 grid on
 hold off
 xlim([140,18000]);
-
+xlim([200,8100]);
+ylim([-10,120]);
+yticks([-10:10:120]);
+xticks(freq_ac(1:8))
 
 ax2 = subplot(4,2,2);
 hold on
@@ -130,7 +140,10 @@ xlabel('Frequency (Hz)');
 legend('R_{BC}', 'Location','Southwest')
 grid on
 hold off
-
+xlim([200,8100]);
+ylim([-10,120]);
+yticks([-10:10:120]);
+xticks(freq_ac(1:8))
 linkaxes([ax1,ax2],'x');
 
 %DPOAEs
@@ -268,73 +281,73 @@ title(['QuickSIN'])
 grid on
 
 %set(gcf,'Position',[1925,-5,1920,1200])
-cd ../
-cd Figures
+set(gcf,'Position',[-1199 -253 1200 1803],'Units','pixels');
+cd(dataDir);
 
 exportgraphics(gcf,[subject,'_compiled.png'],'Resolution',300)
 
 cd(start_path)
 
 %% Figures for talk:
-
-figure;
-subplot(1,3,1:2)
-hold on
-plot(freq_ac(1:8), AC_R_Mean(1:8),'Or-','LineWidth',3,'MarkerSize',15)
-plot(freq_ac(1:8), AC_L_Mean(1:8),'Xb-','LineWidth',3,'MarkerSize',15)
-plot(freq_bc, BC_R_Mean,'<r--','LineWidth',1.5,'MarkerSize',15)
-set(gca,'ydir','reverse');
-ylabel('Hearing Level (dB HL)');
-set(gca,'XScale','log');
-hold off
-grid on
-xlim([200,8100]);
-ylim([-10,120]);
-yticks([-10:10:120]);
-xticks(freq_ac(1:8))
-set(gca,'FontSize',12);
-
-subplot(1,3,3);
-hold on
-plot(freq_ac(9:end), AC_R_Mean(9:end),'Or-','LineWidth',3,'MarkerSize',15)
-plot(freq_ac(9:end), AC_L_Mean(9:end),'Xb-','LineWidth',3,'MarkerSize',15)
-set(gca,'ydir','reverse');
-set(gca,'XScale','log');
-set(gca,'FontSize',12);
-hold off
-grid on
-xlim([9000,16100]);
-ylim([-10,120]);
-yticks([-10:10:120]);
-yticklabels([]);
-xticks(freq_ac(9:end))
-
-%%
-
-figure;
-hold on
-plot(dpoae_f2,dp_R_Mean,'Or-','LineWidth',3,'MarkerSize',15);
-plot(dpoae_f2,dp_L_Mean,'Xb-','LineWidth',3,'MarkerSize',15);
-plot(dpoae_f2,mean([nf_R_Mean,nf_L_Mean],2),'k-','LineWidth',3,'MarkerSize',15);
-xticks(dpoae_f2);
-xticklabels(dpoae_f2);
-xlim([900,10000]);
-grid on
-
-ylabel('DP Level (dB SPL)');
-xlabel('Frequency (Hz)');
-set(gca,'XScale','log');
-set(gca,'FontSize',12);
-legend('DP-Right','DP-Left','Noise Floor','Location','NorthEast')
-
-%% 
-
-figure;
-hold on;
-plot(range_WBT, WBT_L_Mean, 'b','LineWidth',3);
-plot(range_WBT, WBT_R_Mean, 'r','LineWidth',3);
-legend('Left','Right','Location','NorthEast')
-xlabel('Pressure (dPa)');
-ylabel('Admittance (mmho)');
-ylim([0,max(WBT_L_Mean+WBT_L_STD')+0.005])
-grid on
+% 
+% figure;
+% subplot(1,3,1:2)
+% hold on
+% plot(freq_ac(1:8), AC_R_Mean(1:8),'Or-','LineWidth',3,'MarkerSize',15)
+% plot(freq_ac(1:8), AC_L_Mean(1:8),'Xb-','LineWidth',3,'MarkerSize',15)
+% plot(freq_bc, BC_R_Mean,'<r--','LineWidth',1.5,'MarkerSize',15)
+% set(gca,'ydir','reverse');
+% ylabel('Hearing Level (dB HL)');
+% set(gca,'XScale','log');
+% hold off
+% grid on
+% xlim([200,8100]);
+% ylim([-10,120]);
+% yticks([-10:10:120]);
+% xticks(freq_ac(1:8))
+% set(gca,'FontSize',12);
+% 
+% subplot(1,3,3);
+% hold on
+% plot(freq_ac(9:end), AC_R_Mean(9:end),'Or-','LineWidth',3,'MarkerSize',15)
+% plot(freq_ac(9:end), AC_L_Mean(9:end),'Xb-','LineWidth',3,'MarkerSize',15)
+% set(gca,'ydir','reverse');
+% set(gca,'XScale','log');
+% set(gca,'FontSize',12);
+% hold off
+% grid on
+% xlim([9000,16100]);
+% ylim([-10,120]);
+% yticks([-10:10:120]);
+% yticklabels([]);
+% xticks(freq_ac(9:end))
+% 
+% %%
+% 
+% figure;
+% hold on
+% plot(dpoae_f2,dp_R_Mean,'Or-','LineWidth',3,'MarkerSize',15);
+% plot(dpoae_f2,dp_L_Mean,'Xb-','LineWidth',3,'MarkerSize',15);
+% plot(dpoae_f2,mean([nf_R_Mean,nf_L_Mean],2),'k-','LineWidth',3,'MarkerSize',15);
+% xticks(dpoae_f2);
+% xticklabels(dpoae_f2);
+% xlim([900,10000]);
+% grid on
+% 
+% ylabel('DP Level (dB SPL)');
+% xlabel('Frequency (Hz)');
+% set(gca,'XScale','log');
+% set(gca,'FontSize',12);
+% legend('DP-Right','DP-Left','Noise Floor','Location','NorthEast')
+% 
+% %% 
+% 
+% figure;
+% hold on;
+% plot(range_WBT, WBT_L_Mean, 'b','LineWidth',3);
+% plot(range_WBT, WBT_R_Mean, 'r','LineWidth',3);
+% legend('Left','Right','Location','NorthEast')
+% xlabel('Pressure (dPa)');
+% ylabel('Admittance (mmho)');
+% ylim([0,max(WBT_L_Mean+WBT_L_STD')+0.005])
+% grid on
