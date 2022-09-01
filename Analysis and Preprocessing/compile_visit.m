@@ -136,7 +136,7 @@ for n = 1:length(All_IDs)
     %datetime and string inputs for Date and Researcher
     dataCSV = 'Reflex_Entry.csv';
    
-    [researcher,datetime,R_QuickSIN,L_QuickSIN,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Contr]...
+    [researcher,datetime,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Contr]...
         = parseReflexQualtrics(dataCSV, visitID);
     
     %Visits are listed in opposite descending order
@@ -145,11 +145,11 @@ for n = 1:length(All_IDs)
     visit.researcher = researcher;
 
     Reflex_Frequencies = [500, 1e3, 2e3, 4e3];
-    
-    if isnan(visit.QuickSIN.R) || isnan(visit.QuickSIN.L)
-        visit.QuickSIN.R = R_QuickSIN;
-        visit.QuickSIN.L = L_QuickSIN;
-    end 
+%     
+%     if isnan(visit.QuickSIN.R) || isnan(visit.QuickSIN.L)
+%         visit.QuickSIN.R = R_QuickSIN;
+%         visit.QuickSIN.L = L_QuickSIN;
+%     end 
     
     visit.Reflexes.Frequencies = Reflex_Frequencies;
     visit.Reflexes.ProbeR.Ipsi = Probe_R_Ipsi;
