@@ -1,9 +1,10 @@
-function [AC_R, BC_R, AC_L, BC_L] = parseAudiogram(filename, Data_Dir)
-%Description: Text parser for AC/BC Thresholds from custom Audiostar Output template.
+function [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L] = parseAudiogram(filename, Data_Dir)
+%Description: Text parser for AC/BC Thresholds and QuickSIN
+% from custom Audiostar Output template.
 %Consider the fact that some subjects may have additional frequencies
 %tested. This will return [NaN, NaN] for any test that was not
 %collected.
-%AC_R, BC_R, AC_L, BC_L are all Nx2 matrices with Freq in column 1 and threshold in col 2:
+%AC_R, BC_R, AC_L, BC_L are all Nx3 matrices with Freq in column 1, threshold in col 2, and masking in col 3:
 %
 %  [AC_R, BC_R, AC_L, BC_L] = parseAudiogram(filename, Data_Dir)
 %
@@ -14,9 +15,23 @@ dir = cd;
 cd(Data_Dir);
 
 txt = extractFileText(filename);
+txt = char(txt);
+
+try 
+    s = strfind(txt,'Group 1 (dBHL)');
+    QS_L = textscan(txt(s(1)+14:s(2)),'%f');
+    QS_L = double(QS_L{1});
+    QS_R = textscan(txt(s(2)+14:s(3)),'%f');
+    QS_R = double(QS_R{1});
+
+catch
+    disp('No QuickSIN data found');
+    QS_R = NaN;
+    QS_L = NaN;
+end
+
 k = strfind(txt, 'EM Aided');
 
-txt = char(txt);
 
 %Very Un-elegant lol.
 BC_R_str = txt((k(1)+11):(k(2)-35));
@@ -30,32 +45,28 @@ BC_L_str = txt(k(4)+11:end);
 %everything not processed.
 
 if ~isempty(AC_R_str)
-    AC_R = textscan(AC_R_str, '%d %d %s');
-    AC_R = cell2mat(AC_R(1:2));
+    AC_R = readAUDTable(AC_R_str);
 else 
-    AC_R = [NaN, NaN];
+    AC_R = [NaN, NaN, NaN];
 end
 
 if ~isempty(BC_R_str)
-    BC_R = textscan(BC_R_str, '%d %d %s');
-    BC_R = cell2mat(BC_R(1:2));
-else
-    BC_R = [NaN, NaN]; 
+    BC_R = readAUDTable(BC_R_str);
+else 
+    BC_R = [NaN, NaN, NaN];
 end
 
 if ~isempty(AC_L_str)
-    AC_L = textscan(AC_L_str, '%d %d %s');
-    AC_L = cell2mat(AC_L(1:2));
+    AC_L = readAUDTable(AC_L_str);
 else 
-    BC_R = [NaN, NaN]; 
+    AC_L = [NaN, NaN, NaN];
 end
 
 if ~isempty(BC_L_str)
-BC_L = textscan(BC_L_str, '%d %d %s');
-BC_L = cell2mat(BC_L(1:2));
-else
-    BC_L = [NaN, NaN];
-end 
+    BC_L = readAUDTable(BC_L_str);
+else 
+    BC_L = [NaN, NaN, NaN];
+end
 
 cd(dir);
 

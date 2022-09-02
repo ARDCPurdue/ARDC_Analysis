@@ -1,7 +1,7 @@
 clear
 close all
 
-subject = 'ARDC2';
+subject = 'ARDC3';
 
 start_path = pwd;
 dataDir = 'D:\ARDC\Pilot Study Example\2_Visits_Compiled';

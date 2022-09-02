@@ -64,11 +64,13 @@ for n = 1:length(All_IDs)
             switch dataType
 
                 case 'AUD'
-                    [AC_R, BC_R, AC_L, BC_L] = parseAudiogram(files{i}, folders{i});
+                    [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L] = parseAudiogram(files{i}, folders{i});
                     visit.Audiogram.AC.R = AC_R;
                     visit.Audiogram.AC.L = AC_L;
                     visit.Audiogram.BC.R = BC_R;
                     visit.Audiogram.BC.L = BC_L;
+                    visit.QuickSIN.R = QS_R;
+                    visit.QuickSIN.L = QS_L;
 
                     disp('Audiometry Loaded');
                 case 'WBT'
@@ -134,7 +136,7 @@ for n = 1:length(All_IDs)
     %datetime and string inputs for Date and Researcher
     dataCSV = 'Reflex_Entry.csv';
    
-    [researcher,datetime,R_QuickSIN,L_QuickSIN,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Contr]...
+    [researcher,datetime,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Contr]...
         = parseReflexQualtrics(dataCSV, visitID);
     
     %Visits are listed in opposite descending order
@@ -143,10 +145,12 @@ for n = 1:length(All_IDs)
     visit.researcher = researcher;
 
     Reflex_Frequencies = [500, 1e3, 2e3, 4e3];
-
-    visit.QuickSIN.R = R_QuickSIN;
-    visit.QuickSIN.L = L_QuickSIN;
-
+%     
+%     if isnan(visit.QuickSIN.R) || isnan(visit.QuickSIN.L)
+%         visit.QuickSIN.R = R_QuickSIN;
+%         visit.QuickSIN.L = L_QuickSIN;
+%     end 
+    
     visit.Reflexes.Frequencies = Reflex_Frequencies;
     visit.Reflexes.ProbeR.Ipsi = Probe_R_Ipsi;
     visit.Reflexes.ProbeR.Contra = Probe_R_Contr;
