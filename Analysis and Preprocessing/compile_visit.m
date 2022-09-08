@@ -19,11 +19,11 @@ function compile_visit(dataDir, outputDir)
 
 %File Text Pattern:
 if nargin == 0
-    dataDir = 'D:\ARDC\Pilot Study Example\1_Raw_Data'
+    dataDir = 'D:\ARDC\ARDC_AllData\1_Raw_Data'
 end 
 
 if nargin == 1 || nargin == 0
-    outputDir = 'D:\ARDC\Pilot Study Example\2_Visits_Compiled';
+    outputDir = 'D:\ARDC\ARDC_AllData\2_Visits_Compiled';
 end
 
 addpath(pwd);
@@ -112,6 +112,7 @@ for n = 1:length(All_IDs)
                             visit.dpOAE.L.DP = DP;
                             visit.dpOAE.L.f1_rec_dB = f1_rec_dB;
                             visit.dpOAE.L.f2_rec_dB = f2_rec_dB;
+                            visit.researcher = researcher;
                             disp('Left OAE Loaded');
 
                         case 'R'
@@ -122,6 +123,7 @@ for n = 1:length(All_IDs)
                             visit.dpOAE.R.DP = DP;
                             visit.dpOAE.R.f1_rec_dB = f1_rec_dB;
                             visit.dpOAE.R.f2_rec_dB = f2_rec_dB;
+                            visit.researcher = researcher;
                             disp('Right OAE Loaded');
                     end
             end
@@ -134,16 +136,28 @@ for n = 1:length(All_IDs)
 
     cd([dataDir,'/Reflexes'])
     %datetime and string inputs for Date and Researcher
-    dataCSV = 'Reflex_Entry.csv';
+    dataCSV = 'ARDC Reflexes.csv';
    
-    [researcher,datetime,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Contr]...
+    try 
+        [researcher,datetime,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Contr]...
         = parseReflexQualtrics(dataCSV, visitID);
-    
+    catch
+            disp('No Reflex Match Found');
+            researcher = NaN;
+            datetime = NaN;
+            Probe_R_Ipsi = NaN;
+            Probe_R_Contr = NaN;
+            Probe_L_Ipsi = NaN;
+            Probe_L_Contr = NaN;
+    end
     %Visits are listed in opposite descending order
 
     visit.time = datetime;
-    visit.researcher = researcher;
-
+    
+    if ~exist(visit.researcher)
+        visit.researcher = researcher;
+    end
+    
     Reflex_Frequencies = [500, 1e3, 2e3, 4e3];
 %     
 %     if isnan(visit.QuickSIN.R) || isnan(visit.QuickSIN.L)
