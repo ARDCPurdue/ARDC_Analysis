@@ -1,7 +1,7 @@
 function [idStrings] = getUniqueVisitID(dataDir)
 %This could use some improvement...not efficient but gets the job done
 %checks the entire data directory and subdirectories 
-    fnames = dir(strcat([dataDir,'*/*/*']));
+    fnames = dir(dataDir);
     nms = {fnames.name}';
     pat = '(?<subjID>\w+)_(?<date>\d+)';
     idinfo = regexp(nms,pat,'names');
@@ -13,7 +13,8 @@ function [idStrings] = getUniqueVisitID(dataDir)
             ind = ind + 1;
             allids{ind} = [idinfo{i}.subjID,'_',idinfo{i}.date];
         end
-    end    
+    end
+    
     idStrings = unique(allids)';
 end
 

@@ -31,13 +31,13 @@ catch
 end
 
 k = strfind(txt, 'EM Aided');
-
+z = strfind(txt,'Unaided'); %this is the end
 
 %Very Un-elegant lol.
 BC_R_str = txt((k(1)+11):(k(2)-35));
 AC_R_str = txt(k(2)+11:k(3)-35);
 AC_L_str = txt(k(3)+11:k(4)-35);
-BC_L_str = txt(k(4)+11:end);
+BC_L_str = txt(k(4)+11:z(end)+6);
 
 %Convert to cell arrays:
 %I added some corrections so that if only partial data is collected (i.e.
