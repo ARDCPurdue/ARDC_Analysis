@@ -19,11 +19,13 @@ function compile_visit(dataDir, outputDir)
 
 %File Text Pattern:
 if nargin == 0
-    dataDir = 'D:\ARDC\ARDC_AllData\1_Raw_Data'
+     %dataDir = 'D:\ARDC\ARDC_AllData\1_Raw_Data'
+      dataDir = 'C:\Users\ARDC User\Desktop\ALLRAWDATA'
 end 
 
 if nargin == 1 || nargin == 0
-    outputDir = 'D:\ARDC\ARDC_AllData\2_Visits_Compiled';
+     %outputDir = 'D:\ARDC\ARDC_AllData\2_Visits_Compiled';
+      outputDir = 'C:\Users\ARDC User\Desktop\Compiled'
 end
 
 addpath(pwd);
@@ -44,7 +46,7 @@ for n = 1:length(All_IDs)
 %     cd(subj_dir);
 
     %Find ARCDC Prefix, these are the files for a given visit:
-    fnames = dir(strcat([dataDir,'*/*/',All_IDs{n},'*']));
+    fnames = dir(strcat([dataDir,'/',All_IDs{n},'*']));
     files = {fnames.name}';
     folders = {fnames.folder}';
 
@@ -134,7 +136,7 @@ for n = 1:length(All_IDs)
     %Assumes that Qualtrics Survey Results are saved in directory directly
     %above.
 
-    cd([dataDir,'/Reflexes'])
+    cd([dataDir])
     %datetime and string inputs for Date and Researcher
     dataCSV = 'ARDC Reflexes.csv';
    
