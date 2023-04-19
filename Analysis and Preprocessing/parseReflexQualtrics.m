@@ -10,7 +10,7 @@ function [researcher,datetime,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Co
    
    for visit_row = 1:size(csv_string,1)
        csv_subj_ID = csv_string(visit_row,18);
-       csv_dtime = csv_dt(visit_row,1);
+       csv_dtime = csv_dt(visit_row,8);
        csv_dtime.Format = 'MMddyyyy';
        dt_ID = char(csv_dtime);
        dt_ID = erase(dt_ID,'-');
