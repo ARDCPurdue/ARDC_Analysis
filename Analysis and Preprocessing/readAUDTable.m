@@ -11,19 +11,28 @@ try
         if length(strfind(allrows(i),' '))==2
             dbEM(i) = NaN;
             out = textscan(allrows(i), '%d %d %s');
-            freq(i) = out{1};
-            dbHL(i) = out{2};
+            freq(i) = double(out{1});
+            
+            if isempty(out{2})
+                out{2} = NaN;
+            end
+            
+            dbHL(i) = double(out{2});
             
         elseif length(strfind(allrows(i),' '))==3
             out = textscan(allrows(i), '%d %d %d %s');
-            freq(i) = out{1};
-            dbHL(i) = out{2};
-            dbEM(i) = out{3};
+            freq(i) = double(out{1});
+            
+            if isempty(out{2})
+                out{2} = NaN;
+            end
+            
+            dbHL(i) = double(out{2});
+            dbEM(i) = double(out{3});
         end
-        
     end
     
-    dataOut = [double(freq'),double(dbHL'),double(dbEM')];
+    dataOut = [freq',dbHL',dbEM'];
 catch
     dataOut = [NaN,NaN,NaN];
 end
