@@ -1,12 +1,14 @@
-function [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L] = parseAudiogram(filename, Data_Dir)
+function [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L, Age] = parseAudiogram(filename, Data_Dir)
 %Description: Text parser for AC/BC Thresholds and QuickSIN
 % from custom Audiostar Output template.
 %Consider the fact that some subjects may have additional frequencies
 %tested. This will return [NaN, NaN] for any test that was not
 %collected.
 %AC_R, BC_R, AC_L, BC_L are all Nx3 matrices with Freq in column 1, threshold in col 2, and masking in col 3:
-%
-%  [AC_R, BC_R, AC_L, BC_L] = parseAudiogram(filename, Data_Dir)
+% QS_R, and QS_L are the reported QuickSIN SNRs
+% Age is subject age (automatically determined by the 1/1/YYYY input in
+% otoaccess which gets transferred to the PDF audiogram report.
+%  [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L, Age] = parseAudiogram(filename, Data_Dir)
 %
 %Author: Andrew Sivaprakasam
 %Email: asivapr@purdue.edu
@@ -29,6 +31,12 @@ catch
     QS_R = NaN;
     QS_L = NaN;
 end
+
+%get age from audiogram
+a = strfind(txt, 'Age');
+y = strfind(txt, 'years');
+age_found = textscan(txt(a+3:y-1),' %d ');
+Age = age_found{1};
 
 k = strfind(txt, 'EM Aided');
 z = strfind(txt,'Unaided'); %this is the end
