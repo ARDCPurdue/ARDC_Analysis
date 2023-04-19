@@ -66,14 +66,15 @@ for n = 1:length(All_IDs)
             switch dataType
 
                 case 'AUD'
-                    [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L] = parseAudiogram(files{i}, folders{i});
+                    [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L, Age] = parseAudiogram(files{i}, folders{i});
                     visit.Audiogram.AC.R = AC_R;
                     visit.Audiogram.AC.L = AC_L;
                     visit.Audiogram.BC.R = BC_R;
                     visit.Audiogram.BC.L = BC_L;
                     visit.QuickSIN.R = QS_R;
                     visit.QuickSIN.L = QS_L;
-
+                    visit.Age = Age;
+                    
                     disp('Audiometry Loaded');
                 case 'WBT'
                     %CHECK LR
@@ -108,23 +109,25 @@ for n = 1:length(All_IDs)
                     switch files{i}(underscore(3)+1:end-4)
                         case 'L'
                             visit.dpOAE.L.noisefloor = noisefloor_dp;
-                            visit.dpOAE.L.mean_repsonse = mean_response;
+                            visit.dpOAE.L.mean_response = mean_response;
                             visit.dpOAE.L.f1 = f1;
                             visit.dpOAE.L.f2 = f2;
                             visit.dpOAE.L.DP = DP;
                             visit.dpOAE.L.f1_rec_dB = f1_rec_dB;
                             visit.dpOAE.L.f2_rec_dB = f2_rec_dB;
+                            visit.dpOAE.L.fs = 44100; %WARNING! Assumes this is unchanged from my Titan dpOAE code.
                             visit.researcher = researcher;
                             disp('Left OAE Loaded');
 
                         case 'R'
                             visit.dpOAE.R.noisefloor = noisefloor_dp;
-                            visit.dpOAE.R.mean_repsonse = mean_response;
+                            visit.dpOAE.R.mean_response = mean_response;
                             visit.dpOAE.R.f1 = f1;
                             visit.dpOAE.R.f2 = f2;
                             visit.dpOAE.R.DP = DP;
                             visit.dpOAE.R.f1_rec_dB = f1_rec_dB;
                             visit.dpOAE.R.f2_rec_dB = f2_rec_dB;
+                            visit.dpOAE.R.fs = 44100; %WARNING! Assumes this is unchanged from my Titan dpOAE code.
                             visit.researcher = researcher;
                             disp('Right OAE Loaded');
                     end
