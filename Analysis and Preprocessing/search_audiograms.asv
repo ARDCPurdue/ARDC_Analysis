@@ -10,24 +10,20 @@ function [outputArg1,outputArg2] = search_audiograms(freqlist,fldr)
 %-efficient reading
 %-documentation
 
-if ~exist('freqlist','var')
-    freqlist = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 11200,...
-       12500, 14000, 16000]; 
-end
-
-if ~exist('fldr','var')
-    fldr = '/home/sivaprakasaman/Documents/dataTemp/ALL_ARDC';
-end
-
 cwd = pwd;
 clrs_l = [52, 119, 235]./256;
 clrs_r = [153, 24, 24]./256;
 alp = .2;
 
+%temp default directory
+% fldr = '/media/sivaprakasaman/AndrewNVME/Pitch_Study/F30_Full_Data/ARDC_compiledVisits/ALL_ARDC';
+fldr = '/home/sivaprakasaman/Documents/dataTemp/ALL_ARDC';
 cd(fldr);
 
 %load all files
 fnames = {dir(fullfile(cd,'ARDC*.mat')).name};
+freqlist = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 11200,...
+       12500, 14000, 16000];
 
 figure;
 hold on;
