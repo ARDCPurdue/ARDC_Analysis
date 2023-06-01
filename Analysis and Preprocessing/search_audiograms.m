@@ -42,7 +42,7 @@ if ~exist('range_max','var')
 end
 
 if ~exist('fldr','var')
-    fldr = '/media/sivaprakasaman/AndrewNVME/Pitch_Study/F30_Full_Data/ARDC_compiledVisits/ALL_ARDC';
+    fldr = 'C:\Users\ARDC User\Desktop\Compiled';
 end
 
 if ~exist('fig_flag','var')
