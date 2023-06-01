@@ -120,8 +120,8 @@ if fig_flag
     figure;
     hold on;
     
-    plot(freqlist,R_lvl_list,'*-','Color',[clrs_r, alp],'linewidth',1.5,'HandleVisibility','off');
-    plot(freqlist,L_lvl_list,'*-','Color',[clrs_l, alp],'linewidth',1.5,'HandleVisibility','off');
+    plot(freqlist,R_lvl_list,'o-','Color',[clrs_r, alp],'linewidth',1.5,'HandleVisibility','off');
+    plot(freqlist,L_lvl_list,'x-','Color',[clrs_l, alp],'linewidth',1.5,'HandleVisibility','off');
     
     plot(freqlist,R_nf_list,'--','Color',[clrs_r, .25*alp],'linewidth',1.5,'HandleVisibility','off');
     plot(freqlist,L_nf_list,'--','Color',[clrs_l, .25*alp],'linewidth',1.5,'HandleVisibility','off');
@@ -134,14 +134,13 @@ if fig_flag
 
     legend('R_{dpOAE}','L_{dpOAE}','R_{noisefloor}','L_{noisefloor}');
 
-    ylim([-20,120])
     xticks(freqlist);
     set(gca,'XScale','log');
     set(gcf,'Position',[1925,-5,1920,1200])
-    xlabel('Frequency (Hz)');
+    xlabel('F2 Frequency (Hz)');
     ylabel('DP (dB SPL)');
     xlim([500,10e3])
-    ylim([-60,60])
+    ylim([-50,30])
     grid on 
     title(['dpOAEs | N = ',num2str(length(unique([id_list_L, id_list_R]))),' Unique Subjects'])
     xlim([min(freqlist)-2,max(freqlist)+100])
