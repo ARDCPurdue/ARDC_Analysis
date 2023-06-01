@@ -25,26 +25,26 @@ function [id_list_L,L_lvl_list,L_nf_list,id_list_R, R_lvl_list,R_nf_list] = sear
 
 plot_select_flag = 1;
 
-if ~exist('freqlist','var')
+if ~exist('freqlist','var') || isempty(freqlist)
     freqlist = [ 1000 2344 3750 4781 6000 8000];
 end
 
 %default plots all, even with NR/NaN. But if specifying freqs will return
 %specific subjects
 
-if ~exist('range_min','var')
+if ~exist('range_min','var') || isempty(range_min)
     plot_select_flag = 0;
 end
 
-if ~exist('range_max','var')
+if ~exist('range_max','var') || isempty(range_max)
     plot_select_flag = 0;
 end
 
-if ~exist('fldr','var')
+if ~exist('fldr','var')  || isempty(fldr)
     fldr = 'C:\Users\ARDC User\Desktop\Compiled';
 end
 
-if ~exist('fig_flag','var')
+if ~exist('fig_flag','var') || isempty(fig_flag)
     fig_flag = 1;
 end
 
@@ -108,12 +108,17 @@ if plot_select_flag
     L_nf_list = L_nf_list(:,find(L_subjs_exc==0));
     R_nf_list = R_nf_list(:,find(R_subjs_exc==0));
 
-    id_list_L = id_list(find(L_subjs_exc));
-    id_list_R = id_list(find(R_subjs_exc));
+    id_list_L = id_list(find(L_subjs_exc==0));
+    id_list_R = id_list(find(R_subjs_exc==0));
 else 
     %handle default case
     id_list_L = id_list;
     id_list_R = id_list;
+end
+
+if isempty(L_lvl_list) || isempty(R_lvl_list)
+    cd(cwd);
+    error('No data found with specified range');
 end
 
 if fig_flag
