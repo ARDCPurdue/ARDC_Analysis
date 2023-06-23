@@ -1,4 +1,4 @@
-function [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L, Age] = parseAudiogram(filename, Data_Dir)
+function [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L, Age, AC_transduc, BC_transduc, AC_maxOut, BC_maxOut] = parseAudiogram(filename, Data_Dir)
 %Description: Text parser for AC/BC Thresholds and QuickSIN
 % from custom Audiostar Output template.
 %Consider the fact that some subjects may have additional frequencies
@@ -19,6 +19,9 @@ cd(Data_Dir);
 txt = extractFileText(filename);
 txt = char(txt);
 
+%NR Max Levels
+maxOut = readmatrix('NR_limits.csv');
+
 try 
     s = strfind(txt,'Group 1 (dBHL)');
     QS_L = textscan(txt(s(1)+14:s(2)),'%f');
@@ -37,6 +40,39 @@ a = strfind(txt, 'Age');
 y = strfind(txt, 'years');
 age_found = textscan(txt(a+3:y-1),' %d ');
 Age = age_found{1};
+
+%Find Transducers
+
+%bad coding but should work for now. Need to get some reports with inserts
+%& Supra-aural too...need the model number output in report
+
+t1 = strfind(txt,'HTL Full');
+t2 = strfind(txt,'Hz');
+ac_found = txt(t1(2)+8:t2(3)-4);
+AC_transduc = textscan(ac_found, '%s');
+AC_transduc = char(AC_transduc{1});
+
+%NEED TAG FOR SupraAural and Inserts!!!
+%output the mapping at all freqs...since otherwise would need to have
+%separate right and left variable. Should be easy to frequency match the
+%values from AC_R and AC_L when needed.
+switch AC_transduc
+    %HF 
+    case 'DD450'
+        AC_maxOut = [maxOut(:,1),maxOut(:,3)];
+    %FILL IN
+    case 'sup'
+        AC_maxOut = [maxOut(:,1),maxOut(:,4)];
+    %FIll IN
+    case 'ins'
+        AC_maxOut = [maxOut(:,1),maxOut(:,2)];
+    otherwise
+        AC_maxOut = NaN;
+end
+
+%only have one BC transducer...so can hard code for now
+BC_transduc = 'B81';
+BC_maxOut = [maxOut(:,1),maxOut(:,5)];
 
 k = strfind(txt, 'EM Aided');
 z = strfind(txt,'Unaided'); %this is the end
@@ -75,6 +111,9 @@ if ~isempty(BC_L_str)
 else 
     BC_L = [NaN, NaN, NaN];
 end
+
+
+
 
 cd(dir);
 
