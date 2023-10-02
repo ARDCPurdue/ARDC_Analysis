@@ -66,15 +66,19 @@ for n = 1:length(All_IDs)
             switch dataType
 
                 case 'AUD'
-                    [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L, Age] = parseAudiogram(files{i}, folders{i});
+                    [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L, Age, AC_transduc, BC_transduc, AC_maxOut, BC_maxOut] = parseAudiogram(files{i}, folders{i});
                     visit.Audiogram.AC.R = AC_R;
                     visit.Audiogram.AC.L = AC_L;
                     visit.Audiogram.BC.R = BC_R;
                     visit.Audiogram.BC.L = BC_L;
+                    visit.Audiogram.AC_transducer = AC_transduc;
+                    visit.Audiogram.AC_HardwareLimits = AC_maxOut;
+                    visit.Audiogram.BC_transducer = BC_transduc;
+                    visit.Audiogram.BC_HardwareLimits = BC_maxOut;
                     visit.QuickSIN.R = QS_R;
                     visit.QuickSIN.L = QS_L;
                     visit.Age = Age;
-                    
+              
                     disp('Audiometry Loaded');
                 case 'WBT'
                     %CHECK LR

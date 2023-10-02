@@ -5,8 +5,15 @@ function [researcher,datetime,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Co
    
    %This could be loaded earlier in compile_visit in order to save time
    csv_string = readmatrix(dataCSV, 'OutputType', 'string');
-   csv_double = readmatrix(dataCSV, 'OutputType', 'double');
-   csv_dt = readmatrix(dataCSV, 'OutputType', 'datetime');    
+   
+   %CNT/NR must be differentiated. Allow researcher to handle accordingly.
+   %Some may choose NaN for both, some may choose to drop freqs that are
+   %CNT from analysis. Our job is to get the data out as openly/cleanly as
+   %possible. Easy to convert to double. 
+   
+%    csv_double = readmatrix(dataCSV, 'OutputType', 'double');
+   
+    csv_dt = readmatrix(dataCSV, 'OutputType', 'datetime');    
    
    for visit_row = 1:size(csv_string,1)
        csv_subj_ID = csv_string(visit_row,18);
@@ -20,10 +27,10 @@ function [researcher,datetime,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Co
             disp('Reflex Match Found in Qualtrics');
             researcher = csv_string(visit_row,19);
             datetime = csv_dt(visit_row,1);
-            Probe_R_Ipsi = csv_double(visit_row,20:23);
-            Probe_R_Contr = csv_double(visit_row,24:27);
-            Probe_L_Ipsi = csv_double(visit_row,28:31);
-            Probe_L_Contr = csv_double(visit_row,32:35);
+            Probe_R_Ipsi = csv_string(visit_row,20:23);
+            Probe_R_Contr = csv_string(visit_row,24:27);
+            Probe_L_Ipsi = csv_string(visit_row,28:31);
+            Probe_L_Contr = csv_string(visit_row,32:35);
 
        end
 
