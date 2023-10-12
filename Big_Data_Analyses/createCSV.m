@@ -7,7 +7,7 @@ addpath(pwd);
 cwd = pwd();
 %% Directory setup
 
-data_dir = '~/Documents/dataTemp/All_ARDC';
+data_dir = '/media/asivapr/AndrewNVME/Pitch_Study/All_ARDC';
 output_dir = [data_dir,'/CSV_for_R'];
 
 %%  
