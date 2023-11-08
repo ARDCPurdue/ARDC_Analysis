@@ -117,10 +117,10 @@ plot_age <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal He
 plot_age+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
 plot_quickSin <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=QuickSIN, fill = hearingStatus, color = hearingStatus));
-plot_quickSin+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7)+ylab("QuickSin (SNR Loss)") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
+plot_quickSin+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab("QuickSin (SNR Loss)") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
 plot_reflex <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=REFLEX_CONTRA_500, fill = hearingStatus, color = hearingStatus));
-plot_reflex+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
+plot_reflex+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab("500 Hz | Contralateral Reflex Threshold") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
 
 #use this later 
