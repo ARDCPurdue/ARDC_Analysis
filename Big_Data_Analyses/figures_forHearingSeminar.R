@@ -48,12 +48,7 @@ freqs = c(250,500,1000,2000,4000,8000,16000)
 freq_names = paste0("AC_",freqs)
   
 l_aud_only = rbind(l_data$AC_250,l_data$AC_500,l_data$AC_1000,l_data$AC_2000,l_data$AC_4000,l_data$AC_8000,l_data$AC_16000)
-l_qs = l_data$QuickSIN;
-l_reflex = l_data$REFLEX_IPSI_4000;
-
 r_aud_only = rbind(r_data$AC_250,r_data$AC_500,r_data$AC_1000,r_data$AC_2000,r_data$AC_4000,r_data$AC_8000,r_data$AC_16000)
-r_qs = r_data$QuickSIN;
-r_reflex = r_data$REFLEX_IPSI_4000;
 
 age = l_data$Age;
 
@@ -86,25 +81,27 @@ rows_nh_l<- which(rowSums(l_aud_only_t[, 1:ncol(l_aud_only_t)-1] < max_thresh) =
 
 #Trim dataset to normal hearing and hearing loss, I realize rows is actually referring to columns. This could all be done much more efficiently
 l_aud_nh = l_aud_only[,rows_nh_l];
-l_age_nh = l_age[rows_nh_l];
-l_qs_nh = l_qs[rows_nh_l];
-l_ref_nh = l_reflex[rows_nh_l];
-
 r_aud_nh = r_aud_only[,rows_nh_r];
-r_age_nh = r_age[rows_nh_r];
-r_qs_nh = r_qs[rows_nh_r];
-r_ref_nh = r_reflex[rows_nh_r];
 
-#loss
+# #loss
 l_aud_hl = l_aud_only[,-rows_nh_l];
-l_age_hl = l_age[-rows_nh_l];
-l_qs_hl = l_qs[-rows_nh_l];
-l_ref_hl = l_reflex[-rows_nh_l];
-
 r_aud_hl = r_aud_only[,-rows_nh_r];
-r_age_hl = r_age[-rows_nh_r];
-r_qs_hl = r_qs[-rows_nh_r];
-r_ref_hl = r_reflex[-rows_nh_r];
+
+
+#More efficient way to do this:
+r_dat_nh = r_data[rows_nh_r,]
+r_dat_hl = r_data[-rows_nh_r,]
+
+l_dat_nh = l_data[rows_nh_l,]
+l_dat_hl = l_data[-rows_nh_l,]
+
+df_nh <- data.frame(rbind(r_dat_nh,l_dat_nh));
+df_nh$hearingStatus = "Normal Hearing";
+
+df_hl <- data.frame(rbind(r_dat_hl,l_dat_hl));
+df_hl$hearingStatus = "Hearing Loss";
+
+merged_frame = rbind(df_nh,df_hl);
 
 color_plt = 'cyan4';
 color_hl = 'brown';
@@ -115,22 +112,15 @@ par(new = TRUE)
 plot_audio(freqs,cbind(l_aud_hl,r_aud_hl),color = color_hl, title = '');
 legend('bottomleft',c('Normal Hearing', 'Hearing Loss'),col = c(color_plt,color_hl),lwd=5,cex=1.5,y.intersp=1.25);
 
-#making a df assigning hearing status, age, quicksin, etc.
-df_grouped_nh <- data.frame(QuickSin=append(l_qs_nh,r_qs_nh), Age=append(l_age_nh,r_age_nh), Reflex = append(l_ref_nh,r_ref_nh));
-df_grouped_nh$hearingStatus = "Normal Hearing";
- 
-df_grouped_hl <- data.frame(QuickSin=append(l_qs_hl,r_qs_hl),Age=append(l_age_hl,r_age_hl), Reflex = append(l_ref_hl,r_ref_hl));
-df_grouped_hl$hearingStatus = "Hearing Loss";
 
-merged_frame = rbind(df_grouped_nh,df_grouped_hl);
 plot_age <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=Age, fill = hearingStatus, color = hearingStatus));
-plot_age+geom_boxplot(alpha=0.3) + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
+plot_age+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
-plot_quickSin <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=QuickSin, fill = hearingStatus, color = hearingStatus));
-plot_quickSin+ylab("QuickSin (SNR Loss)")+geom_boxplot(alpha=0.3) + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
+plot_quickSin <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=QuickSIN, fill = hearingStatus, color = hearingStatus));
+plot_quickSin+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7)+ylab("QuickSin (SNR Loss)") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
-plot_reflex <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=Reflex, fill = hearingStatus, color = hearingStatus));
-plot_reflex+geom_boxplot(alpha=0.3) + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
+plot_reflex <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=REFLEX_CONTRA_500, fill = hearingStatus, color = hearingStatus));
+plot_reflex+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
 
 #use this later 
