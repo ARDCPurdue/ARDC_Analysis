@@ -87,7 +87,6 @@ r_aud_nh = r_aud_only[,rows_nh_r];
 l_aud_hl = l_aud_only[,-rows_nh_l];
 r_aud_hl = r_aud_only[,-rows_nh_r];
 
-
 #More efficient way to do this:
 r_dat_nh = r_data[rows_nh_r,]
 r_dat_hl = r_data[-rows_nh_r,]
@@ -112,7 +111,6 @@ par(new = TRUE)
 plot_audio(freqs,cbind(l_aud_hl,r_aud_hl),color = color_hl, title = '');
 legend('bottomleft',c('Normal Hearing', 'Hearing Loss'),col = c(color_plt,color_hl),lwd=5,cex=1.5,y.intersp=1.25);
 
-
 plot_age <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=Age, fill = hearingStatus, color = hearingStatus));
 plot_age+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
@@ -122,6 +120,8 @@ plot_quickSin+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab(
 plot_reflex <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=REFLEX_CONTRA_500, fill = hearingStatus, color = hearingStatus));
 plot_reflex+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab("500 Hz | Contralateral Reflex Threshold") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
+plot_oae <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=DPF2_6000, fill = hearingStatus, color = hearingStatus));
+plot_oae+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab("500 Hz | Contralateral Reflex Threshold") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
 #use this later 
 # save_plot_as_png <- function(plot, file_name, width = 7, height = 5, dpi = 300) {
