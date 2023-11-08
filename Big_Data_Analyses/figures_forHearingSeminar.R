@@ -121,7 +121,7 @@ plot_reflex <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal
 plot_reflex+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab("500 Hz | Contralateral Reflex Threshold") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
 plot_oae <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=DPF2_6000, fill = hearingStatus, color = hearingStatus));
-plot_oae+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab("500 Hz | Contralateral Reflex Threshold") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
+plot_oae+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab("DPOAE | F2 Frequency 6kHz (dB SPL)") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
 
 #use this later 
 # save_plot_as_png <- function(plot, file_name, width = 7, height = 5, dpi = 300) {
