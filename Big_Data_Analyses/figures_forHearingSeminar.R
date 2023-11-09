@@ -55,7 +55,7 @@ age = l_data$Age;
 #TODO: Maybe switch this to use ggplot2 instead of r base
 plot_audio <- function(freqs, data_matrix, color = rgb(0,0,1), ylim = c(100,-20), title = 'Audiogram'){
   matplot(freqs,data_matrix,type = "l", lwd = 3, col = alpha(color, 0.15), lty=1, ylim = ylim, log = 'x',xlab = 'Frequency (Hz)', ylab = "Threshold (dB HL)", main = title, xaxt = "n", yaxt="n");
-  par(new = TRUE)
+  par(new = TRUE, cex=1.4)
   matplot(freqs,rowMeans(data_matrix, na.rm=T),type = "l", lwd = 5, col = color,lty=1, ylim = ylim, log = 'x', xaxt='n', xlab = "n", ylab = "Threshold (dB HL)");
   axis(side = 1, at = freqs)
   abline(h = seq(-20,100,by=20), col = "gray", lty = 2);
@@ -112,39 +112,48 @@ plot_audio(freqs,cbind(l_aud_hl,r_aud_hl),color = color_hl, title = '');
 legend('bottomleft',c('Normal Hearing', 'Hearing Loss'),col = c(color_plt,color_hl),lwd=5,cex=1.5,y.intersp=1.25);
 
 plot_age <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=Age, fill = hearingStatus, color = hearingStatus));
-plot_age+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
+plot_age <- plot_age+geom_boxplot(width=.25, alpha=0.5) + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.7)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=28))+theme(legend.position = "none");
 
 plot_quickSin <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=QuickSIN, fill = hearingStatus, color = hearingStatus));
-plot_quickSin+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab("QuickSin (SNR Loss)") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
+plot_quickSin <- plot_quickSin+geom_boxplot(width=.25, alpha=0.5) + ylab("QuickSin (SNR Loss)") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=28))+theme(legend.position = "none");
 
 plot_reflex <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=REFLEX_CONTRA_500, fill = hearingStatus, color = hearingStatus));
-plot_reflex+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab("500 Hz | Contralateral Reflex Threshold") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
+plot_reflex <- plot_reflex+geom_boxplot(width=.25, alpha=0.5)+ ylab("500 Hz | Contra. Reflex Threshold") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=28))+theme(legend.position = "none");
 
 plot_oae <- ggplot(merged_frame,aes(x=factor(hearingStatus, level = c("Normal Hearing", "Hearing Loss")),y=DPF2_6000, fill = hearingStatus, color = hearingStatus));
-plot_oae+geom_violin(alpha = 0.1)+geom_boxplot(width=.1, alpha=0.7) + ylab("DPOAE | F2 Frequency 6kHz (dB SPL)") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=20))+theme(legend.position = "none");
+plot_oae <-plot_oae+geom_boxplot(width=.25, alpha=0.5)+ ylab("DPOAE | F2 Freq 6kHz (dB SPL)") + xlab('Hearing Status')+ geom_jitter(size=2,width = 0.35, alpha=0.5)+scale_color_manual(values=c(color_hl, color_plt))+scale_fill_manual(values=c(color_hl, color_plt))+theme(text=element_text(size=28))+theme(legend.position = "none");
+
 
 #use this later 
-# save_plot_as_png <- function(plot, file_name, width = 7, height = 5, dpi = 300) {
-#   if (inherits(plot, "gg")) {
-#     ggsave(
-#       plot,
-#       filename = file_name,
-#       width = width,
-#       height = height,
-#       dpi = dpi
-#     )
-#   } else if (is.function(plot)) {
-#     # Assuming it's a base R plot function
-#     png(file_name, width = width, height = height, res = dpi)
-#     plot()
-#     dev.off()
-#   } else {
-#     stop("Unsupported plot type. Only ggplot2 or base R plots are supported.")
-#   }
-# }
-
-
-
+save_plot_as_png <- function(plot, file_name, width = 8, height = 7, dpi = 300) {
+  if (inherits(plot, "gg")) {
+    ggsave(
+      plot,
+      filename = file_name,
+      width = width,
+      height = height,
+      dpi = dpi
+    )
+  } else if (is.function(plot)) {
+    # Assuming it's a base R plot function
+    png(file_name, width = width, height = height, res = dpi)
+    plot()
+    dev.off()
+  } else {
+    stop("Unsupported plot type. Only ggplot2 or base R plots are supported.")
+  }
+}
 
 setwd(cwd)
+
+setwd('r_figs_forSHRP')
+
+save_plot_as_png(plot_age,'age_nhvhl.png');
+save_plot_as_png(plot_quickSin,'qs_nhvhl.png');
+save_plot_as_png(plot_reflex,'reflex_nhvhl.png');
+save_plot_as_png(plot_oae,'oae_nhvhl.png');
+
+setwd(cwd)
+
+
 
