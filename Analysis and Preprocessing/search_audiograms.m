@@ -21,9 +21,7 @@ function [id_list_L,L_lvl_list,id_list_R, R_lvl_list] = search_audiograms(freqli
 %Written By: Andrew Sivaprakasam
 %Last Updated: June 2023
 
-%TODO: NR should be reported better (e.g. NR @ X dB HL)
-
-plot_select_flag = 1;
+%TODO: NR should be reported 
 
 if ~exist('freqlist','var') || isempty(freqlist)
     freqlist = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 11200,...
@@ -32,6 +30,7 @@ end
 
 %default plots all, even with NR/NaN. But if specifying freqs will return
 %specific subjects
+plot_select_flag = 1; %SH added 11/15/23 (not working without)
 
 if ~exist('range_min','var') || isempty(range_min)
     plot_select_flag = 0;
@@ -63,6 +62,7 @@ for i = 1:length(fnames)
 
     load(fnames{i});
     subjID = visit.subjectID;
+    
     id_list(i) = string(subjID);
     [~,locL] = ismember(freqlist,visit.Audiogram.AC.L(:,1));
     [~,locR] = ismember(freqlist,visit.Audiogram.AC.R(:,1));
