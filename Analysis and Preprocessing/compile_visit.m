@@ -37,7 +37,6 @@ All_IDs = getUniqueVisitID(dataDir);
 for n = 1:length(All_IDs)
     
     visitID = All_IDs{n};
-    %AGH just fix this to pull from All_IDs...
     scors = strfind(visitID,'_');
     subjectID = visitID(1:scors(1)-1)
     
