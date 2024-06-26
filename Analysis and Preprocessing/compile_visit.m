@@ -41,11 +41,9 @@ for n = 1:length(All_IDs)
     subjectID = visitID(1:scors(1)-1)
     
     pd = pwd;
-    %     subj_dir = [dataDir, '/', visitID];
-    %     cd(subj_dir);
     
     %Find ARCDC Prefix, these are the files for a given visit:
-    fnames = dir(strcat([dataDir,'/',All_IDs{n},'*']));
+    fnames = dir(strcat([dataDir,'/',visitID,'*']));
     files = {fnames.name}';
     folders = {fnames.folder}';
     
@@ -81,6 +79,8 @@ for n = 1:length(All_IDs)
                     visit.QuickSIN.L = QS_L;
                     visit.Age = Age;
                     
+                    % Measure info
+
                     disp('Audiometry Loaded');
                 case 'WBT'
                     %CHECK LR
@@ -109,9 +109,6 @@ for n = 1:length(All_IDs)
                 case 'OAE'
                     %CHECK LR
                     load(files{i});
-                    %                 eval([visitID,'.researcher = researcher']);
-                    %                 eval([visitID,'.time = time']);
-                    
                     switch files{i}(underscore(3)+1:end-4)
                         case 'L'
                             visit.dpOAE.L.noisefloor = noisefloor_dp;
@@ -188,12 +185,6 @@ for n = 1:length(All_IDs)
         end
         
         Reflex_Frequencies = [500, 1e3, 2e3, 4e3];
-        %
-        %     if isnan(visit.QuickSIN.R) || isnan(visit.QuickSIN.L)
-        %         visit.QuickSIN.R = R_QuickSIN;
-        %         visit.QuickSIN.L = L_QuickSIN;
-        %     end
-        
         visit.Reflexes.Frequencies = Reflex_Frequencies;
         visit.Reflexes.ProbeR.Ipsi = Probe_R_Ipsi;
         visit.Reflexes.ProbeR.Contra = Probe_R_Contr;
