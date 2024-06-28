@@ -66,6 +66,7 @@ for n = 1:length(All_IDs)
             switch dataType
                 
                 case 'COM'
+                    load(files{i});
                     visit.SubjInfo = subj;
                     visit.VisitInfo = study;
                     
@@ -131,7 +132,7 @@ for n = 1:length(All_IDs)
                             dpOAE.L.noisefloor = noisefloor_dp;
                             dpOAE.L.mean_response = mean_response;
                             dpOAE.L.f1 = f1;
-                            visit.dpOAE.L.f2 = f2;
+                            dpOAE.L.f2 = f2;
                             dpOAE.L.DP = DP;
                             dpOAE.L.f1_rec_dB = f1_rec_dB;
                             dpOAE.L.f2_rec_dB = f2_rec_dB;

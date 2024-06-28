@@ -13,9 +13,9 @@ clc;
 close all;
 
 %Be sure to update the dataPath as needed.
-%dataPath = 'C:\Users\ARDC User\Desktop\DATA'; % use this
+dataPath = 'C:\Users\ARDC User\Desktop\DATA'; % use this
 % for debugging
-dataPath = '/Users/lizzyjensen/Desktop/Code/ARDC/ARDC_Analysis/Analysis and Preprocessing';
+%dataPath = '/Users/lizzyjensen/Desktop/Code/ARDC/ARDC_Analysis/Analysis and Preprocessing';
 origPath = pwd;
 
 %% Set defaults
@@ -180,8 +180,14 @@ comp_time = datetime('now');
 comp_time.Format = 'MMddyyyy';
 study.dateCompiled = comp_time; 
 
+%For filename...we should use study date?? so it all gets compiled - AS/LJ
+testDate = study.testDate;
+testDate.Format = 'MMddyyyy';
+study.testDate = testDate;
+
 cd(dataPath)
-filename = strcat(subj.ID,'_',string(comp_time),'_COM');
+%filename = strcat(subj.ID,'_',string(comp_time),'_COM');
+filename = strcat(subj.ID,'_',string(study.testDate),'_COM');
 
 % if data should go to certain folders, set where it goes here: 
 
