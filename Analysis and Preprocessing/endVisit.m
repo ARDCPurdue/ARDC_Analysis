@@ -4,6 +4,9 @@
 % Author: Samantha Hauser
 % Date Created: 6/25/24
 
+%TODO: (from AS/BH/AGS) Should we be saving time to the minute? Current saving of 
+%datetime doesn't have this info
+
 %% Clear and set-up directories
 clear;
 clc;
@@ -12,7 +15,7 @@ close all;
 %Be sure to update the dataPath as needed.
 %dataPath = 'C:\Users\ARDC User\Desktop\DATA'; % use this
 % for debugging
-dataPath = 'C:\Users\saman\Desktop\Code\ARDC_Analysis\Analysis and Preprocessing';
+dataPath = '/Users/lizzyjensen/Desktop/Code/ARDC/ARDC_Analysis/Analysis and Preprocessing';
 origPath = pwd;
 
 %% Set defaults
@@ -57,17 +60,7 @@ fields.referring = uidropdown(app, 'Items', dropdown_lab, 'Position', [x(1), y(6
 % Add a callback to update fields.IRBnum when fields.referring value changes
 fields.referring.ValueChangedFcn = @(dropdown,event) updateIRBnum(dropdown, fields.IRBnum, IRBs);
 
-% Define the callback function
-function updateIRBnum(referringDropdown, irbnumEditField, irbData)
-    selectedLab = referringDropdown.Value;
-    idx = find(strcmp(irbData.PI, selectedLab));
-    if ~isempty(idx)
-        irbNumber = irbData.IRBnum(idx);
-        irbnumEditField.Value = irbNumber;
-    else
-        irbnumEditField.Value = 'IRB not found'; % Handle if lab not found in IRB data
-    end
-end
+
 
 
 y = y -30; 
@@ -180,17 +173,31 @@ data.MEMR.comments = get(fields.memr.comment, 'Value');
 data.MEMR.protocol = get(fields.memr.protocol, 'Value'); 
 % data.MEMR.equipment = get(fields.memr.equipment, 'Value'); 
 
+
+%Should we save the time (minutes/hours??)
 study.location = 'Purdue LYLE3069'; 
 comp_time = datetime('now');
 comp_time.Format = 'MMddyyyy';
 study.dateCompiled = comp_time; 
 
 cd(dataPath)
-filename = strcat(subj.ID,'_',string(comp_time),'_comments');
+filename = strcat(subj.ID,'_',string(comp_time),'_COM');
 
 % if data should go to certain folders, set where it goes here: 
 
 save(filename, 'study', 'data', 'subj'); 
 cd(origPath);
 close(app)
+end
+
+% Define the callback function
+function updateIRBnum(referringDropdown, irbnumEditField, irbData)
+    selectedLab = referringDropdown.Value;
+    idx = find(strcmp(irbData.PI, selectedLab));
+    if ~isempty(idx)
+        irbNumber = irbData.IRBnum(idx);
+        irbnumEditField.Value = irbNumber;
+    else
+        irbnumEditField.Value = 'IRB not found'; % Handle if lab not found in IRB data
+    end
 end
