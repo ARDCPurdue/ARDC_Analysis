@@ -47,12 +47,10 @@ fields.gender = uidropdown(app, 'Items',dropdown_gender, 'Position',[x(1), y(3)-
 
 y = y + 20; 
 % Study info: 
-p_study = uipanel(app, 'Title', 'Study Info', 'TitlePosition', 'lefttop', 'Position', [x(1)-10, 115-100, width+20, height.*17]); 
-label_date = uilabel(app, 'Text','Test Date (YYYY-MM-DD)', 'Position',[x(1), y(5), width, height]); 
-fields.testDate = uidatepicker(app,"Value",datetime('today'),'DisplayFormat','yyyy-MM-dd', 'Position',[x(1), y(5)-inpsz, width, height]); 
-labels(4) = uilabel(app,'Text','Referring Lab', 'Position',[x(1), y(6), width, height]);
-fields.IRBnum = uieditfield(app, 'Value', IRBs.IRBnum(1), 'Position', [x(1), y(6) - inpsz*2-10, width, height]); 
-fields.referring = uidropdown(app, 'Items', dropdown_lab, 'Position', [x(1), y(6)-inpsz, width, height]);
+p_study = uipanel(app, 'Title', 'Study Info', 'TitlePosition', 'lefttop', 'Position', [x(1)-10, 115-50, width+20, height.*15]); 
+labels(4) = uilabel(app,'Text','Referring Lab', 'Position',[x(1), y(5), width, height]);
+fields.IRBnum = uieditfield(app, 'Value', IRBs.IRBnum(1), 'Position', [x(1), y(5) - inpsz*2-10, width, height]); 
+fields.referring = uidropdown(app, 'Items', dropdown_lab, 'Position', [x(1), y(5)-inpsz, width, height]);
 
 % Add a callback to update fields.IRBnum when fields.referring value changes
 fields.referring.ValueChangedFcn = @(dropdown,event) updateIRBnum(dropdown, fields.IRBnum, IRBs);
@@ -71,17 +69,17 @@ end
 
 
 y = y -30; 
-labels(5) = uilabel(app,'Text','ARDR Signed?', 'Position',[x(1), y(7), width, height]);
-fields.ARDR = uidropdown(app, 'Items',{'Yes', 'No', 'Unknown'},'Position',[x(1), y(7)-inpsz, width, height]);
-labels(6) = uilabel(app,'Text','Researcher', 'Position',[x(1), y(8), width, height]);
-fields.Researcher = uieditfield(app, 'Value','', 'Position',[x(1), y(8)-inpsz, width, height]);
-labels(7) = uilabel(app, 'Text', 'Other researchers', 'Position',[x(1), y(9), width, height]); 
-fields.ResearcherOther = uieditfield(app, 'Value', '', 'Position', [x(1), y(9)-inpsz, width, height] ); 
-labels(8) =  uilabel(app,'Text','ARDC Protocol', 'Position',[x(1), y(10), width, height]);
-fields.ARDCrelVer = uidropdown(app, 'Items',{'Standard', 'Advanced', 'Other'},'Position',[x(1), y(10)-inpsz, width, height]);
-labels(9) = uilabel(app,'Text','Location', 'Position',[x(1), y(11), width, height]);
-fields.location = uidropdown(app, "Items",{'Purdue LYLE 3069', 'APARC-Indy'}, 'Position', [x(1), y(11)-inpsz, width, height]);
-labels(10) = uilabel(app, "Text", sprintf('ARDC Release: %s', relVer), 'Position',[x(1), y(12), width, height]); 
+labels(5) = uilabel(app,'Text','ARDR Signed?', 'Position',[x(1), y(6), width, height]);
+fields.ARDR = uidropdown(app, 'Items',{'Yes', 'No', 'Unknown'},'Position',[x(1), y(6)-inpsz, width, height]);
+labels(6) = uilabel(app,'Text','Researcher', 'Position',[x(1), y(7), width, height]);
+fields.Researcher = uieditfield(app, 'Value','', 'Position',[x(1), y(7)-inpsz, width, height]);
+labels(7) = uilabel(app, 'Text', 'Other researchers', 'Position',[x(1), y(8), width, height]); 
+fields.ResearcherOther = uieditfield(app, 'Value', '', 'Position', [x(1), y(8)-inpsz, width, height] ); 
+labels(8) =  uilabel(app,'Text','ARDC Protocol', 'Position',[x(1), y(9), width, height]);
+fields.ARDCrelVer = uidropdown(app, 'Items',{'Standard', 'Advanced', 'Other'},'Position',[x(1), y(9)-inpsz, width, height]);
+labels(9) = uilabel(app,'Text','Location', 'Position',[x(1), y(10), width, height]);
+fields.location = uidropdown(app, "Items",{'Purdue LYLE 3069', 'APARC-Indy'}, 'Position', [x(1), y(10)-inpsz, width, height]);
+labels(10) = uilabel(app, "Text", sprintf('ARDC Release: %s', relVer), 'Position',[x(1), y(11), width, height]); 
 
 y = 575:-50:0;
 % Measure info: 
@@ -146,7 +144,6 @@ subj.ID = get(fields.subjID, 'Value');
 subj.age = get(fields.age, 'Value'); 
 subj.gender = get(fields.gender, 'Value'); 
 
-study.testDate = get(fields.testDate, 'Value'); 
 study.referringLab = get(fields.referring, 'Value'); 
 study.irbNumber = get(fields.IRBnum, 'Value'); 
 ardryes = get(fields.ARDR); 
