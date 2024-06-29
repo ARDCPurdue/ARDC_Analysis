@@ -15,6 +15,12 @@ close all;
 dataPath = 'C:\Users\saman\Desktop\Code\ARDC_Analysis\Analysis and Preprocessing';
 origPath = pwd;
 
+%% More fields to add 
+% General comments about the patient 
+% otoscopy result
+% HA? CI%  
+
+
 %% Set defaults
 relVer = 'v1'; 
 
