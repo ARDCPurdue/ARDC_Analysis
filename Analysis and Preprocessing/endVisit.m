@@ -24,7 +24,6 @@ origPath = pwd;
 % otoscopy result
 % HA? CI%  
 
-
 %% Set defaults
 % These can/should also be stored in CSVs instead
 % Set defaults for metadata dropdowns
@@ -37,80 +36,110 @@ opts = setvaropts(opts,"CalibDate",'inputFormat','MM/dd/uuuu');
 Equipment = readtable('Equipment.csv', opts); 
 
 dropdown_gender = {'Male', 'Female', 'Non-binary', 'No Response'};  % Replace with your options
+dropdown_amplification = {'None', 'Hearing Aids', 'Cochlear Implant', 'Other'};
 fields.relVer = 'v1'; 
 
 %% Dimensions
-app_width = 1200; 
-app_height = 650; 
+app_width = 1130; 
+app_height = 700; 
 
 width = 200; 
 height = 25; 
+sect_height = 2*height; 
 x = 25:225:app_width - width -10; 
-y = app_height-75:-50:0;
-inpsz = 20; 
+y = app_height-75:-sect_height:0;
 
+inpsz = 20;
+border = 20;
+pborder = 55; 
 % Create the app figure
 app = uifigure('Name','Subject Information', 'Position',[100, 100, app_width, app_height]);
+p_app = uipanel(app, 'Title', 'Enter Visit Data', 'TitlePosition', 'centertop',...
+    'Position', [5,5, app_width-10, app_height-10], 'BackgroundColor', '#cfb991', ...
+    'ForegroundColor', 'k' , 'FontSize', 16, 'FontWeight', 'bold'); 
 
 %Define labels and edit text fields
 % Subject info: 
-p_subject = uipanel(app, 'Title', 'Subject', 'TitlePosition', 'lefttop', 'Position', [x(1)-10, 445, width+20, height.*7]); 
+numSects = 4;
+p_subject = uipanel(app, 'Title', 'Subject', 'TitlePosition', 'centertop', ...
+    'Position', [x(1)-border/2, app_height-pborder-(numSects*sect_height), width+border,(numSects*sect_height+border)], ...
+    "BackgroundColor", '#c4bfc0', 'FontWeight', 'bold'); 
 labels_general(1) = uilabel(app,'Text','ARDC ID#', 'Position',[x(1), y(1), width, height]);
 fields.subjID = uieditfield(app,'Value','ARDC', 'Position',[x(1), y(1)-inpsz, width, height]);
 labels_general(2) = uilabel(app,'Text','Age (yrs)', 'Position',[x(1), y(2), width, height]);
 fields.age = uieditfield(app, 'Value','', 'Position',[x(1), y(2)-inpsz, width, height]);
 labels_general(3) = uilabel(app,'Text','Gender', 'Position',[x(1), y(3), width, height]);
 fields.gender = uidropdown(app, 'Items',dropdown_gender, 'Position',[x(1), y(3)-inpsz, width, height]);
+labels_general(4) = uilabel(app, 'Text', 'Amplification?', 'Position',[x(1), y(4), width, height]); 
+fields.amplification = uidropdown(app, 'Items', dropdown_amplification, 'Position', [x(1), y(4)-inpsz, width, height]); 
 
-y = y + 20; 
 % Study info: 
-p_study = uipanel(app, 'Title', 'Study Info', 'TitlePosition', 'lefttop', 'Position', [x(1)-10, 115-100, width+20, height.*17]); 
-label_date = uilabel(app, 'Text','Test Date (YYYY-MM-DD)', 'Position',[x(1), y(5), width, height]); 
-fields.testDate = uidatepicker(app,"Value",datetime('today'),'DisplayFormat','yyyy-MM-dd', 'Position',[x(1), y(5)-inpsz, width, height]); 
-labels_general(4) = uilabel(app,'Text','Referring Lab', 'Position',[x(1), y(6), width, height]);
-fields.IRBnum = uieditfield(app, 'Value', IRBs.IRBnum(1), 'Position', [x(1), y(6) - inpsz*2-10, width, height]); 
-fields.referring = uidropdown(app, 'Items', dropdown_lab, 'Position', [x(1), y(6)-inpsz, width, height]);
+y = app_height-90-(numSects*sect_height+border):-sect_height:0;
+numSects = 8;
+p_study = uipanel(app, 'Title', 'Study Info', 'TitlePosition', 'lefttop', ...
+    'Position', [x(1)-border/2, border/2+5, width+border,(numSects*sect_height+border)], ...
+    "BackgroundColor", '#c4bfc0', 'FontWeight', 'bold'); 
+%'Position', [x(1)-10, 115-140, width+20, height.*17]); 
+label_date = uilabel(app, 'Text','Test Date (YYYY-MM-DD)', 'Position',[x(1), y(1), width, height]); 
+fields.testDate = uidatepicker(app,"Value",datetime('today'),'DisplayFormat','yyyy-MM-dd', 'Position',[x(1), y(1)-inpsz, width, height]); 
+labels_general(4) = uilabel(app,'Text','Referring Lab', 'Position',[x(1), y(2), width, height]);
+fields.IRBnum = uieditfield(app, 'Value', IRBs.IRBnum(1), 'Position', [x(1), y(2) - inpsz*2-10, width, height]); 
+fields.referring = uidropdown(app, 'Items', dropdown_lab, 'Position', [x(1), y(2)-inpsz, width, height]);
 
 % Add a callback to update fields.IRBnum when fields.referring value changes
 fields.referring.ValueChangedFcn = @(dropdown,event) updateIRBnum(dropdown, fields.IRBnum, IRBs);
-
-y = y -30; 
-labels_general(5) = uilabel(app,'Text','ARDR Signed?', 'Position',[x(1), y(7), width, height]);
-fields.ARDR = uidropdown(app, 'Items',{'Yes', 'No', 'Unknown'},'Position',[x(1), y(7)-inpsz, width, height]);
-labels_general(6) = uilabel(app,'Text','Researcher', 'Position',[x(1), y(8), width, height]);
-fields.Researcher = uieditfield(app, 'Value','', 'Position',[x(1), y(8)-inpsz, width, height]);
-labels_general(7) = uilabel(app, 'Text', 'Other researchers', 'Position',[x(1), y(9), width, height]); 
-fields.ResearcherOther = uieditfield(app, 'Value', '', 'Position', [x(1), y(9)-inpsz, width, height] ); 
-labels_general(8) =  uilabel(app,'Text','ARDC Protocol', 'Position',[x(1), y(10), width, height]);
-fields.ARDCrelVer = uidropdown(app, 'Items',{'Standard', 'Advanced', 'Other'},'Position',[x(1), y(10)-inpsz, width, height]);
-labels_general(9) = uilabel(app,'Text','Location', 'Position',[x(1), y(11), width, height]);
-fields.location = uidropdown(app, "Items",unique(table2array(Equipment(:,'Location'))), 'Position', [x(1), y(11)-inpsz, width, height]); 
-labels_general(10) = uilabel(app, "Text", sprintf('ARDC Release: %s', fields.relVer), 'Position',[x(1), y(12), width, height]); 
+y = y - 30; 
+labels_general(5) = uilabel(app,'Text','ARDR Signed?', 'Position',[x(1), y(3), width, height]);
+fields.ARDR = uidropdown(app, 'Items',{'Yes', 'No', 'Unknown'},'Position',[x(1), y(3)-inpsz, width, height]);
+labels_general(6) = uilabel(app,'Text','Researcher', 'Position',[x(1), y(4), width, height]);
+fields.Researcher = uieditfield(app, 'Value','', 'Position',[x(1), y(4)-inpsz, width, height]);
+labels_general(7) = uilabel(app, 'Text', 'Other researchers', 'Position',[x(1), y(5), width, height]); 
+fields.ResearcherOther = uieditfield(app, 'Value', '', 'Position', [x(1), y(5)-inpsz, width, height] ); 
+labels_general(8) =  uilabel(app,'Text','ARDC Protocol', 'Position',[x(1), y(6), width, height]);
+fields.ARDCrelVer = uidropdown(app, 'Items',{'Standard', 'Advanced', 'Other'},'Position',[x(1), y(6)-inpsz, width, height]);
+labels_general(9) = uilabel(app,'Text','Location', 'Position',[x(1), y(7), width, height]);
+fields.location = uidropdown(app, "Items",unique(table2array(Equipment(:,'Location'))), 'Position', [x(1), y(7)-inpsz, width, height]); 
+labels_general(10) = uilabel(app, "Text", sprintf('ARDC Release: %s', fields.relVer), 'Position',[x(1), y(8), width, height]); 
 
 % Measure info: 
-p_measure = uipanel(app, 'Title', 'Measures', 'TitlePosition', 'lefttop', 'Position', [x(2)-10, 115-50, width*4.6, 555]); 
+p_measure = uipanel(app, 'Title', 'Measures', 'TitlePosition', 'lefttop', ...
+    'Position', [x(2)-border/2, border+5+30, (width*4+border*4), (12*sect_height+2*border -(border+10))],...
+    "BackgroundColor", '#c4bfc0', 'FontWeight', 'bold'); 
 
-y = app_height -75:-50:0;
-x = 250:180:app_width; 
-width = 175; 
 
+width = 205; 
+x = 245+20:width+5:app_width;  
+y = [200, 40]; 
 init_equip = Equipment(strcmp(Equipment.Location, fields.location.Value), 1:4);
 
 measures = unique(init_equip.Measure); 
+numSects = 6; 
 for j = 1:length(measures) % handle if length(measures) > 5
     measure = measures{j}; 
-    device = table2array(init_equip(strcmp(init_equip.Measure, measure), "Device"));
-    serNum = table2array(init_equip(strcmp(init_equip.Measure, measure), "SerialNum"));
-    calDate = table2array(init_equip(strcmp(init_equip.Measure, measure), "CalibDate"));
-    labels.(measure).name = uilabel(app, 'Text', measure, 'Position', [x(j), y(1), width, height], 'FontWeight', 'bold');
-    labels.(measure).com = uilabel(app, 'Text', 'Comments', 'Position',[x(j), y(1)-inpsz, width, height]);
-    fields.(measure).comment = uitextarea(app, 'Value', '', 'Position',[x(j), y(1)-height-inpsz*2, width, height*2]);
-    labels.(measure).protocol = uilabel(app, 'Text', 'Protocol', 'Position',[x(j), y(3), width, height]);
-    fields.(measure).protocol = uidropdown(app, "Items",{'Conventional', 'Other'}, 'Position',[x(j), y(3)-inpsz, width, height]);
-    labels.(measure).equipment = uilabel(app, 'Text', 'Equipment', 'Position',[x(j), y(4), width, height]');
-    fields.(measure).equipment.device = uieditfield(app, "Value", device{1,1} , 'Position',[x(j), y(4)-inpsz, width, height]);
-    fields.(measure).equipment.serialNumber = uieditfield(app, "Value", string(serNum) , 'Position',[x(j), y(4)-2*inpsz, width, height]);
-    fields.(measure).equipment.calibDate = uieditfield(app, "Value", string(calDate) , 'Position',[x(j), y(4)-3*inpsz, width, height]);
+    if j > 4
+        k = 2;
+        i = j - 4; 
+        %y = app_height -75 - 300:-50:0;
+    else
+        k = 1; 
+        i = j;
+        %y = app_height-75:-50:0;
+    end
+    p_meas(j) = uipanel(app, 'Title', measure, 'TitlePosition', 'centertop', ...
+            'Position', [x(i)-border/2, y(k), (width+border/2), (numSects*height+border/2)],...
+        "BackgroundColor", '#555960', 'FontWeight', 'bold'); 
+%     device = table2array(init_equip(strcmp(init_equip.Measure, measure), "Device"));
+%     serNum = table2array(init_equip(strcmp(init_equip.Measure, measure), "SerialNum"));
+%     calDate = table2array(init_equip(strcmp(init_equip.Measure, measure), "CalibDate"));
+%     labels.(measure).name = uilabel(app, 'Text', measure, 'Position', [x(i), y(1), width, height], 'FontWeight', 'bold');
+%     labels.(measure).com = uilabel(app, 'Text', 'Comments', 'Position',[x(i), y(1)-inpsz, width, height]);
+%     fields.(measure).comment = uitextarea(app, 'Value', '', 'Position',[x(i), y(k)-height-inpsz*2, width, height*2]);
+%     labels.(measure).protocol = uilabel(app, 'Text', 'Protocol', 'Position',[x(i), y(k), width, height]);
+%     fields.(measure).protocol = uidropdown(app, "Items",{'Conventional', 'Other'}, 'Position',[x(j), y(k)-inpsz, width, height]);
+%     labels.(measure).equipment = uilabel(app, 'Text', 'Equipment', 'Position',[x(i), y(k), width, height]');
+%     fields.(measure).equipment.device = uieditfield(app, "Value", device{1,1} , 'Position',[x(i), y(k)-inpsz, width, height]);
+%     fields.(measure).equipment.serialNumber = uieditfield(app, "Value", string(serNum) , 'Position',[x(i), y(k)-2*inpsz, width, height]);
+%     fields.(measure).equipment.calibDate = uieditfield(app, "Value", string(calDate) , 'Position',[x(i), y(k)-3*inpsz, width, height]);
 end
 
 % update equpiment by location 
