@@ -1,11 +1,11 @@
 Measure,Device,SerialNum,CalibDate,Location
-Otoscopy,Welch-Allen,,N/A,LYLE3069
+Otoscopy,Welch-Allen,,Nan,LYLE3069
 Audiogram,GSI AudioStar Pro,GS0085881,3/12/2024,LYLE3069
 QuickSIN,GSI AudioStar Pro,GS0085881,3/12/2024,LYLE3069
 WBT,Interacoustics Titan,3456,3/12/2024,LYLE3069
 DPOAE,Interacoustics Titan,3456,3/12/2024,LYLE3069
 Reflexes,Interacoustics Titan,3456,3/12/2024,LYLE3069
-Otoscopy,Welch-Allen,,N/A,APARC-Indy
+Otoscopy,Welch-Allen,,Nan,APARC-Indy
 Audiogram,GSI AudioStar Pro,5774,1/2/2024,APARC-Indy
 QuickSIN,GSI AudioStar Pro,45799,1/2/2024,APARC-Indy
 WBT,Interacoustics Titan,5675563,1/2/2024,APARC-Indy
