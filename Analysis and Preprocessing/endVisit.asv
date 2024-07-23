@@ -168,10 +168,10 @@ end
 fields.location.ValueChangedFcn = @(dropdown,event) updateEquipment(dropdown, fields, MEAS);
 
 % update measures by protocolName
-fields.ProtocolName.ValueChangedFcn = @(dropdown,event) updateMeasures(p_measure, dropdown, fields,labels, MEAS, Equipment);
+fields.ProtocolName.ValueChangedFcn = @(dropdown,event) updateMeasures(app, dropdown, fields,labels, MEAS, Equipment);
 
 % Create submit button
-submit_button = uibutton(app,'Text','Submit', 'Position', [550, 15, 100, 30], ...
+submit_button = uibutton(app,'Text','Submit', 'Position', [550, 25, 100, 30], ...
     "ButtonPushedFcn", @(src,event) submit_action(app, fields, dataPath, origPath, measures), ...
     "BackgroundColor", 'g', 'FontSize', 18);
 

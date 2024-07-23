@@ -1,13 +1,6 @@
-Measure,Device,SerialNum,CalibDate,Location
-Otoscopy,Welch-Allen,,Nan,LYLE3069
-Audiogram,GSI AudioStar Pro,GS0085881,3/12/2024,LYLE3069
-QuickSIN,GSI AudioStar Pro,GS0085881,3/12/2024,LYLE3069
-WBT,Interacoustics Titan,3456,3/12/2024,LYLE3069
-DPOAE,Interacoustics Titan,3456,3/12/2024,LYLE3069
-Reflexes,Interacoustics Titan,3456,3/12/2024,LYLE3069
-Otoscopy,Welch-Allen,,Nan,APARC-Indy
-Audiogram,GSI AudioStar Pro,5774,1/2/2024,APARC-Indy
-QuickSIN,GSI AudioStar Pro,45799,1/2/2024,APARC-Indy
-WBT,Interacoustics Titan,5675563,1/2/2024,APARC-Indy
-DPOAE,Interacoustics Titan,23245,1/2/2024,APARC-Indy
-Reflexes,Interacoustics Titan,12314,1/2/2024,APARC-Indy
+Device,SerialNum,calib2023,calib2024
+Welch-Allyn,1234,NA,NA
+GSI AudioStar Pro,GS0085882,3/5/2023,3/5/2024
+ER10X,IA24277,3/5/2023,3/5/2024
+Interacoustics Titan,5325,3/5/2023,3/5/2024
+BioSemi,5786778,3/5/2023,3/5/2024
