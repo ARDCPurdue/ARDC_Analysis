@@ -24,6 +24,8 @@ origPath = pwd;
 % otoscopy result
 % HA? CI%
 
+%% TESTING2
+
 %% Set defaults
 % These can/should also be stored in CSVs instead
 % Set defaults for metadata dropdowns
