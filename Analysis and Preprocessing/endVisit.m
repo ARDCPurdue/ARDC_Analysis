@@ -3,327 +3,224 @@
 % metadata and comments about the testing.
 % Author: Samantha Hauser
 % Date Created: 6/25/24
-
-%TODO: (from AS/BH/AGS) Should we be saving time to the minute? Current saving of
-%datetime doesn't have this info -- SH: I think hour/min would be more
-%useful attached to the individual measure.
+% Last updated: 7/23/24 (v1)
 
 %% Clear and set-up directories
 clear;
 clc;
 close all;
 
+%% Global Variables
+global fields
+
 %Be sure to update the dataPath as needed.
 dataPath = 'C:\Users\ARDC User\Desktop\DATA'; % use this
-% for debugging
-%dataPath = '/Users/lizzyjensen/Desktop/Code/ARDC/ARDC_Analysis/Analysis and Preprocessing';
 origPath = pwd;
 
 %% More fields to add
 % General comments about the patient
-% otoscopy result
-% HA? CI%
-
-%% TESTING2
+% Date/time of compiling?
 
 %% Set defaults
-% These can/should also be stored in CSVs instead
 % Set defaults for metadata dropdowns
+% Most relevant dropdowns that will need to be changed, should be changed
+% in the DataSheets folder (CSV files), NOT here.
+
 addpath('DataSheets')
+
+% Read in IRB data
 IRBs = readtable('IRBs.csv', 'TextType','string');
 dropdown_lab = table2array(IRBs(:,"PI"));
 dropdown_IRB = table2array(IRBs(:,"IRBnum"));
 
+% Read in data about the measures (measure, device, protocol it's a part of)
 MEAS = readtable('Measures.csv', 'TextType','string');
 
+% Other standard dropdowns, not read from CSV. Could be edited if needed.
 dropdown_gender = {'Male', 'Female', 'Non-binary', 'No Response'};  % Replace with your options
-dropdown_amplification = {'None', 'Hearing Aids', 'Cochlear Implant', 'Other'};
-fields.relVer = 'v1';
+dropdown_amplification = {'None', 'Hearing Aids', 'Cochlear Implant','Other'};
 
-%% Dimensions
-app_width = 1130;
-app_height = 700;
-
-width = 200;
-height = 25;
-sect_height = 2*height;
-x = 25:225:app_width - width -10;
-y = app_height-75:-sect_height:0;
-
-inpsz = 20;
-border = 20;
-pborder = 55;
-% Create the app figure
-app = uifigure('Name','Subject Information', 'Position',[100, 100, app_width, app_height]);
-p_app = uipanel(app, 'Title', 'Enter Visit Data', 'TitlePosition', 'centertop',...
-    'Position', [5,5, app_width-10, app_height-10], 'BackgroundColor', '#cfb991', ...
-    'ForegroundColor', 'k' , 'FontSize', 16, 'FontWeight', 'bold');
-
-%Define labels and edit text fields
-% Subject info:
-numSects = 4;
-p_subject = uipanel(app, 'Title', 'Subject', 'TitlePosition', 'centertop', ...
-    'Position', [x(1)-border/2, app_height-pborder-(numSects*sect_height), width+border,(numSects*sect_height+border)], ...
-    "BackgroundColor", '#c4bfc0', 'FontWeight', 'bold');
-labels_general(1) = uilabel(app,'Text','ARDC ID#', 'Position',[x(1), y(1), width, height]);
-fields.subjID = uieditfield(app,'Value','ARDC', 'Position',[x(1), y(1)-inpsz, width, height]);
-labels_general(2) = uilabel(app,'Text','Age (yrs)', 'Position',[x(1), y(2), width, height]);
-fields.age = uieditfield(app, 'Value','', 'Position',[x(1), y(2)-inpsz, width, height]);
-labels_general(3) = uilabel(app,'Text','Gender', 'Position',[x(1), y(3), width, height]);
-fields.gender = uidropdown(app, 'Items',dropdown_gender, 'Position',[x(1), y(3)-inpsz, width, height]);
-labels_general(4) = uilabel(app, 'Text', 'Amplification?', 'Position',[x(1), y(4), width, height]);
-fields.amplification = uidropdown(app, 'Items', dropdown_amplification, 'Position', [x(1), y(4)-inpsz, width, height]);
-
-% Study info:
-y = app_height-90-(numSects*sect_height+border):-sect_height:0;
-numSects = 8;
-p_study = uipanel(app, 'Title', 'Study Info', 'TitlePosition', 'lefttop', ...
-    'Position', [x(1)-border/2, border/2+5, width+border,(numSects*sect_height+border)], ...
-    "BackgroundColor", '#c4bfc0', 'FontWeight', 'bold');
-%'Position', [x(1)-10, 115-140, width+20, height.*17]);
-label_date = uilabel(app, 'Text','Test Date (YYYY-MM-DD)', 'Position',[x(1), y(1), width, height]);
-fields.testDate = uidatepicker(app,"Value",datetime('today'),'DisplayFormat','yyyy-MM-dd', 'Position',[x(1), y(1)-inpsz, width, height]);
-labels_general(4) = uilabel(app,'Text','Referring Lab', 'Position',[x(1), y(2), width, height]);
-fields.IRBnum = uieditfield(app, 'Value', IRBs.IRBnum(1), 'Position', [x(1), y(2) - inpsz*2-10, width, height]);
-fields.referring = uidropdown(app, 'Items', dropdown_lab, 'Position', [x(1), y(2)-inpsz, width, height]);
-
-% Add a callback to update fields.IRBnum when fields.referring value changes
-fields.referring.ValueChangedFcn = @(dropdown,event) updateIRBnum(dropdown, fields.IRBnum, IRBs);
-y = y - 30;
-labels_general(5) = uilabel(app,'Text','ARDR Signed?', 'Position',[x(1), y(3), width, height]);
-fields.ARDR = uidropdown(app, 'Items',{'Yes', 'No', 'Unknown'},'Position',[x(1), y(3)-inpsz, width, height]);
-labels_general(6) = uilabel(app,'Text','Researcher', 'Position',[x(1), y(4), width, height]);
-fields.Researcher = uieditfield(app, 'Value','', 'Position',[x(1), y(4)-inpsz, width, height]);
-labels_general(7) = uilabel(app, 'Text', 'Other researchers', 'Position',[x(1), y(5), width, height]);
-fields.ResearcherOther = uieditfield(app, 'Value', '', 'Position', [x(1), y(5)-inpsz, width, height] );
-
-% set action for changing protocol:
-labels_general(8) =  uilabel(app,'Text','ARDC Protocol', 'Position',[x(1), y(6), width, height]);
-fields.ProtocolName= uidropdown(app, 'Items',{'Standard', 'Advanced', 'Other'},'Position',[x(1), y(6)-inpsz, width, height]);
-
-labels_general(9) = uilabel(app,'Text','Location', 'Position',[x(1), y(7), width, height]);
+% Get all locations
 all_locs = dir("DataSheets\Equipment_*");
 for i = 1:numel(all_locs)
-    locations(i) = extractBetween(all_locs(i).name, 'Equipment_', '.csv');
+    locations(i) = extractBetween(all_locs(i).name, 'Equipment_', '_');
+    rms(i) = extractBetween(all_locs(i).name, sprintf('Equipment_%s_', locations{i}), '.csv'); 
 end
-fields.location = uidropdown(app, "Items",locations, 'Position', [x(1), y(7)-inpsz, width, height]);
-labels_general(10) = uilabel(app, "Text", sprintf('ARDC Release: %s', fields.relVer), 'Position',[x(1), y(8)+5, width, height]);
+unique_locations = unique(locations); 
+% If useful to have release versions of the code, update here:
+fields.releaseVersion = 'v1';
+
+%% Create the app figure
+% Dimensions/Parameters for app
+params.app_width = 1100;
+params.app_height = 700;
+
+% Global dimentions/parameters
+params.input_width = 200;
+params.input_height = 25;
+params.border = 10;
+params.sect_height = 2*params.input_height;
+params.inpsz = 20;
+
+% Create the app and a panel for it.
+app = uifigure('Name','Visit Data', 'Position',[100, 100, params.app_width, params.app_height]);
+p_app = uipanel(app, 'Title', 'Enter Visit Data', 'TitlePosition', 'centertop',...
+    'Position', [5,5, params.app_width-10, params.app_height-10], 'BackgroundColor', '#555960', ...
+    'ForegroundColor', 'k' , 'FontSize', 16, 'FontWeight', 'bold');
+
+%% Subject Information Section: Create the panel and inputs
+% Dimensions/Parameters
+numSections = 4;
+x = 5;
+y = 230-params.sect_height:-params.sect_height:0;
+
+% If this data is needed elsewhere.
+params.p_subject.numSections = numSections;
+params.p_subject.x = x;
+params.p_subject.y = y;
+
+% Create the panel
+p_subject = uipanel(p_app, 'Title', 'Subject', 'TitlePosition', 'centertop', ...
+    'Position', [params.border/2, 435, params.input_width+params.border,225], ...
+    "BackgroundColor", '#9d9795', 'FontWeight', 'bold');
+
+% Create the fields w/in the panel
+labels_general(1) = uilabel(p_subject,'Text','ARDC ID#', 'Position',[x, y(1), params.input_width, params.input_height]);
+fields.subjID = uieditfield(p_subject,'Value','ARDC', 'Position',[x, y(1)-params.inpsz, params.input_width, params.input_height]);
+labels_general(2) = uilabel(p_subject,'Text','Age (yrs)', 'Position',[x, y(2), params.input_width, params.input_height]);
+fields.age = uieditfield(p_subject, 'Value','', 'Position',[x, y(2)-params.inpsz, params.input_width, params.input_height]);
+labels_general(3) = uilabel(p_subject,'Text','Gender', 'Position',[x, y(3), params.input_width, params.input_height]);
+fields.gender = uidropdown(p_subject, 'Items',dropdown_gender, 'Position',[x, y(3)-params.inpsz, params.input_width, params.input_height]);
+labels_general(4) = uilabel(p_subject, 'Text', 'Amplification?', 'Position',[x, y(4), params.input_width, params.input_height]);
+fields.amplification = uidropdown(p_subject, 'Items', dropdown_amplification, 'Position', [x, y(4)-params.inpsz, params.input_width, params.input_height]);
+
+%% Study Information Section: Create the panel and inputs
+% Dimensions/Parameters
+x = 5;
+y = 430-params.sect_height:-params.sect_height:0;
+
+% Create panel
+p_study = uipanel(p_app, 'Title', 'Study Info', 'TitlePosition', 'centertop', ...
+    'Position', [params.border/2, params.border/2, params.input_width+params.border,425], ...
+    "BackgroundColor", '#9d9795', 'FontWeight', 'bold');
+
+% Create inputs
+label_date = uilabel(p_study, 'Text','Test Date (YYYY-MM-DD)', 'Position',[x(1), y(1), params.input_width, params.input_height]);
+fields.testDate = uidatepicker(p_study,"Value",datetime('today'),'DisplayFormat','yyyy-MM-dd', 'Position',[x(1), y(1)-params.inpsz, params.input_width, params.input_height]);
+labels_general(4) = uilabel(p_study,'Text','Referring Lab', 'Position',[x(1), y(2), params.input_width, params.input_height]);
+fields.IRBnum = uieditfield(p_study, 'Value', IRBs.IRBnum(1), 'Position', [x(1), y(2) - params.inpsz*2-10, params.input_width, params.input_height]);
+fields.referring = uidropdown(p_study, 'Items', dropdown_lab, 'Position', [x(1), y(2)-params.inpsz, params.input_width, params.input_height]);
+
+y(3:end) = y(3:end) - 30;
+labels_general(5) = uilabel(p_study,'Text','ARDR Signed?', 'Position',[x(1), y(3), params.input_width, params.input_height]);
+fields.ARDR = uidropdown(p_study, 'Items',{'Yes', 'No', 'Unknown'},'Position',[x(1), y(3)-params.inpsz, params.input_width, params.input_height]);
+labels_general(6) = uilabel(p_study,'Text','Researcher', 'Position',[x(1), y(4), params.input_width, params.input_height]);
+fields.Researcher = uieditfield(p_study, 'Value','', 'Position',[x(1), y(4)-params.inpsz, params.input_width, params.input_height]);
+labels_general(7) = uilabel(p_study, 'Text', 'Other researchers', 'Position',[x(1), y(5), params.input_width, params.input_height]);
+fields.ResearcherOther = uieditfield(p_study, 'Value', '', 'Position', [x(1), y(5)-params.inpsz, params.input_width, params.input_height] );
+labels_general(8) =  uilabel(p_study,'Text','ARDC Protocol', 'Position',[x(1), y(6), params.input_width, params.input_height]);
+fields.ProtocolName= uidropdown(p_study, 'Items',{'Standard', 'Advanced', 'Other'},'Position',[x(1), y(6)-params.inpsz, params.input_width, params.input_height]);
+labels_general(9) = uilabel(p_study,'Text','Location', 'Position',[x(1), y(7), params.input_width, params.input_height]);
+fields.location = uidropdown(p_study, "Items",unique_locations, 'Position', [x(1), y(7)-params.inpsz, params.input_width/2, params.input_height]);
+labels_general(10) = uilabel(p_study, "Text", sprintf('ARDC Release: %s', fields.releaseVersion), 'Position',[x(1), y(8), params.input_width, params.input_height]);
+fields.location_rm = uidropdown(p_study, "Items",rms(strcmp(locations, fields.location.Value)), 'Position', [x(1)+(params.input_width/2+params.border/2), y(7)-params.inpsz, params.input_width/2-params.border/2, params.input_height]);
+
+
+% Saving these params in case
+params.p_study.x = x;
+params.p_study.y = y;
 
 %% Measure info:
 
 %load default data:
-measures = table2array(MEAS(ismember(MEAS.Standard, 1),1));
-devices = table2array(MEAS(ismember(MEAS.Standard, 1), 2));
-test_site = fields.location.Value;
-equip_file = sprintf('Equipment_%s.csv', test_site);
+measures = table2array(MEAS(ismember(MEAS.(fields.ProtocolName.Value), 1),1));
+devices = table2array(MEAS(ismember(MEAS.(fields.ProtocolName.Value), 1), 2));
+test_location = fields.location.Value;
+test_room = fields.location_rm.Value; 
+equip_file = sprintf('Equipment_%s_%s.csv', test_location, test_room);
 opts = detectImportOptions(equip_file);
 opts = setvaropts(opts, (3:numel(opts.VariableNames)), 'InputFormat','MM/dd/uuuu', 'TreatAsMissing', 'NA');
 opts = setvaropts(opts, 2, "Type", 'string');
 Equipment = readtable(equip_file, opts);
 
-% Create panels
-p_measure = uipanel(app, 'Title', 'Measures', 'TitlePosition', 'lefttop', ...
-    'Position', [x(2)-border/2, border+5+30, (width*4+border*4), (12*sect_height+2*border -(border+10))],...
-    "BackgroundColor", '#555960', 'FontWeight', 'bold');
+% Create general panel for all measures
+p_measure = uipanel(p_app, 'Title', 'Measures', 'TitlePosition', 'centertop', ...
+    'Position', [params.border+params.input_width+params.border, params.border/2+40, (params.input_width*4+params.border*6.5), 615],...
+    "BackgroundColor", '#9d9795', 'FontWeight', 'bold');
 
-p_width = 200;
-p_x = 5:p_width+border:app_width;
-p_y = [border+280 10];
-width = 190;
-height = 25;
-sect_height = 2*height;
-x =  p_x+5;
+p_x = 5:params.input_width+params.border*1.5:params.app_width;
+p_y = [params.border/2+295 params.border/2];
+x = 5;
+y = 300-params.sect_height:-params.sect_height:0;
 
-numSects = 11;
-for j = 1:length(measures) % handle if length(measures) > 5
+for j = 1:length(measures)
     measure = measures{j};
     device = devices{j};
-    if j > 4
+    if j > 4  % handle if length(measures) > 4 so that there are two rows
         k = 2;
         i = j - 4;
-        y = 255:-sect_height:0;
-
     else
         k = 1;
         i = j;
-        y = app_height-150:-sect_height:300;
     end
-    % p_meas(j) = uipanel(p_measure, 'Title', measure, 'TitlePosition', 'centertop', ...
-    %         'Position', [p_x(i)-border/2, p_y(k), (p_width+border/2), (numSects*height+border/2)],...
-    %     "BackgroundColor", '#c4bfc0', 'FontWeight', 'bold');
+
     p_meas(j) = uipanel(p_measure, 'Title', measure, 'TitlePosition', 'centertop', ...
-        'Position', [p_x(i), p_y(k), (p_width+border/2), (numSects*height+border/2)],...
+        'Position', [p_x(i), p_y(k), params.input_width+params.border, 290],...
         "BackgroundColor", '#c4bfc0', 'FontWeight', 'bold');
+
+    %
     serNum = table2array(Equipment(strcmp(device,Equipment.Device), "SerialNum"));
     calDate = table2array(Equipment(strcmp(device,Equipment.Device), end));
-    labels.meas.(measure).com = uilabel(p_measure, 'Text', 'Comments', 'Position',[x(i), y(1)-4, width, height]);
-    fields.meas.(measure).comment = uitextarea(p_measure, 'Value', '', 'Position',[x(i), y(1)-height-inpsz-4, width, height*2]);
-    labels.meas.(measure).protocol = uilabel(p_measure, 'Text', 'Protocol', 'Position',[x(i), y(3), width, height]);
-    fields.meas.(measure).protocol = uidropdown(p_measure, "Items",{'Conventional', 'Other'}, 'Position',[x(i), y(3)-inpsz, width, height]);
-    labels.meas.(measure).equipment = uilabel(p_measure, 'Text', 'Equipment', 'Position',[x(i), y(4), width, height]');
-    fields.meas.(measure).equipment.device = uieditfield(p_measure, "Value", device , 'Position',[x(i), y(4)-inpsz, width, height-5]);
-    fields.meas.(measure).equipment.serialNumber = uieditfield(p_measure, "Value", string(serNum) , 'Position',[x(i), y(4)-2*inpsz, width, height-5]);
-    fields.meas.(measure).equipment.calibDate = uieditfield(p_measure, "Value", string(calDate) , 'Position',[x(i), y(4)-3*inpsz, width, height-5]);
+    labels.meas.(measure).com = uilabel(p_meas(j), 'Text', 'Comments', 'Position',[x, y(1), params.input_width, params.input_height]);
+    fields.meas.(measure).comment = uitextarea(p_meas(j), 'Value', '', 'Position',[x, y(1)-params.input_height-params.inpsz, params.input_width, params.input_height*2]);
+    % labels.meas.(measure).protocol = uilabel(p_meas(j), 'Text', 'Protocol', 'Position',[x, y(3), params.input_width, params.input_height]);
+    % fields.meas.(measure).protocol = uidropdown(p_meas(j), "Items",{'Conventional', 'Other'}, 'Position',[x, y(3)-params.inpsz, params.input_width, params.input_height]);
+    labels.meas.(measure).equipment = uilabel(p_meas(j), 'Text', 'Equipment', 'Position',[x, y(4), params.input_width, params.input_height]');
+    fields.meas.(measure).equipment.device = uieditfield(p_meas(j), "Value", device , 'Position',[x, y(4)-params.inpsz, params.input_width, params.input_height-5]);
+    fields.meas.(measure).equipment.serialNumber = uieditfield(p_meas(j), "Value", string(serNum) , 'Position',[x, y(4)-2*params.inpsz, params.input_width, params.input_height-5]);
+    fields.meas.(measure).equipment.calibDate = uieditfield(p_meas(j), "Value", string(calDate) , 'Position',[x, y(4)-3*params.inpsz, params.input_width, params.input_height-5]);
+
+    % checkbox
+    fields.meas.(measure).checkbox = uicheckbox(p_meas(j), 'Text', 'Exclude', 'Position', [190, 5, 15, 15]);
+    fields.meas.(measure).checkbox.ValueChangedFcn = @(src, event) toggleMeasureFields(src, event, fields.meas.(measure), p_meas(j));
+    labels.meas.(measure).cbLabel = uilabel(p_meas(j), 'Text','Did Not Test', 'Position', [130, 5, 60, 15], 'FontSize', 10);
+
 end
+
+%% Add actions to certain fields and the submit button
+
+% Add a callback to update fields.IRBnum when fields.referring value changes
+fields.referring.ValueChangedFcn = @(dropdown,event) updateIRBnum(dropdown, fields.IRBnum, IRBs);
 
 % update equpiment by location
-fields.location.ValueChangedFcn = @(dropdown,event) updateEquipment(dropdown, fields, MEAS);
+fields.location.ValueChangedFcn = @(dropdown,event) updateEquipment(dropdown, fields, MEAS, locations, rms);
+fields.location_rm.ValueChangedFcn = @(dropdown,event) updateRoom(fields, MEAS, locations, rms);
 
 % update measures by protocolName
-fields.ProtocolName.ValueChangedFcn = @(dropdown,event) updateMeasures(p_measure, dropdown, fields,labels, MEAS, Equipment);
+fields.ProtocolName.ValueChangedFcn = @(dropdown,event) updateMeasures(p_measure,params, dropdown, fields,labels, MEAS);
 
+% when closing the GUI
+app.CloseRequestFcn = @(app, event) closeApp(app, fields); 
+%% Submitting
 % Create submit button
-submit_button = uibutton(app,'Text','Submit', 'Position', [550, 15, 100, 30], ...
-    "ButtonPushedFcn", @(src,event) submit_action(app, fields, dataPath, origPath, measures), ...
-    "BackgroundColor", 'g', 'FontSize', 18);
+submit_button = uibutton(p_app,'Text','Submit', 'Position', [985, 5, 100, 35], ...
+    "ButtonPushedFcn", @(src,event) submitEndVisit(app, fields, dataPath, origPath, measures), ...
+    "BackgroundColor", '#cfb991', 'FontSize', 18);
 
-%% Relevant functions for button press:
-% When Submit btn is pressed, saves the values entered in a "comments"
-% structure which can then be added to the final compiled format.
-
-function submit_action(app, fields, dataPath, origPath, measures)
-subj.ID = get(fields.subjID, 'Value');
-subj.age = get(fields.age, 'Value');
-subj.gender = get(fields.gender, 'Value');
-
-study.testDate = get(fields.testDate, 'Value');
-study.referringLab = get(fields.referring, 'Value');
-study.irbNumber = get(fields.IRBnum, 'Value');
-ardryes = get(fields.ARDR);
-if strcmp(ardryes, 'Yes')
-    study.ARDRsigned = 1;
-else
-    study.ARDRsigned = 0;
-end
-study.researcher = get(fields.Researcher, 'Value');
-study.researcherOther = get(fields.ResearcherOther, 'Value');
-%study.ARDCprotocol = get(fields.protocol, 'Value');
-% study.ARDCreleaseVersion = get(fields.version, 'Value');
-
-for k = 1:length(measures)
-    data.(measures{k}).comments = get(fields.(measures{k}).comment, 'Value');
-    data.(measures{k}).protocol = get(fields.(measures{k}).protocol, 'Value');
-    data.(measures{k}).equipment.device = get(fields.(measures{k}).equipment.device, 'Value');
-    data.(measures{k}).equipment.calibDate = get(fields.(measures{k}).equipment.calibDate, 'Value');
-    data.(measures{k}).equipment.serialNumber = get(fields.(measures{k}).equipment.serialNumber, 'Value');
-end
-
-%Should we save the time (minutes/hours??)
-study.location = 'Purdue LYLE3069';
-comp_time = datetime('now');
-comp_time.Format = 'MMddyyyy';
-study.dateCompiled = comp_time;
-
-%For filename...we should use study date?? so it all gets compiled - AS/LJ
-% SH: I agree fixed.
-testDate = study.testDate;
-testDate.Format = 'MMddyyyy';
-study.testDate = testDate;
-
-%cd(dataPath)
-filename = strcat(subj.ID,'_',string(study.testDate),'_COM');
-
-% if data should go to certain folders, set where it goes here:
-
-save(filename, 'study', 'data', 'subj');
-cd(origPath);
-close(app)
-end
-
-%% Other functions needed for callbacks:
-
-% Update IRB number based on the PI that was selected.
-function updateIRBnum(referringDropdown, irbnumEditField, irbData)
-selectedLab = referringDropdown.Value;
-idx = find(strcmp(irbData.PI, selectedLab));
-if ~isempty(idx)
-    irbNumber = irbData.IRBnum(idx);
-    irbnumEditField.Value = irbNumber;
-else
-    irbnumEditField.Value = 'IRB not found'; % Handle if lab not found in IRB data
-end
-end
-
-% function to decide what equipment sheet to use based on the location.
-% update when changing fields.location
-function updateEquipment(locationDropdown, fields, MEAS)
-selectedLocation = locationDropdown.Value;
-measures = table2array(MEAS(ismember(MEAS.Standard, 1),1));
-devices = table2array(MEAS(ismember(MEAS.Standard, 1), 2));
-
-equip_file = sprintf('Equipment_%s.csv', selectedLocation);
-opts = detectImportOptions(equip_file);
-opts = setvaropts(opts, (3:numel(opts.VariableNames)), 'InputFormat','MM/dd/uuuu', 'TreatAsMissing', 'NA');
-opts = setvaropts(opts, 2, "Type", 'string');
-Equipment = readtable(equip_file, opts);
-
-for i = 1:size(measures,1)
-    meas = measures(i);
-    device = devices(i);
-    serNum = table2array(Equipment(strcmp(device,Equipment.Device), "SerialNum"));
-    calDate = table2array(Equipment(strcmp(device,Equipment.Device), end));
-    fields.(meas).equipment.device.Value = device;
-    fields.(meas).equipment.serialNumber.Value = string(serNum);
-    fields.(meas).equipment.calibDate.Value = string(calDate);
-end
-end
-
-
-% function to decide what measures to use based on the protocol selected.
-% update when changing fields.ProtocolName
-function updateMeasures(p_measure, protocolDropdown, fields,labels, MEAS, Equipment)
-selectedProtocol = protocolDropdown.Value;
-measures = table2array(MEAS(ismember(MEAS.(selectedProtocol), 1),1));
-devices = table2array(MEAS(ismember(MEAS.(selectedProtocol), 1), 2));
-
-fields = rmfield(fields, "meas");
-labels = rmfield(labels, "meas");
-delete(p_measure.Children)
-app_width = 1130;
-app_height = 700;
-
-inpsz = 20;
-border = 20;
-pborder = 55;
-p_width = 200;
-
-p_x = 5:p_width+border:app_width;
-p_y = [border+280 10];
-width = 190;
-height = 25;
-sect_height = 2*height;
-x =  p_x+5;
-
-numSects = 11;
-for j = 1:length(measures) % handle if length(measures) > 5
-    measure = measures{j};
-    device = devices{j};
-    if j > 4
-        k = 2;
-        i = j - 4;
-        y = 255:-sect_height:0;
-
-    else
-        k = 1;
-        i = j;
-        y = app_height-150:-sect_height:300;
+%% checkbox
+function toggleMeasureFields(checkbox, event, measureFields, panel)
+isEnabled = checkbox.Value;
+fields = fieldnames(measureFields);
+for i = 1:length(fields)
+    if ~strcmp(fields{i}, 'checkbox')
+        measureFields.(fields{i}).Enable = isEnabled;
     end
-    % p_meas(j) = uipanel(p_measure, 'Title', measure, 'TitlePosition', 'centertop', ...
-    %         'Position', [p_x(i)-border/2, p_y(k), (p_width+border/2), (numSects*height+border/2)],...
-    %     "BackgroundColor", '#c4bfc0', 'FontWeight', 'bold');
-    p_meas(j) = uipanel(p_measure, 'Title', measure, 'TitlePosition', 'centertop', ...
-        'Position', [p_x(i), p_y(k), (p_width+border/2), (numSects*height+border/2)],...
-        "BackgroundColor", '#c4bfc0', 'FontWeight', 'bold');
-    serNum = table2array(Equipment(strcmp(device,Equipment.Device), "SerialNum"));
-    calDate = table2array(Equipment(strcmp(device,Equipment.Device), end));
-    labels.meas.(measure).com = uilabel(p_measure, 'Text', 'Comments', 'Position',[x(i), y(1)-4, width, height]);
-    fields.meas.(measure).comment = uitextarea(p_measure, 'Value', '', 'Position',[x(i), y(1)-height-inpsz-4, width, height*2]);
-    labels.meas.(measure).protocol = uilabel(p_measure, 'Text', 'Protocol', 'Position',[x(i), y(3), width, height]);
-    fields.meas.(measure).protocol = uidropdown(p_measure, "Items",{'Conventional', 'Other'}, 'Position',[x(i), y(3)-inpsz, width, height]);
-    labels.meas.(measure).equipment = uilabel(p_measure, 'Text', 'Equipment', 'Position',[x(i), y(4), width, height]');
-    fields.meas.(measure).equipment.device = uieditfield(p_measure, "Value", device , 'Position',[x(i), y(4)-inpsz, width, height-5]);
-    fields.meas.(measure).equipment.serialNumber = uieditfield(p_measure, "Value", string(serNum) , 'Position',[x(i), y(4)-2*inpsz, width, height-5]);
-    fields.meas.(measure).equipment.calibDate = uieditfield(p_measure, "Value", string(calDate) , 'Position',[x(i), y(4)-3*inpsz, width, height-5]);
+end
+if isEnabled
+    panel.BackgroundColor = 'k'; % Adjust colors as needed
+else
+    panel.BackgroundColor = '#c4bfc0';
+end
 end
 
-end
+
