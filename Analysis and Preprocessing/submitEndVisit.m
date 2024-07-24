@@ -2,7 +2,7 @@
 % When Submit btn is pressed, saves the values entered in a "comments"
 % structure which can then be added to the final compiled format.
 
-function submitEndVisit(app, fields, dataPath, origPath, measures)
+function submitEndVisit(app, fields)
 
 global fields
 
@@ -52,10 +52,7 @@ study.testDate.Format = 'MMddyyyy';
 %save(filename, 'study', 'data', 'subj');
 
 % compile with raw data
-visit = compile_visit_wCOM(data, study, subj); 
-
-% if data should go to certain folders, set where it goes here:
-filename = strcat(subj.ID,'_',string(study.testDate));
+compile_visit_wCOM(data, study, subj); 
 
 % close app and make sure the global variable is cleared for no other
 % issues

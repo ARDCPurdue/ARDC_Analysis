@@ -13,13 +13,8 @@ close all;
 %% Global Variables
 global fields
 
-%Be sure to update the dataPath as needed.
-dataPath = 'C:\Users\ARDC User\Desktop\DATA'; % use this
-origPath = pwd;
-
 %% More fields to add
 % General comments about the patient
-% Date/time of compiling?
 
 %% Set defaults
 % Set defaults for metadata dropdowns
@@ -206,7 +201,7 @@ app.CloseRequestFcn = @(app, event) closeApp(app, fields);
 %% Submitting
 % Create submit button
 submit_button = uibutton(p_app,'Text','Submit', 'Position', [985, 5, 100, 35], ...
-    "ButtonPushedFcn", @(src,event) submitEndVisit(app, fields, dataPath, origPath, measures), ...
+    "ButtonPushedFcn", @(src,event) submitEndVisit(app, fields), ...
     "BackgroundColor", '#cfb991', 'FontSize', 18);
 
 %% checkbox

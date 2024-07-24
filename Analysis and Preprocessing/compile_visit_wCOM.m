@@ -14,15 +14,17 @@ function visit = compile_visit_wCOM(data, study, subj)
 % Updated: Samantha Hauser, hauser23@purdue.edu, 7/24/24 (adding
 % functionality to EndVisit process)
 
-dataDir = 'C:\Users\ARDC User\Desktop\ALLRAWDATA'
-outputDir = 'C:\Users\ARDC User\Desktop\Compiled'
+dataDir = 'C:\Users\ARDC User\Desktop\ALLRAWDATA';
+outputDir = 'C:\Users\ARDC User\Desktop\';
+
+ARDClabDir = ['ARDCLab Data\'];
+ARDRDir = ['ARDR Data\'];
+extDir = ['External Labs TEMP\'];
 
 addpath(pwd);
-addpath(genpath(dataDir));
-
+addpath(dataDir);
 
 visitID = subj.ID;
-scors = strfind(visitID,'_');
 
 pd = pwd;
 
@@ -40,64 +42,64 @@ reflex_found = 0;
 
 for i = 1:length(files)
     if ~isempty(files{i})
-
+        
         underscore = strfind(files{i},'_');
         dataType = files{i}(underscore(2)+1:underscore(2)+3);
-
+        
         switch dataType
-
+            
             case 'AUD'
                 [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L, Age, AC_transduc, BC_transduc, AC_maxOut, BC_maxOut] = parseAudiogram(files{i}, folders{i});
-                Audiogram.AC.R = AC_R;
-                Audiogram.AC.L = AC_L;
-                Audiogram.BC.R = BC_R;
-                Audiogram.BC.L = BC_L;
-                Audiogram.AC_transducer = AC_transduc;
-                Audiogram.AC_HardwareLimits = AC_maxOut;
-                Audiogram.BC_transducer = BC_transduc;
-                Audiogram.BC_HardwareLimits = BC_maxOut;
+                Audiometry.AC.R = AC_R;
+                Audiometry.AC.L = AC_L;
+                Audiometry.BC.R = BC_R;
+                Audiometry.BC.L = BC_L;
+                Audiometry.equipment.AC_transducer = AC_transduc;
+                Audiometry.equipment.AC_HardwareLimits = AC_maxOut;
+                Audiometry.equipment.BC_transducer = BC_transduc;
+                Audiometry.equipment.BC_HardwareLimits = BC_maxOut;
                 QuickSIN.R = QS_R;
                 QuickSIN.L = QS_L;
-
-                visit.Measures.Audiogram = Audiogram;
-                visit.Measures.QuickSin = QuickSIN;
-
+                
+                visit.Measures.Audiometry = Audiometry;
+                visit.Measures.QuickSIN = QuickSIN;
+                
                 disp('Audiometry Loaded');
-
+                
             case 'WBT'
-
+                
                 %TODO: Pull all the data from WBT!!!!! Andrew didn't
                 %copy everything :(
-
+                
                 %Verify this is working after changing to Measure
-
+                
                 %CHECK LR
                 run(files{i});
                 vars = who('-regexp', 'WBT*');
                 structname = vars{1};
-
+                
                 switch files{i}(underscore(3)+1:end-2)
-
+                    
                     case 'L'
                         eval(['L.PRESSURE = ',structname,'.PRESSURE;']);
                         eval(['L.FREQ = ',structname,'.FREQ;']);
                         eval(['L.ABSORBANCE = ', structname,'.ABSORBANCE;']);
                         clear(vars{:})
                         disp('Left WBT Loaded');
-
+                        
                         visit.Measures.WBT.L = L;
-
+                        
                     case 'R'
                         eval(['R.PRESSURE = ',structname,'.PRESSURE;']);
                         eval(['R.FREQ = ',structname,'.FREQ;']);
                         eval(['R.ABSORBANCE = ', structname,'.ABSORBANCE;']);
                         clear(vars{:})
                         disp('Right WBT Loaded');
-
+                        
                         visit.Measures.WBT.R = R;
                 end
-
-
+                
+                
             case 'OAE'
                 %CHECK LR
                 load(files{i});
@@ -113,7 +115,7 @@ for i = 1:length(files)
                         DPOAE.L.fs = 44100; %WARNING! Assumes this is unchanged from my Titan dpOAE code.
                         DPOAE.other.researcher = researcher;
                         disp('Left OAE Loaded');
-
+                        
                     case 'R'
                         DPOAE.R.noisefloor = noisefloor_dp;
                         DPOAE.R.mean_response = mean_response;
@@ -125,13 +127,13 @@ for i = 1:length(files)
                         DPOAE.R.fs = 44100; %WARNING! Assumes this is unchanged from my Titan dpOAE code.
                         DPOAE.other.researcher = researcher;
                         disp('Right OAE Loaded');
-
-                        visit.Measures.dpOAE = DPOAE;
+                        
+                        visit.Measures.DPOAE = DPOAE;
                 end
-
+                
             case 'RFX'
                 load(files{i});
-
+                
                 Reflex_Frequencies = [500, 1e3, 2e3, 4e3];
                 Reflexes.Frequencies = Reflex_Frequencies;
                 Reflexes.ProbeR.Ipsi = Probe_R_Ipsi;
@@ -139,9 +141,9 @@ for i = 1:length(files)
                 Reflexes.ProbeL.Ipsi = Probe_L_Ipsi;
                 Reflexes.ProbeL.Contra = Probe_L_Contra;
                 disp('Reflexes Loaded');
-
+                
                 visit.Measures.Reflexes = Reflexes;
-
+                
                 reflex_found = 1;
         end
     end
@@ -153,14 +155,14 @@ end
 
 cd([dataDir])
 if reflex_found == 0
-
+    
     %datetime and string inputs for Date and Researcher
     dataCSV = 'ARDC Reflexes.csv';
-
+    
     try
         [researcher,datetime,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Contr]...
             = parseReflexQualtrics(dataCSV, visitID);
-
+        
     catch
         disp('No Reflex Match Found');
         researcher = NaN;
@@ -169,37 +171,60 @@ if reflex_found == 0
         Probe_R_Contr = NaN;
         Probe_L_Ipsi = NaN;
         Probe_L_Contr = NaN;
-
+        
     end
-
+    
     Reflex_Frequencies = [500, 1e3, 2e3, 4e3];
     Reflexes.Frequencies = Reflex_Frequencies;
     Reflexes.ProbeR.Ipsi = Probe_R_Ipsi;
     Reflexes.ProbeR.Contra = Probe_R_Contr;
     Reflexes.ProbeL.Ipsi = Probe_L_Ipsi;
     Reflexes.ProbeL.Contra = Probe_L_Contr;
-
+    
     visit.Measures.Reflexes = Reflexes;
-
+    
 end
 %     %Saving (This may need to be edited depending on file structure)
 
-cd(outputDir);
+
 
 % now add in data/comments
 measures = fieldnames(data.Measure);
 for i = 1:length(measures)
     measure = measures{i};
-    if isfield(visit.Measures, measure)
-        visit.Measures.(measure).comments = data.Measure.(measure).comments;
-        visit.Measures.(measure).equipment = data.Measure.(measure).equipment;
-    end
+    visit.Measures.(measure).comments = data.Measure.(measure).comments;
+    visit.Measures.(measure).equipment.device = data.Measure.(measure).equipment.device;
+    visit.Measures.(measure).equipment.calibDate = data.Measure.(measure).equipment.calibDate;
+    visit.Measures.(measure).equipment.serialNumber = data.Measure.(measure).equipment.serialNumber;
 end
 
+% if data should go to certain folders, set where it goes here:
+cd(outputDir);
+filename = strcat(subj.ID,'_',string(study.testDate));
 
-%save([visitID,'.mat'], 'visit');
+if strcmp(visit.VisitInfo.referringLab, 'ARDC Lab')
+    cd(ARDClabDir);
+else
+    cd(extDir)
+    refPI = visit.VisitInfo.referringLab; 
+    if ~exist(dir(refPI))
+        mkdir(refPI)
+    end
+    cd(visit.VisitInfo.referringLab)
+end
 
-cd(pd);
+save(filename, 'visit');
+cd(outputDir)
+
+% if ARDR is signed and data can go to repo, also save it to that folder. 
+if visit.VisitInfo.ARDRsigned
+    cd(ARDRDir)
+    save(filename, 'visit');
+end
+    
+cd(pd)
+rmpath(pwd);
+rmpath(dataDir);
 
 end
 
