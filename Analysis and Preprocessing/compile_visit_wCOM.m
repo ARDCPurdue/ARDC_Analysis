@@ -1,0 +1,206 @@
+function visit = compile_visit_wCOM(data, study, subj)
+%Description: Compiles all the data from a specified ARDC visit directory
+%   into a .mat file that can easily be accessed. Default directory outputDir
+%   is the 'Visits_Compiled' directory, unless otherwise specified. It is
+%   assumed the Qualtrics data form with QuickSIN/Reflexes/etc is in the
+%   same directory as the Visit folders.
+%
+%  compile_visit(visitList, dataDir, outputDir)
+%
+%  visitList may be specified as an array of visits or a single visit, but the entries must be
+%  string not char. i.e. ["V1","V2"] not ['V1','V2']
+% Author: Andrew Sivaprakasam
+% Email: asivapr@purdue.edu
+% Updated: Samantha Hauser, hauser23@purdue.edu, 7/24/24 (adding
+% functionality to EndVisit process)
+
+dataDir = 'C:\Users\ARDC User\Desktop\ALLRAWDATA'
+outputDir = 'C:\Users\ARDC User\Desktop\Compiled'
+
+addpath(pwd);
+addpath(genpath(dataDir));
+
+
+visitID = subj.ID;
+scors = strfind(visitID,'_');
+
+pd = pwd;
+
+%Find ARCDC Prefix, these are the files for a given visit:
+fnames = dir(strcat([dataDir,'/',visitID,'*']));
+files = {fnames.name}';
+folders = {fnames.folder}';
+
+% Sets the subject and study details, also declares the Visit struct
+visit.Subject = subj;
+visit.VisitInfo = study;
+
+% reflex flag
+reflex_found = 0;
+
+for i = 1:length(files)
+    if ~isempty(files{i})
+
+        underscore = strfind(files{i},'_');
+        dataType = files{i}(underscore(2)+1:underscore(2)+3);
+
+        switch dataType
+
+            case 'AUD'
+                [AC_R, BC_R, AC_L, BC_L, QS_R, QS_L, Age, AC_transduc, BC_transduc, AC_maxOut, BC_maxOut] = parseAudiogram(files{i}, folders{i});
+                Audiogram.AC.R = AC_R;
+                Audiogram.AC.L = AC_L;
+                Audiogram.BC.R = BC_R;
+                Audiogram.BC.L = BC_L;
+                Audiogram.AC_transducer = AC_transduc;
+                Audiogram.AC_HardwareLimits = AC_maxOut;
+                Audiogram.BC_transducer = BC_transduc;
+                Audiogram.BC_HardwareLimits = BC_maxOut;
+                QuickSIN.R = QS_R;
+                QuickSIN.L = QS_L;
+
+                visit.Measures.Audiogram = Audiogram;
+                visit.Measures.QuickSin = QuickSIN;
+
+                disp('Audiometry Loaded');
+
+            case 'WBT'
+
+                %TODO: Pull all the data from WBT!!!!! Andrew didn't
+                %copy everything :(
+
+                %Verify this is working after changing to Measure
+
+                %CHECK LR
+                run(files{i});
+                vars = who('-regexp', 'WBT*');
+                structname = vars{1};
+
+                switch files{i}(underscore(3)+1:end-2)
+
+                    case 'L'
+                        eval(['L.PRESSURE = ',structname,'.PRESSURE;']);
+                        eval(['L.FREQ = ',structname,'.FREQ;']);
+                        eval(['L.ABSORBANCE = ', structname,'.ABSORBANCE;']);
+                        clear(vars{:})
+                        disp('Left WBT Loaded');
+
+                        visit.Measures.WBT.L = L;
+
+                    case 'R'
+                        eval(['R.PRESSURE = ',structname,'.PRESSURE;']);
+                        eval(['R.FREQ = ',structname,'.FREQ;']);
+                        eval(['R.ABSORBANCE = ', structname,'.ABSORBANCE;']);
+                        clear(vars{:})
+                        disp('Right WBT Loaded');
+
+                        visit.Measures.WBT.R = R;
+                end
+
+
+            case 'OAE'
+                %CHECK LR
+                load(files{i});
+                switch files{i}(underscore(3)+1:end-4)
+                    case 'L'
+                        DPOAE.L.noisefloor = noisefloor_dp;
+                        DPOAE.L.mean_response = mean_response;
+                        DPOAE.L.f1 = f1;
+                        DPOAE.L.f2 = f2;
+                        DPOAE.L.DP = DP;
+                        DPOAE.L.f1_rec_dB = f1_rec_dB;
+                        DPOAE.L.f2_rec_dB = f2_rec_dB;
+                        DPOAE.L.fs = 44100; %WARNING! Assumes this is unchanged from my Titan dpOAE code.
+                        DPOAE.other.researcher = researcher;
+                        disp('Left OAE Loaded');
+
+                    case 'R'
+                        DPOAE.R.noisefloor = noisefloor_dp;
+                        DPOAE.R.mean_response = mean_response;
+                        DPOAE.R.f1 = f1;
+                        DPOAE.R.f2 = f2;
+                        DPOAE.R.DP = DP;
+                        DPOAE.R.f1_rec_dB = f1_rec_dB;
+                        DPOAE.R.f2_rec_dB = f2_rec_dB;
+                        DPOAE.R.fs = 44100; %WARNING! Assumes this is unchanged from my Titan dpOAE code.
+                        DPOAE.other.researcher = researcher;
+                        disp('Right OAE Loaded');
+
+                        visit.Measures.dpOAE = DPOAE;
+                end
+
+            case 'RFX'
+                load(files{i});
+
+                Reflex_Frequencies = [500, 1e3, 2e3, 4e3];
+                Reflexes.Frequencies = Reflex_Frequencies;
+                Reflexes.ProbeR.Ipsi = Probe_R_Ipsi;
+                Reflexes.ProbeR.Contra = Probe_R_Contra;
+                Reflexes.ProbeL.Ipsi = Probe_L_Ipsi;
+                Reflexes.ProbeL.Contra = Probe_L_Contra;
+                disp('Reflexes Loaded');
+
+                visit.Measures.Reflexes = Reflexes;
+
+                reflex_found = 1;
+        end
+    end
+end
+
+%Date/Time/Researcher/Reflexes/QuickSIN Performance
+%Assumes that Qualtrics Survey Results are saved in directory directly
+%above.
+
+cd([dataDir])
+if reflex_found == 0
+
+    %datetime and string inputs for Date and Researcher
+    dataCSV = 'ARDC Reflexes.csv';
+
+    try
+        [researcher,datetime,Probe_R_Ipsi,Probe_R_Contr,Probe_L_Ipsi,Probe_L_Contr]...
+            = parseReflexQualtrics(dataCSV, visitID);
+
+    catch
+        disp('No Reflex Match Found');
+        researcher = NaN;
+        datetime = NaN;
+        Probe_R_Ipsi = NaN;
+        Probe_R_Contr = NaN;
+        Probe_L_Ipsi = NaN;
+        Probe_L_Contr = NaN;
+
+    end
+
+    Reflex_Frequencies = [500, 1e3, 2e3, 4e3];
+    Reflexes.Frequencies = Reflex_Frequencies;
+    Reflexes.ProbeR.Ipsi = Probe_R_Ipsi;
+    Reflexes.ProbeR.Contra = Probe_R_Contr;
+    Reflexes.ProbeL.Ipsi = Probe_L_Ipsi;
+    Reflexes.ProbeL.Contra = Probe_L_Contr;
+
+    visit.Measures.Reflexes = Reflexes;
+
+end
+%     %Saving (This may need to be edited depending on file structure)
+
+cd(outputDir);
+
+% now add in data/comments
+measures = fieldnames(data.Measure);
+for i = 1:length(measures)
+    measure = measures{i};
+    if isfield(visit.Measures, measure)
+        visit.Measures.(measure).comments = data.Measure.(measure).comments;
+        visit.Measures.(measure).equipment = data.Measure.(measure).equipment;
+    end
+end
+
+
+%save([visitID,'.mat'], 'visit');
+
+cd(pd);
+
+end
+
+

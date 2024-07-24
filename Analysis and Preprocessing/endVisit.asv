@@ -50,7 +50,7 @@ unique_locations = unique(locations);
 % If useful to have release versions of the code, update here:
 fields.releaseVersion = 'v1';
 
-% To do: Make a dropdown for protocols based on measures csv.
+% To do: Make a dropdown for 
 
 %% Create the app figure
 % Dimensions/Parameters for app
