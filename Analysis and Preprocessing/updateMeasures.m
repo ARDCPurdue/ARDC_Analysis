@@ -20,8 +20,8 @@ location = fields.location.Value;
 room = fields.location_rm.Value; 
 equip_file = sprintf('Equipment_%s_%s.csv', location, room);
 opts = detectImportOptions(equip_file);
-opts = setvaropts(opts, (3:numel(opts.VariableNames)), 'InputFormat','MM/dd/uuuu', 'TreatAsMissing', 'NA');
-opts = setvaropts(opts, 2, "Type", 'string');
+opts = setvaropts(opts, 3, "Type", 'datetime','InputFormat','MM/dd/uuuu', 'TreatAsMissing', 'NA');
+opts = setvaropts(opts, 2, "Type", 'string', 'TreatAsMissing', 'NA');
 Equipment = readtable(equip_file, opts);
 
 p_x = 5:params.input_width+params.border*1.5:params.app_width;

@@ -7,7 +7,6 @@
 
 %% Clear and set-up directories
 clear;
-clc;
 close all;
 
 %% Global Variables
@@ -33,7 +32,7 @@ MEAS = readtable('Measures.csv', 'TextType','string');
 
 % Other standard dropdowns, not read from CSV. Could be edited if needed.
 dropdown_gender = {'Male', 'Female', 'Non-binary', 'No Response'};  % Replace with your options
-dropdown_amplification = {'None', 'Hearing Aids', 'Cochlear Implant','Other'};
+dropdown_amplification = {'None', 'Hearing Aids', 'Cochlear Implant','Other', 'Unknown'};
 
 % Get all locations
 all_locs = dir("DataSheets\Equipment_*");
@@ -83,7 +82,9 @@ p_subject = uipanel(p_app, 'Title', 'Subject', 'TitlePosition', 'centertop', ...
 
 % Create the fields w/in the panel
 labels_general(1) = uilabel(p_subject,'Text','ARDC ID#', 'Position',[x, y(1), params.input_width, params.input_height]);
-fields.subjID = uieditfield(p_subject,'Value','ARDC', 'Position',[x, y(1)-params.inpsz, params.input_width, params.input_height]);
+fields.subjID = uieditfield(p_subject,'Value','ARDC', 'Position',[x, y(1)-params.inpsz, params.input_width-50, params.input_height]);
+subjID_search_btn = uibutton(p_subject, 'text', 'Search', 'Position',[x+155, y(1)-params.inpsz, 45, params.input_height], ...
+    "ButtonPushedFcn", @(src, event) searchARDCid(app, fields)); 
 labels_general(2) = uilabel(p_subject,'Text','Age (yrs)', 'Position',[x, y(2), params.input_width, params.input_height]);
 fields.age = uieditfield(p_subject, 'Value','', 'Position',[x, y(2)-params.inpsz, params.input_width, params.input_height]);
 labels_general(3) = uilabel(p_subject,'Text','Gender', 'Position',[x, y(3), params.input_width, params.input_height]);

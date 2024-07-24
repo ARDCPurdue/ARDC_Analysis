@@ -4,6 +4,6 @@ global fields
 
 clear global fields
 %fprintf('Fields deleted\n')
-close(app)
+delete(app)
 
 end

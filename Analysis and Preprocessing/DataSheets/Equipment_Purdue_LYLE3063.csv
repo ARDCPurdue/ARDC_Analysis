@@ -1,6 +1,6 @@
-Device,SerialNum,calib2023,calib2024
-Welch-Allyn,1234p,NA,NA
-GSI AudioStar Pro,GS0085881p,3/5/2023,3/5/2024
-ER10X,IA24266p,3/5/2023,3/5/2024
-Interacoustics Titan,5325p,3/5/2023,3/5/2024
-BioSemi,5786778p,3/5/2023,3/5/2024
+Device,SerialNum,calib2024
+Welch-Allyn,NA,NA
+GSI AudioStar Pro,GS0085881,3/12/2024
+ER10X,1605106,NA
+Interacoustics Titan,4005727,3/12/2024
+BioSemi,ADC17-16-1399,NA

@@ -15,8 +15,8 @@ devices = table2array(MEAS(ismember(MEAS.(protocol), 1), 2));
 
 equip_file = sprintf('Equipment_%s_%s.csv', selectedLocation, fields.location_rm.Value);
 opts = detectImportOptions(equip_file);
-opts = setvaropts(opts, (3:numel(opts.VariableNames)), 'InputFormat','MM/dd/uuuu', 'TreatAsMissing', 'NA');
-opts = setvaropts(opts, 2, "Type", 'string');
+opts = setvaropts(opts, 3, "Type", 'datetime','InputFormat','MM/dd/uuuu', 'TreatAsMissing', 'NA');
+opts = setvaropts(opts, 2, "Type", 'string', 'TreatAsMissing', 'NA');
 Equipment = readtable(equip_file, opts);
 
 for i = 1:size(measures,1)
