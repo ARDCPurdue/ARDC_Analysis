@@ -44,8 +44,6 @@ unique_locations = unique(locations);
 % If useful to have release versions of the code, update here:
 fields.releaseVersion = 'v1';
 
-% To do: Make a dropdown for protocols based on measures csv.
-
 %% Create the app figure
 % Dimensions/Parameters for app
 params.app_width = 1100;
@@ -204,21 +202,4 @@ app.CloseRequestFcn = @(app, event) closeApp(app, fields);
 submit_button = uibutton(p_app,'Text','Submit', 'Position', [985, 5, 100, 35], ...
     "ButtonPushedFcn", @(src,event) submitEndVisit(app, fields), ...
     "BackgroundColor", '#cfb991', 'FontSize', 18);
-
-%% checkbox
-function toggleMeasureFields(checkbox, event, measureFields, panel)
-isEnabled = checkbox.Value;
-fields = fieldnames(measureFields);
-for i = 1:length(fields)
-    if ~strcmp(fields{i}, 'checkbox')
-        measureFields.(fields{i}).Enable = isEnabled;
-    end
-end
-if isEnabled
-    panel.BackgroundColor = 'k'; % Adjust colors as needed
-else
-    panel.BackgroundColor = '#c4bfc0';
-end
-end
-
 

@@ -54,5 +54,11 @@ for j = 1:length(measures)
     fields.meas.(measure).equipment.device = uieditfield(p_meas(j), "Value", device , 'Position',[x, y(4)-params.inpsz, params.input_width, params.input_height-5]);
     fields.meas.(measure).equipment.serialNumber = uieditfield(p_meas(j), "Value", string(serNum) , 'Position',[x, y(4)-2*params.inpsz, params.input_width, params.input_height-5]);
     fields.meas.(measure).equipment.calibDate = uieditfield(p_meas(j), "Value", string(calDate) , 'Position',[x, y(4)-3*params.inpsz, params.input_width, params.input_height-5]);
+
+    % checkbox
+    fields.meas.(measure).checkbox = uicheckbox(p_meas(j), 'Text', 'Exclude', 'Position', [190, 5, 15, 15]);
+    fields.meas.(measure).checkbox.ValueChangedFcn = @(src, event) toggleMeasureFields(src, event, fields.meas.(measure), p_meas(j));
+    labels.meas.(measure).cbLabel = uilabel(p_meas(j), 'Text','Did Not Test', 'Position', [130, 5, 60, 15], 'FontSize', 10);
+
 end
 end
