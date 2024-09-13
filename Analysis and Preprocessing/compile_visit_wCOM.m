@@ -14,7 +14,7 @@ function visit = compile_visit_wCOM(data, study, subj)
 % Updated: Samantha Hauser, hauser23@purdue.edu, 7/24/24 (adding
 % functionality to EndVisit process)
 
-dataDir = 'C:\Users\ARDC User\Desktop\ALLRAWDATA\Compiled';
+dataDir = 'C:\Users\ARDC User\Desktop\ALLRAWDATA';
 outputDir = 'C:\Users\ARDC User\Desktop\';
 
 ARDClabDir = ['ARDCLab Data\'];
@@ -207,7 +207,7 @@ if strcmp(visit.VisitInfo.referringLab, 'ARDC Lab')
 else
     cd(extDir)
     refPI = visit.VisitInfo.referringLab; 
-    if ~exist(dir(refPI))
+    if ~exist(refPI, 'dir')
         mkdir(refPI)
     end
     cd(visit.VisitInfo.referringLab)

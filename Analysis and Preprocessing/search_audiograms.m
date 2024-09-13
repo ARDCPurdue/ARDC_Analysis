@@ -64,9 +64,23 @@ for i = 1:length(fnames)
     subjID = visit.subjectID;
     
     id_list(i) = string(subjID);
-    [~,locL] = ismember(freqlist,visit.Audiogram.AC.L(:,1));
-    [~,locR] = ismember(freqlist,visit.Audiogram.AC.R(:,1));
-
+    
+    %updated to handle new format!
+    try 
+        [~,locL] = ismember(freqlist,visit.Audiogram.AC.L(:,1));
+        [~,locR] = ismember(freqlist,visit.Audiogram.AC.R(:,1));
+        aud_struct = visit.Audiogram;
+    catch
+        try
+            [~,locL] = ismember(freqlist,visit.Measures.Audio.AC.L(:,1));
+            [~,locR] = ismember(freqlist,visit.Measures.Audio.AC.R(:,1));
+            aud_struct = visit.Measures.Audio;
+            disp([subjID, ' has the new format!']);
+        catch
+            warning([subjID,' visit has invalid format']);
+        end
+    end 
+    
     %handle absent values (return NaN if loc is 0)
     %this can be cleaned up later and made more efficient
 
@@ -75,21 +89,21 @@ for i = 1:length(fnames)
             L_lvl(j) = NaN;
             disp([subjID,' missing record at ', num2str(freqlist(j)),' Hz on Left.']);
         else
-            L_lvl(j) = visit.Audiogram.AC.L(locL(j),2);
+            L_lvl(j) = aud_struct.AC.L(locL(j),2);
         end
 
         if locR(j) == 0
             R_lvl(j) = NaN;
             disp([subjID,' missing record at ', num2str(freqlist(j)),' Hz on Right.']);
         else
-            R_lvl(j) = visit.Audiogram.AC.R(locR(j),2);
+            R_lvl(j) = aud_struct.AC.R(locR(j),2);
         end
     end
 
     R_lvl_list(:,i) = R_lvl;
     L_lvl_list(:,i) = L_lvl;
 
-    clear R_lvl L_lvl locL locR;
+    clear R_lvl L_lvl locL locR; 
 end
 
 
