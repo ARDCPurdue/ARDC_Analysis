@@ -61,8 +61,13 @@ fnames = {dir(fullfile(cd,'ARDC*.mat')).name};
 for i = 1:length(fnames)
 
     load(fnames{i});
-    subjID = visit.subjectID;
-    
+    try
+        subjID = visit.subjectID;
+    catch
+        subjID = visit.Subject.ID; 
+    end
+        disp([subjID]); 
+        
     id_list(i) = string(subjID);
     
     %updated to handle new format!
@@ -75,11 +80,19 @@ for i = 1:length(fnames)
             [~,locL] = ismember(freqlist,visit.Measures.Audio.AC.L(:,1));
             [~,locR] = ismember(freqlist,visit.Measures.Audio.AC.R(:,1));
             aud_struct = visit.Measures.Audio;
-            disp([subjID, ' has the new format!']);
+            disp([subjID, ' has the new format (Audio)!']);
         catch
-            warning([subjID,' visit has invalid format']);
+            try
+                [~,locL] = ismember(freqlist,visit.Measures.Audiometry.AC.L(:,1));
+                [~,locR] = ismember(freqlist,visit.Measures.Audiometry.AC.R(:,1));
+                aud_struct = visit.Measures.Audiometry;
+                disp([subjID, ' has the new format (Audiometry)!']);
+            catch
+                disp([subjID,' visit has invalid format']);
+                break; 
+            end
         end
-    end 
+    end
     
     %handle absent values (return NaN if loc is 0)
     %this can be cleaned up later and made more efficient

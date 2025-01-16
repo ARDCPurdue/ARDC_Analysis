@@ -17,6 +17,11 @@ function compile_visit(dataDir, outputDir)
 % - Otoscopy data, but need from endVisit
 % - 
 
+%WARNING!
+beep;
+warning('This script is being phased out. Please preference the compile_visit_wCOM.m script.'); 
+disp('SAVING DATA IN Compiled_OldFormat');
+
 %File Text Pattern:
 if nargin == 0
     %dataDir = 'D:\ARDC\ARDC_AllData\1_Raw_Data'
@@ -25,7 +30,7 @@ end
 
 if nargin == 1 || nargin == 0
     %outputDir = 'D:\ARDC\ARDC_AllData\2_Visits_Compiled';
-    outputDir = 'C:\Users\ARDC User\Desktop\Compiled'
+    outputDir = 'C:\Users\ARDC User\Desktop\Compiled_OldFormat';
 end
 
 addpath(pwd);
@@ -224,6 +229,7 @@ for n = 1:length(All_IDs)
     save([visitID,'.mat'], 'visit');
     
     cd(pd);
-    
+    warning('Again. This script is being phased out-- just so you are aware!'); 
+
 end
 

@@ -1,8 +1,7 @@
 %% End Visit
 % This script should be run at the end of a visit to save relevant
 % metadata and comments about the testing.
-% Author: Samantha Hauser
-% Date Created: 6/25/24
+% Author: Samantha Hauser  
 % Last updated: 7/23/24 (v1)
 
 %% Clear and set-up directories
