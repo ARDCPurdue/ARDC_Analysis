@@ -42,6 +42,7 @@ end
 
 if ~exist('fldr','var') || isempty(fldr)
     fldr = 'C:\Users\ARDC User\Desktop\Compiled';
+    %fldr = 'C:\Users\ARDC User\Desktop\ARDCLab Data'; 
 end
 
 if ~exist('fig_flag','var') || isempty(fig_flag)
@@ -89,7 +90,7 @@ for i = 1:length(fnames)
                 disp([subjID, ' has the new format (Audiometry)!']);
             catch
                 disp([subjID,' visit has invalid format']);
-                break; 
+                continue; 
             end
         end
     end
