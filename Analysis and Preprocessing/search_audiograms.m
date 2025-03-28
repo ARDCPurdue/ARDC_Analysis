@@ -21,9 +21,7 @@ function [id_list_L,L_lvl_list,id_list_R, R_lvl_list] = search_audiograms(freqli
 %Written By: Andrew Sivaprakasam
 %Last Updated: June 2023
 
-%TODO: NR should be reported better (e.g. NR @ X dB HL)
-
-plot_select_flag = 1;
+%TODO: NR should be reported 
 
 if ~exist('freqlist','var') || isempty(freqlist)
     freqlist = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 11200,...
@@ -32,6 +30,7 @@ end
 
 %default plots all, even with NR/NaN. But if specifying freqs will return
 %specific subjects
+plot_select_flag = 1; %SH added 11/15/23 (not working without)
 
 if ~exist('range_min','var') || isempty(range_min)
     plot_select_flag = 0;
@@ -43,6 +42,7 @@ end
 
 if ~exist('fldr','var') || isempty(fldr)
     fldr = 'C:\Users\ARDC User\Desktop\Compiled';
+    %fldr = 'C:\Users\ARDC User\Desktop\ARDCLab Data'; 
 end
 
 if ~exist('fig_flag','var') || isempty(fig_flag)
@@ -62,11 +62,39 @@ fnames = {dir(fullfile(cd,'ARDC*.mat')).name};
 for i = 1:length(fnames)
 
     load(fnames{i});
-    subjID = visit.subjectID;
+    try
+        subjID = visit.subjectID;
+    catch
+        subjID = visit.Subject.ID; 
+    end
+        disp([subjID]); 
+        
     id_list(i) = string(subjID);
-    [~,locL] = ismember(freqlist,visit.Audiogram.AC.L(:,1));
-    [~,locR] = ismember(freqlist,visit.Audiogram.AC.R(:,1));
-
+    
+    %updated to handle new format!
+    try 
+        [~,locL] = ismember(freqlist,visit.Audiogram.AC.L(:,1));
+        [~,locR] = ismember(freqlist,visit.Audiogram.AC.R(:,1));
+        aud_struct = visit.Audiogram;
+    catch
+        try
+            [~,locL] = ismember(freqlist,visit.Measures.Audio.AC.L(:,1));
+            [~,locR] = ismember(freqlist,visit.Measures.Audio.AC.R(:,1));
+            aud_struct = visit.Measures.Audio;
+            disp([subjID, ' has the new format (Audio)!']);
+        catch
+            try
+                [~,locL] = ismember(freqlist,visit.Measures.Audiometry.AC.L(:,1));
+                [~,locR] = ismember(freqlist,visit.Measures.Audiometry.AC.R(:,1));
+                aud_struct = visit.Measures.Audiometry;
+                disp([subjID, ' has the new format (Audiometry)!']);
+            catch
+                disp([subjID,' visit has invalid format']);
+                continue; 
+            end
+        end
+    end
+    
     %handle absent values (return NaN if loc is 0)
     %this can be cleaned up later and made more efficient
 
@@ -75,21 +103,21 @@ for i = 1:length(fnames)
             L_lvl(j) = NaN;
             disp([subjID,' missing record at ', num2str(freqlist(j)),' Hz on Left.']);
         else
-            L_lvl(j) = visit.Audiogram.AC.L(locL(j),2);
+            L_lvl(j) = aud_struct.AC.L(locL(j),2);
         end
 
         if locR(j) == 0
             R_lvl(j) = NaN;
             disp([subjID,' missing record at ', num2str(freqlist(j)),' Hz on Right.']);
         else
-            R_lvl(j) = visit.Audiogram.AC.R(locR(j),2);
+            R_lvl(j) = aud_struct.AC.R(locR(j),2);
         end
     end
 
     R_lvl_list(:,i) = R_lvl;
     L_lvl_list(:,i) = L_lvl;
 
-    clear R_lvl L_lvl locL locR;
+    clear R_lvl L_lvl locL locR; 
 end
 
 

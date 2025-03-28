@@ -1,0 +1,13 @@
+Measure,Device,Standard,Advanced
+Otoscopy,Welch-Allyn,1,1
+Audiometry,GSI AudioStar Pro,1,0
+QuickSIN,GSI AudioStar Pro,1,0
+Reflexes,Interacoustics Titan,1,0
+WBT,Interacoustics Titan,1,0
+DPOAE,Interacoustics Titan,1,0
+EEG,BioSemi,0,1
+ABR,BioSemi,0,1
+SweptDPOAE,ER10X,0,1
+WBMEMR,ER10X,0,1
+ACT,GSI AudioStar Pro,1,0
+WRS,GSI AudioStar Pro,1,0

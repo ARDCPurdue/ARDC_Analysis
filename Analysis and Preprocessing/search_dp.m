@@ -52,6 +52,7 @@ cwd = pwd;
 clrs_l = [52, 119, 235]./256;
 clrs_r = [153, 24, 24]./256;
 alp = .2;
+skip_flag = 0;
 
 cd(fldr);
 
@@ -63,27 +64,50 @@ for i = 1:length(fnames)
     load(fnames{i});
     subjID = visit.subjectID;
     id_list(i) = string(subjID);
-    [~,locL] = ismember(freqlist,visit.dpOAE.L.f2);
-    [~,locR] = ismember(freqlist,visit.dpOAE.R.f2);
+    
+    try
+        [~,locL] = ismember(freqlist,visit.dpOAE.L.f2);
+        [~,locR] = ismember(freqlist,visit.dpOAE.R.f2); 
+        dp_struct = visit.dpOAE;
+        
+    catch
+        
+        try
+            [~,locL] = ismember(freqlist,visit.Measures.dpOAE.L.f2(:,1));
+            [~,locR] = ismember(freqlist,visit.Measures.dpOAE.R.f2(:,1));
+            dp_struct = visit.Measures.dpOAE;
+            disp([subjID, ' has the new format!']);
+        catch
+            warning([subjID,' visit has invalid format']);
+            skip_flag = 1;
+        end 
+        
+    end 
 
     %handle absent values (return NaN if loc is 0)
     %this can be cleaned up later and made more efficient
 
+ if ~skip_flag
+     
     for j = 1:length(freqlist)
-        if locL(j) == 0
+        if locL(j) == 0 %bad coding...just preallocate...
             L_lvl(j) = NaN;
+            L_nf(j) = NaN;
+            
             disp([subjID,' missing record at ', num2str(freqlist(j)),' Hz on Left.']);
         else
-            L_lvl(j) = visit.dpOAE.L.DP(locL(j));
-            L_nf(j) = visit.dpOAE.L.noisefloor(locL(j));
+            L_lvl(j) = dp_struct.L.DP(locL(j));
+            L_nf(j) = dp_struct.L.noisefloor(locL(j));
         end
 
         if locR(j) == 0
             R_lvl(j) = NaN;
+            R_nf(j) = NaN;
+            
             disp([subjID,' missing record at ', num2str(freqlist(j)),' Hz on Right.']);
         else
-            R_lvl(j) =  visit.dpOAE.R.DP(locR(j));
-            R_nf(j) = visit.dpOAE.R.noisefloor(locR(j));
+            R_lvl(j) = dp_struct.R.DP(locR(j));
+            R_nf(j) = dp_struct.R.noisefloor(locR(j));
 
         end
     end
@@ -94,6 +118,8 @@ for i = 1:length(fnames)
     L_nf_list(:,i) = L_nf;
     
     clear R_lvl L_lvl locL locR;
+ end 
+ 
 end
 
 if plot_select_flag
