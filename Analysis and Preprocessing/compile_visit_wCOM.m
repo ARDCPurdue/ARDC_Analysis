@@ -147,30 +147,36 @@ for i = 1:length(files)
                 reflex_found = 1;
 
                 % Also get WRS info from this gui
-                if reflex_data.wrs.R.didNotTest == 0
-                    WRS.R.speechLevel = reflex_data.wrs.R.speechLevel;
-                    WRS.R.maskingLevel = reflex_data.wrs.R.maskingLevel;
-                    WRS.R.numberWordsCorrect = reflex_data.wrs.R.correct;
-                    WRS.R.totalWordsPresented = reflex_data.wrs.R.totalWords;
-                    WRS.R.list = reflex_data.wrs.R.list;
-                    WRS.R.listNumber = reflex_data.wrs.R.listNumber;
-                    WRS.R.percentCorrect = 100.*(reflex_data.wrs.R.correct ./ reflex_data.wrs.R.totalWords );
+                if wrs.R.didNotTest == 0
+                    WRS.R.speechLevel = wrs.R.speechLevel;
+                    WRS.R.maskingLevel = wrs.R.maskingLevel;
+                    WRS.R.numberWordsCorrect = wrs.R.correct;
+                    WRS.R.totalWordsPresented = wrs.R.totalWords;
+                    WRS.R.list = wrs.R.list;
+                    WRS.R.listNumber = wrs.R.listNumber;
+                    WRS.R.percentCorrect = 100.*(str2double(wrs.R.correct) ./ str2double(wrs.R.totalWords) );
+                else
+                    WRS.R.didNotTest = 1; 
                 end
 
-                if reflex_data.wrs.L.didNotTest == 0
-                    WRS.L.speechLevel = reflex_data.wrs.L.speechLevel;
-                    WRS.L.maskingLevel = reflex_data.wrs.L.RmaskingLevel;
-                    WRS.L.numberWordsCorrect = reflex_data.wrs.L.correct;
-                    WRS.L.totalWordsPresented = reflex_data.wrs.L.totalWords;
-                    WRS.L.list = reflex_data.wrs.L.list;
-                    WRS.L.listNumber = reflex_data.wrs.L.listNumber;
-                    WRS.L.percentCorrect = 100.*(reflex_data.wrs.L.correct ./ reflex_data.wrs.L.totalWords );
+                if wrs.L.didNotTest == 0
+                    WRS.L.speechLevel = wrs.L.speechLevel;
+                    WRS.L.maskingLevel = wrs.L.maskingLevel;
+                    WRS.L.numberWordsCorrect = wrs.L.correct;
+                    WRS.L.totalWordsPresented = wrs.L.totalWords;
+                    WRS.L.list = wrs.L.list;
+                    WRS.L.listNumber = wrs.L.listNumber;
+                    WRS.L.percentCorrect = 100.*(str2double(wrs.L.correct) ./ str2double(wrs.L.totalWords));
+                else
+                    WRS.L.didNotTest = 1; 
                 end
+
+                visit.Measures.WRS = WRS;
 
                 % for ACT data
-                if reflex_data.act.didNotTest == 0
-                    if reflex_data.act.couldNotTest == 0
-                        ACT.scores = reflex_data.act;
+                if act.didNotTest == 0
+                    if act.couldNotTest == 0
+                        ACT.scores = act.score;
                     else
                         ACT.scores = 'Could not test';
                     end
@@ -178,6 +184,7 @@ for i = 1:length(files)
                     ACT.scores = 'Did not test';
                 end
 
+                visit.Measures.ACT = ACT; 
 
 
         end

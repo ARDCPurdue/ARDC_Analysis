@@ -41,8 +41,8 @@ if ~exist('range_max','var') || isempty(range_max)
 end
 
 if ~exist('fldr','var') || isempty(fldr)
-    fldr = 'C:\Users\ARDC User\Desktop\Compiled';
-    %fldr = 'C:\Users\ARDC User\Desktop\ARDCLab Data'; 
+    %fldr = 'C:\Users\ARDC User\Desktop\Compiled';
+    fldr = 'C:\Users\ARDC User\Desktop\ARDR Data'; 
 end
 
 if ~exist('fig_flag','var') || isempty(fig_flag)
