@@ -389,6 +389,7 @@ uicontrol(fig,'Style','text','String','Absorbance','Position',[820 130 60 20],'H
 WBTabsorbanceL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.ABSORBANCE,'Position',[880 130 60 20]);
 WBTabsorbanceR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.ABSORBANCE,'Position',[940 130 60 20]);
 
+
 uicontrol(fig,'Style','text','String','Comment','Position',[820 100 60 20],'HorizontalAlignment','left');
 WBTComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[880 100 120 20]);
 
@@ -401,10 +402,51 @@ WBTEquipmentCalibDate = uicontrol(fig,'Style','edit','String', Measures.WBT.equi
 uicontrol(fig,'Style','text','String','Serial #','Position',[820 40 60 20],'HorizontalAlignment','left');
 WBTEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.serialNumber,'Position',[880 40 120 20]);
 
+% ==== QuickSIN ====
 
-% ==== SUBMIT BUTTON ====
-uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 150 40],...
-    'Callback', @(src, event)submitCallback());
+    uicontrol(fig,'Style', 'text', 'String', 'QuickSIN', 'Position', [880 570 60 20], 'HorizontalAlignment','left', 'FontSize', 10);
+
+    uicontrol(fig,'Style', 'text', 'String','RE QuickSIN', 'Position', [880 550 150 boxheight], 'HorizontalAlignment','left');
+    RquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.R, 'Position',[950 550 30 boxheight]); 
+
+    uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [985 550 150 boxheight], 'HorizontalAlignment','left');
+    RquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1010 550 25 boxheight]);
+
+    uicontrol(fig,'Style', 'text', 'String','Equip', 'Position', [1030 550 150 boxheight], 'HorizontalAlignment','left');
+    QSequipdevice = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.device, 'Position',[1060 550 110 boxheight]);
+
+    uicontrol(fig, 'Style', 'text', 'String','LE QuickSIN', 'Position', [880 510 150 boxheight], 'HorizontalAlignment','left');
+    LquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.L, 'Position',[950 510 30 boxheight]); 
+
+     uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [985 510 150 boxheight], 'HorizontalAlignment','left');
+    LquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1010 510 25 boxheight]);
+
+    uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [1030 510 150 boxheight], 'HorizontalAlignment','left');
+    QSequipcalib = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.calibDate, 'Position',[1060 510 110 boxheight]);
+
+    uicontrol(fig, 'Style', 'text', 'String','Bin QuickSIN', 'Position', [880 470 150 boxheight], 'HorizontalAlignment','left');
+    BquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.Bin, 'Position',[950 470 30 boxheight]);
+    
+    uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [985 470 150 boxheight], 'HorizontalAlignment','left');
+    BquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1010 470 25 boxheight]);
+    
+    uicontrol(fig,'Style', 'text', 'String','SN', 'Position', [1030 470 150 boxheight], 'HorizontalAlignment','left');
+    QSequipSN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.serialNumber, 'Position',[1060 470 110 boxheight]);
+
+    uicontrol(fig,'Style', 'text', 'String','Comments', 'Position', [880 440 150 boxheight], 'HorizontalAlignment','left');
+    QScomments = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.comments, 'Position',[950 420 220 40]);
+
+
+    % 
+uicontrol(fig,'Style', 'text', 'String', 'WRS', 'Position', [880 400 60 20], 'HorizontalAlignment','left', 'FontSize', 10);
+
+uicontrol(fig,'Style', 'text', 'String','RE QuickSIN', 'Position', [880 550 150 boxheight], 'HorizontalAlignment','left');
+rWRS = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.R, 'Position',[950 550 30 boxheight]); 
+
+
+    % ==== SUBMIT BUTTON ====
+    uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 150 40],...
+        'Callback', @(src, event)submitCallback());
 
 
 % ==== CALLBACK FUNCTION ====
