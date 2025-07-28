@@ -1,7 +1,7 @@
 function simpleVisitEditor()
 
 %%%%% STUFF TO EDIT FOR A USER %%%%%
-dataDir = "D:\ARDR Data\"; 
+dataDir = "C:\Users\armai\Desktop\Code\ARDC Compile Code\ARDC_Analysis\"; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Load .mat file (you can customize the path)
@@ -24,7 +24,6 @@ dataDir = "D:\ARDR Data\";
         Subject.age = "";
         Subject.gender = "";
         Subject.amplification = "";
-        VisitInfo.testDate = "";
         VisitInfo.referringLab = "";
         VisitInfo.irbNumber = "";
         VisitInfo.ARDRsigned = "";
@@ -170,52 +169,123 @@ dataDir = "D:\ARDR Data\";
     
 
     % Create figure window
-    boxwidth = 20; 
+    labelboxwidth = 100; 
     figheight = 600; 
     fig = figure('Name', 'Visit Editor', 'Position', [100 100 1200 figheight]);
    
 
     % ==== SUBJECT INFO ====
-    uicontrol(fig,'Style','text','String','Subject ID','Position',[20 570 60 boxwidth],'HorizontalAlignment','left');
-    subjID = uicontrol(fig,'Style','edit','String',visit.Subject.ID,'Position',[80 570 100 boxwidth]);
+    uicontrol(fig,'Style','text','String','Subject ID','Position',[20 570 labelboxwidth 20],'HorizontalAlignment','left');
+    subjID = uicontrol(fig,'Style','edit','String',visit.Subject.ID,'Position',[80 570 100 20]);
 
-    uicontrol(fig,'Style','text','String','Age','Position',[20 550 60 20],'HorizontalAlignment','left');
+    uicontrol(fig,'Style','text','String','Age','Position',[20 550 labelboxwidth 20],'HorizontalAlignment','left');
     age = uicontrol(fig,'Style','edit','String',num2str(visit.Subject.age),'Position',[80 550 100 20]);
 
-    uicontrol(fig,'Style','text','String','Gender','Position',[20 530 60 20],'HorizontalAlignment','left');
+    uicontrol(fig,'Style','text','String','Gender','Position',[20 530 labelboxwidth 20],'HorizontalAlignment','left');
     gender = uicontrol(fig,'Style','edit','String',visit.Subject.gender,'Position',[80 530 100 20]);
 
-    uicontrol(fig,'Style','text','String','Amplification','Position',[20 510 60 20],'HorizontalAlignment','left');
+    uicontrol(fig,'Style','text','String','Amplification','Position',[20 510 labelboxwidth 20],'HorizontalAlignment','left');
     amplification = uicontrol(fig,'Style','edit','String',visit.Subject.amplification,'Position',[80 510 100 20]);
 
     % ==== VISIT INFO ====
-    uicontrol(fig,'Style','text','String','Test Date','Position',[20 480 60 20],'HorizontalAlignment','left');
-    testDate = uicontrol(fig, 'Style', 'edit','String', string(visit.VisitInfo.testDate),'Position',[80 480 100 20]);
+    uicontrol(fig,'Style','text','String','Test Date','Position',[20 480 labelboxwidth 20],'HorizontalAlignment','left');
+    testDate = uicontrol(fig, 'Style', 'edit','String', string(VisitInfo.testDate),'Position',[80 480 100 20]);
 
-    uicontrol(fig,'Style','text','String','Referring Lab','Position',[20 480 60 20],'HorizontalAlignment','left');
-    referringLab = uicontrol(fig,'Style','edit','String',visit.VisitInfo.referringLab,'Position',[80 480 100 20]);
+    uicontrol(fig,'Style','text','String','Refer Lab','Position',[20 460 labelboxwidth 20],'HorizontalAlignment','left');
+    referringLab = uicontrol(fig,'Style','edit','String',VisitInfo.referringLab,'Position',[80 460 100 20]);
 
-    uicontrol(fig,'Style','text','String','IRB Number','Position',[20 480 60 20],'HorizontalAlignment','left');
-    irbNumber = uicontrol(fig,'Style','edit','String',visit.VisitInfo.irbNumber,'Position',[80 480 100 20]);
+    uicontrol(fig,'Style','text','String','IRB Number','Position',[20 440 labelboxwidth 20],'HorizontalAlignment','left');
+    irbNumber = uicontrol(fig,'Style','edit','String',VisitInfo.irbNumber,'Position',[80 440 100 20]);
+    
+     uicontrol(fig,'Style','text','String','ARDRsigned','Position',[20 420 labelboxwidth 20],'HorizontalAlignment','left');
+    ARDRsigned = uicontrol(fig,'Style','edit','String',VisitInfo.ARDRsigned,'Position',[80 420 100 20]);
+    
+    uicontrol(fig,'Style','text','String','researcher','Position',[20 400 labelboxwidth 20],'HorizontalAlignment','left');
+    researcher = uicontrol(fig,'Style','edit','String',VisitInfo.researcher,'Position',[80 400 100 20]);
+    
+    uicontrol(fig,'Style','text','String','researcherOther','Position',[20 380 labelboxwidth 20],'HorizontalAlignment','left');
+    researcherOther = uicontrol(fig,'Style','edit','String',VisitInfo.researcherOther,'Position',[80 380 100 20]);
+    
+     uicontrol(fig,'Style','text','String','studyProtocol','Position',[20 360 labelboxwidth 20],'HorizontalAlignment','left');
+    studyProtocol = uicontrol(fig,'Style','edit','String',VisitInfo.studyProtocol,'Position',[80 360 100 20]);
+    
+    uicontrol(fig,'Style','text','String','location','Position',[20 340 labelboxwidth 20],'HorizontalAlignment','left');
+    location = uicontrol(fig,'Style','edit','String',VisitInfo.location,'Position',[80 340 100 20]);
+    
+     uicontrol(fig,'Style','text','String','room','Position',[20 320 labelboxwidth 20],'HorizontalAlignment','left');
+    room = uicontrol(fig,'Style','edit','String',VisitInfo.room,'Position',[80 320 100 20]);
+    
+     uicontrol(fig,'Style','text','String','dateComplied','Position',[20 300 labelboxwidth 20],'HorizontalAlignment','left');
+    dateCompiled = uicontrol(fig,'Style','edit','String',string(VisitInfo.dateComplied),'Position',[80 300 100 20]);
+    
+    % ==== Audiometry ====
+    uicontrol(fig,'Style','text','String','Audiometry','Position',[20 280 labelboxwidth 20],'HorizontalAlignment','Center', 'FontWeight', 'bold');
+    
+    uicontrol(fig,'Style','text','String','AC_trans','Position',[20 260 labelboxwidth 20],'HorizontalAlignment','left');
+    AC_trans = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.AC_transducer,'Position',[80 260 100 20]);
+    
+    uicontrol(fig,'Style','text','String','BC_trans','Position',[20 240 labelboxwidth 20],'HorizontalAlignment','left');
+   BC_trans = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.BC_transducer,'Position',[80 240 100 20]);
+
+     uicontrol(fig,'Style','text','String','AC_Limit','Position',[20 220 labelboxwidth 20],'HorizontalAlignment','left');
+    AC_Limit = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.AC_HardwareLimits,'Position',[80 220 100 20]);
+    
+      uicontrol(fig,'Style','text','String','BC_Limit','Position',[20 200 labelboxwidth 20],'HorizontalAlignment','left');
+    BC_Limit = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.BC_HardwareLimits,'Position',[80 200 100 20]);
+    
+    uicontrol(fig,'Style','text','String','device','Position',[20 180 labelboxwidth 20],'HorizontalAlignment','left');
+    Auddevice = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.device,'Position',[80 180 100 20]);
+    
+    uicontrol(fig,'Style','text','String','serialnum','Position',[20 160 labelboxwidth 20],'HorizontalAlignment','left');
+    Audserialnum = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.serialNumber,'Position',[80 160 100 20]);
+    
+    uicontrol(fig,'Style','text','String','calibDate','Position',[20 140 labelboxwidth 20],'HorizontalAlignment','left');
+    AudcalibDate = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.calibDate,'Position',[80 140 100 20]);
+    
+    uicontrol(fig,'Style','text','String','comments','Position',[20 120 labelboxwidth 20],'HorizontalAlignment','left');
+    Audcomments = uicontrol(fig,'Style','edit','String', Measures.Audiometry.comments,'Position',[80 120 100 20]);
+    
+    % ==== DPOAEs ====
+    uicontrol(fig,'Style','text','String','DPOAEs','Position',[20 100 labelboxwidth 20],'HorizontalAlignment','Center', 'FontWeight', 'bold');
+    
+    uicontrol(fig,'Style','text','String','researcher','Position',[20 80 labelboxwidth 20],'HorizontalAlignment','left');
+    DPOAEresearcher = uicontrol(fig,'Style','edit','String', Measures.DPOAE.other.researcher,'Position',[80 80 100 20]);
+    
+    uicontrol(fig,'Style','text','String','device','Position',[20 60 labelboxwidth 20],'HorizontalAlignment','left');
+    DPOAEdevice = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.device,'Position',[80 60 100 20]);
+    
+     uicontrol(fig,'Style','text','String','calibDate','Position',[20 40 labelboxwidth 20],'HorizontalAlignment','left');
+    DPOAEcalibDate = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.calibDate,'Position',[80 40 100 20]);
+    
+     uicontrol(fig,'Style','text','String','serialnum','Position',[20 20 labelboxwidth 20],'HorizontalAlignment','left');
+    DPOAEserialnum = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.serialNumber,'Position',[80 20 100 20]);
+    
+     uicontrol(fig,'Style','text','String','DPOAEs Cont','Position',[200 570 labelboxwidth 20],'HorizontalAlignment','Center', 'FontWeight', 'bold');
+     
+     uicontrol(fig,'Style','text','String','serialnum','Position',[200 550 labelboxwidth 20],'HorizontalAlignment','left');
+    DPOAEserialnum = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.serialNumber,'Position',[80 550 100 20]);
+    
+
+
 
     % ==== SUBMIT BUTTON ====
-    uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[130 80 150 40],...
+    uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 150 40],... 
         'Callback', @(src, event)submitCallback());
 
     % ==== CALLBACK FUNCTION ====
     function submitCallback()
         % Update visit struct from GUI
-        visit.Subject.ID = subjID.String;
-        visit.Subject.age = str2double(age.String);
-        visit.Subject.gender = gender.String;
-        visit.Subject.amplification = amplification.String;
+        visit2.Subject.ID = subjID.String;
+        visit2.Subject.age = str2double(age.String);
+        visit2.Subject.gender = gender.String;
+        visit2.Subject.amplification = amplification.String;
 
-        visit.VisitInfo.testDate = testDate.String;
-        visit.VisitInfo.referringLab = referringLab.String;
-        visit.VisitInfo.irbNumber = irbNumber.String;
+        visit2.VisitInfo.testDate = testDate.String;
+        visit2.VisitInfo.referringLab = referringLab.String;
+        visit2.VisitInfo.irbNumber = irbNumber.String;
 
         % Save updated struct back to file
-        save(fullfile(path, file), 'visit');
+        %save(fullfile(path, 'New\', file), 'visit');
         msgbox('visit data saved successfully!', 'Success');
     end
 end
