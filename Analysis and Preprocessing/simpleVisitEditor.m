@@ -1,0 +1,216 @@
+function simpleVisitEditor()
+
+    % Load .mat file (you can customize the path)
+    [file,path] = uigetfile('*.mat','Select the MAT-file');
+    if isequal(file,0)
+        disp('User canceled file selection');
+        return;
+    end
+    loaded = load(fullfile(path, file));
+    
+    if ~isfield(loaded, 'visit')
+        error('The selected file does not contain a ''visit'' structure.');
+    end
+    
+    visit = loaded.visit;
+    
+    dateOfTest = datetime(extractBetween(file, '_', '.mat'), 'InputFormat', 'MMddyyyy'); 
+    
+    % ==== Initialize Visit ==== 
+    % Set initial data structure
+        Subject.ID = "";
+        Subject.age = "";
+        Subject.gender = "";
+        Subject.amplification = "";
+        VisitInfo.testDate = "";
+        VisitInfo.referringLab = "";
+        VisitInfo.irbNumber = "";
+        VisitInfo.ARDRsigned = "";
+        VisitInfo.researcher = "";
+        VisitInfo.researcherOther = "";
+        VisitInfo.studyProtocol = "";
+        VisitInfo.location = "";
+        VisitInfo.room = "";
+        VisitInfo.dateComplied = "";
+        VisitInfo.testDate = dateOfTest;
+
+            
+    Measures.Audiometry.AC.R = []; 
+    Measures.Audiometry.AC.L = []; 
+    Measures.Audiometry.BC.R = []; 
+    Measures.Audiometry.BC.L = [];
+    Measures.Audiometry.equipment.AC_transducer = ""; 
+    Measures.Audiometry.equipment.BC_transducer = ""; 
+    Measures.Audiometry.equipment.AC_HardwareLimits = ""; 
+    Measures.Audiometry.equipment.BC_HardwareLimits = ""; 
+    Measures.Audiometry.equipment.device = ""; 
+    Measures.Audiometry.equipment.calibDate = ""; 
+    Measures.Audiometry.equipment.serialNumber = ""; 
+    Measures.Audiometry.comments = ""; 
+    
+    Measures.QuickSIN.R = ""; 
+    Measures.QuickSIN.L = ""; 
+    Measures.QuickSIN.equipment.device = ""; 
+    Measures.QuickSIN.equipment.calibDate = ""; 
+    Measures.QuickSIN.equipment.serialNumber = ""; 
+    Measures.QuickSIN.comments = ""; 
+    
+    Measures.DPOAE.R.noisefloor = ""; 
+    Measures.DPOAE.R.mean_response = ""; 
+    Measures.DPOAE.R.f1 = ""; 
+    Measures.DPOAE.R.f2 = ""; 
+    Measures.DPOAE.R.DP = ""; 
+    Measures.DPOAE.R.f1_rec_dB = ""; 
+    Measures.DPOAE.R.f2_rec_dB = ""; 
+    Measures.DPOAE.R.fs = ""; 
+    Measures.DPOAE.L.noisefloor = ""; 
+    Measures.DPOAE.L.mean_response = ""; 
+    Measures.DPOAE.L.f1 = ""; 
+    Measures.DPOAE.L.f2 = ""; 
+    Measures.DPOAE.L.DP = ""; 
+    Measures.DPOAE.L.f1_rec_dB = ""; 
+    Measures.DPOAE.L.f2_rec_dB = ""; 
+    Measures.DPOAE.L.fs = ""; 
+    Measures.DPOAE.other.researcher  = ""; 
+    Measures.DPOAE.equipment.device = ""; 
+    Measures.DPOAE.equipment.calibDate = ""; 
+    Measures.DPOAE.equipment.serialNumber = ""; 
+    Measures.DPOAE.comments = ""; 
+    
+    Measures.Reflexes.Frequencies = [500 1e3 2e3 4e3];
+    Measures.Reflexes.ProbeR.Ipsi = ""; 
+    Measures.Reflexes.ProbeR.Contra = ""; 
+    Measures.Reflexes.ProbeL.Ipsi = ""; 
+    Measures.Reflexes.ProbeL.Contra = ""; 
+    Measures.Reflexes.equipment.device = ""; 
+    Measures.Reflexes.equipment.calibDate = ""; 
+    Measures.Reflexes.equipment.serialNumber = ""; 
+    Measures.Reflexes.comments = ""; 
+    
+    Measures.WRS.R.speechLevel = ""; 
+    Measures.WRS.R.maskingLevel = ""; 
+    Measures.WRS.R.numberWordCorrect = ""; 
+    Measures.WRS.R.totalWordsPresented = ""; 
+    Measures.WRS.R.list = ""; 
+    Measures.WRS.R.listNumber = ""; 
+    Measures.WRS.R.percentCorrect = ""; 
+    Measures.WRS.L.speechLevel = ""; 
+    Measures.WRS.L.maskingLevel = ""; 
+    Measures.WRS.L.numberWordCorrect = ""; 
+    Measures.WRS.L.totalWordsPresented = ""; 
+    Measures.WRS.L.list = ""; 
+    Measures.WRS.L.listNumber = ""; 
+    Measures.WRS.L.percentCorrect = ""; 
+    Measures.WRS.equipment.device = ""; 
+    Measures.WRS.equipment.calibDate = ""; 
+    Measures.WRS.equipment.serialNumber = ""; 
+    Measures.WRS.comments = ""; 
+    
+    Measures.ACT.scores = ""; 
+    Measures.ACT.comments = ""; 
+    Measures.ACT.equipment.device = ""; 
+    Measures.ACT.equipment.calibDate = ""; 
+    Measures.ACT.equipment.serialNumber = ""; 
+    
+    Measures.WBT.L.PRESSURE = ""; 
+    Measures.WBT.L.FREQ = ""; 
+    Measures.WBT.L.ABSORBANCE = ""; 
+    Measures.WBT.R.PRESSURE = ""; 
+    Measures.WBT.R.FREQ = ""; 
+    Measures.WBT.R.ABSORBANCE = ""; 
+    Measures.WBT.comments = ""; 
+    Measures.WBT.equipment.device = ""; 
+    Measures.WBT.equipment.calibDate = ""; 
+    Measures.WBT.equipment.serialNumber = ""; 
+    
+    Measures.Otoscopy.comments = ""; 
+    Measures.Otoscopy.equipment = ""; 
+    
+    
+    % ===== Fill in what's there from orig visit ==== 
+    if isfield(visit, 'subjectID')
+        Subject.ID = visit.subjectID;
+        VisitInfo.researcher = visit.researcher;
+    elseif isfield(visit, 'Subject')
+        Subject.ID = visit.Subject.ID;
+        Subject.age = visit.Subject.age;
+        Subject.gender = visit.Subject.gender;
+        Subject.amplification = visit.Subject.amplification;
+    end
+    
+    % Data for each measure
+    if isfield(visit, 'Measures')
+        meas = fieldnames(visit.Measures);
+        for f = 1:length(meas)
+            if contains(meas{f}, 'audio', 'IgnoreCase', 1)
+                Measures.Audiometry.AC.R = visit.Measures.(meas{f}).AC.R;
+                Measures.Audiometry.AC.L = visit.Measures.(meas{f}).AC.L;
+                Measures.Audiometry.BC.R = visit.Measures.(meas{f}).BC.R;
+                Measures.Audiometry.BC.L = visit.Measures.(meas{f}).BC.L;
+                if isfield(visit.Measures.(meas{f}), 'equipment')
+                    Measures.Audiometry.equipment.AC_transducer = visit.Measures.(meas{f}).equipment.AC_transducer;
+                    Measures.Audiometry.equipment.BC_transducer = visit.Measures.(meas{f}).equipment.BC_transducer;
+                    Measures.Audiometry.equipment.AC_HardwareLimits = visit.Measures.(meas{f}).equipment.AC_HardwareLimits;
+                    Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).equipment.BC_HardwareLimits;
+                    Measures.Audiometry.equipment.device = visit.Measures.(meas{f}).equipment.device;
+                    Measures.Audiometry.equipment.calibDate = visit.Measures.(meas{f}).equipment.calibDate;
+                    Measures.Audiometry.equipment.serialNumber = visit.Measures.(meas{f}).equipment.serialNumber;
+                    Measures.Audiometry.comments = visit.Measures.(meas{f}).comments;
+                else
+                    Measures.Audiometry.equipment.AC_transducer = visit.Measures.(meas{f}).AC_transducer;
+                    Measures.Audiometry.equipment.BC_transducer = visit.Measures.(meas{f}).BC_transducer;
+                    Measures.Audiometry.equipment.AC_HardwareLimits = visit.Measures.(meas{f}).AC_HardwareLimits;
+                    Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).BC_HardwareLimits;
+                end
+            end
+        end
+    end
+    
+
+    % Create figure window
+    fig = figure('Name', 'visit Editor', 'Position', [100 100 400 800]);
+
+    % ==== SUBJECT INFO ====
+    uicontrol(fig,'Style','text','String','Subject ID','Position',[20 350 100 20],'HorizontalAlignment','left');
+    subjID = uicontrol(fig,'Style','edit','String',visit.Subject.ID,'Position',[130 350 200 25]);
+
+    uicontrol(fig,'Style','text','String','Age','Position',[20 320 100 20],'HorizontalAlignment','left');
+    age = uicontrol(fig,'Style','edit','String',num2str(visit.Subject.age),'Position',[130 320 200 25]);
+
+    uicontrol(fig,'Style','text','String','Gender','Position',[20 290 100 20],'HorizontalAlignment','left');
+    gender = uicontrol(fig,'Style','edit','String',visit.Subject.gender,'Position',[130 290 200 25]);
+
+    uicontrol(fig,'Style','text','String','Amplification','Position',[20 260 100 20],'HorizontalAlignment','left');
+    amplification = uicontrol(fig,'Style','edit','String',visit.Subject.amplification,'Position',[130 260 200 25]);
+
+    % ==== VISIT INFO ====
+    uicontrol(fig,'Style','text','String','Test Date','Position',[20 210 100 20],'HorizontalAlignment','left');
+    testDate = uicontrol(fig,'Style','edit','String',visit.VisitInfo.testDate,'Position',[130 210 200 25]);
+
+    uicontrol(fig,'Style','text','String','Referring Lab','Position',[20 180 100 20],'HorizontalAlignment','left');
+    referringLab = uicontrol(fig,'Style','edit','String',visit.VisitInfo.referringLab,'Position',[130 180 200 25]);
+
+    uicontrol(fig,'Style','text','String','IRB Number','Position',[20 150 100 20],'HorizontalAlignment','left');
+    irbNumber = uicontrol(fig,'Style','edit','String',visit.VisitInfo.irbNumber,'Position',[130 150 200 25]);
+
+    % ==== SUBMIT BUTTON ====
+    uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[130 80 150 40],...
+        'Callback', @(src, event)submitCallback());
+
+    % ==== CALLBACK FUNCTION ====
+    function submitCallback()
+        % Update visit struct from GUI
+        visit.Subject.ID = subjID.String;
+        visit.Subject.age = str2double(age.String);
+        visit.Subject.gender = gender.String;
+        visit.Subject.amplification = amplification.String;
+
+        visit.VisitInfo.testDate = testDate.String;
+        visit.VisitInfo.referringLab = referringLab.String;
+        visit.VisitInfo.irbNumber = irbNumber.String;
+
+        % Save updated struct back to file
+        save(fullfile(path, file), 'visit');
+        msgbox('visit data saved successfully!', 'Success');
+    end
+end
