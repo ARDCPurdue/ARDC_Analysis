@@ -1,7 +1,7 @@
 function simpleVisitEditor()
 
 %%%%% STUFF TO EDIT FOR A USER %%%%%
-dataDir = "D:\ARDR Data\"; 
+dataDir = "C:\Users\annik\OneDrive\Desktop\Code\ARDC_Analysis\"; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Load .mat file (you can customize the path)
@@ -170,14 +170,14 @@ dataDir = "D:\ARDR Data\";
     
 
     % Create figure window
-    boxwidth = 20; 
+    boxheight = 20; 
     figheight = 600; 
     fig = figure('Name', 'Visit Editor', 'Position', [100 100 1200 figheight]);
    
 
     % ==== SUBJECT INFO ====
-    uicontrol(fig,'Style','text','String','Subject ID','Position',[20 570 60 boxwidth],'HorizontalAlignment','left');
-    subjID = uicontrol(fig,'Style','edit','String',visit.Subject.ID,'Position',[80 570 100 boxwidth]);
+    uicontrol(fig,'Style','text','String','Subject ID','Position',[20 570 60 boxheight],'HorizontalAlignment','left');
+    subjID = uicontrol(fig,'Style','edit','String',visit.Subject.ID,'Position',[80 570 100 boxheight]);
 
     uicontrol(fig,'Style','text','String','Age','Position',[20 550 60 20],'HorizontalAlignment','left');
     age = uicontrol(fig,'Style','edit','String',num2str(visit.Subject.age),'Position',[80 550 100 20]);
@@ -198,6 +198,67 @@ dataDir = "D:\ARDR Data\";
     uicontrol(fig,'Style','text','String','IRB Number','Position',[20 440 60 20],'HorizontalAlignment','left');
     irbNumber = uicontrol(fig,'Style','edit','String',visit.VisitInfo.irbNumber,'Position',[80 440 100 20]);
 
+    %%
+
+    uicontrol(fig,'Style', 'text', 'String', 'QuickSIN', 'Position', [880 570 60 20], 'HorizontalAlignment','left', 'FontSize', 10);
+
+    uicontrol(fig,'Style', 'text', 'String','RE QuickSIN', 'Position', [880 550 150 boxheight], 'HorizontalAlignment','left');
+    RquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.R, 'Position',[950 550 30 boxheight]); 
+
+    uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [985 550 150 boxheight], 'HorizontalAlignment','left');
+    RquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1010 550 25 boxheight]);
+
+    uicontrol(fig,'Style', 'text', 'String','Equip', 'Position', [1030 550 150 boxheight], 'HorizontalAlignment','left');
+    QSequipdevice = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.device, 'Position',[1060 550 110 boxheight]);
+
+    uicontrol(fig, 'Style', 'text', 'String','LE QuickSIN', 'Position', [880 510 150 boxheight], 'HorizontalAlignment','left');
+    LquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.L, 'Position',[950 510 30 boxheight]); 
+
+     uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [985 510 150 boxheight], 'HorizontalAlignment','left');
+    LquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1010 510 25 boxheight]);
+
+    uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [1030 510 150 boxheight], 'HorizontalAlignment','left');
+    QSequipcalib = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.calibDate, 'Position',[1060 510 110 boxheight]);
+
+    uicontrol(fig, 'Style', 'text', 'String','Bin QuickSIN', 'Position', [880 470 150 boxheight], 'HorizontalAlignment','left');
+    BquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.Bin, 'Position',[950 470 30 boxheight]);
+    
+    uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [985 470 150 boxheight], 'HorizontalAlignment','left');
+    BquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1010 470 25 boxheight]);
+    
+    uicontrol(fig,'Style', 'text', 'String','SN', 'Position', [1030 470 150 boxheight], 'HorizontalAlignment','left');
+    QSequipSN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.serialNumber, 'Position',[1060 470 110 boxheight]);
+
+    uicontrol(fig,'Style', 'text', 'String','Comments', 'Position', [880 440 150 boxheight], 'HorizontalAlignment','left');
+    QScomments = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.comments, 'Position',[950 420 220 40]);
+
+%% WRS %%
+%  Measures.WRS.R.speechLevel = ""; 
+    Measures.WRS.R.maskingLevel = ""; 
+    Measures.WRS.R.numberWordCorrect = ""; 
+    Measures.WRS.R.totalWordsPresented = ""; 
+    Measures.WRS.R.list = ""; 
+    Measures.WRS.R.listNumber = ""; 
+    Measures.WRS.R.percentCorrect = ""; 
+    Measures.WRS.L.speechLevel = ""; 
+    Measures.WRS.L.maskingLevel = ""; 
+    Measures.WRS.L.numberWordCorrect = ""; 
+    Measures.WRS.L.totalWordsPresented = ""; 
+    Measures.WRS.L.list = ""; 
+    Measures.WRS.L.listNumber = ""; 
+    Measures.WRS.L.percentCorrect = ""; 
+    Measures.WRS.equipment.device = ""; 
+    Measures.WRS.equipment.calibDate = ""; 
+    Measures.WRS.equipment.serialNumber = ""; 
+    Measures.WRS.comments = ""; 
+    % 
+uicontrol(fig,'Style', 'text', 'String', 'WRS', 'Position', [880 400 60 20], 'HorizontalAlignment','left', 'FontSize', 10);
+
+uicontrol(fig,'Style', 'text', 'String','RE QuickSIN', 'Position', [880 550 150 boxheight], 'HorizontalAlignment','left');
+rWRS = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.R, 'Position',[950 550 30 boxheight]); 
+
+
+%%%%
     % ==== SUBMIT BUTTON ====
     uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 150 40],...
         'Callback', @(src, event)submitCallback());
