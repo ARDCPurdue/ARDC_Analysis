@@ -1,7 +1,7 @@
 function simpleVisitEditor()
 
 %%%%% STUFF TO EDIT FOR A USER %%%%%
-dataDir = "D:\ARDR Data\"; 
+dataDir = "C:\Users\isabe\OneDrive\Desktop\Code\ARDC_Analysis\"; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Load .mat file (you can customize the path)
@@ -170,14 +170,14 @@ dataDir = "D:\ARDR Data\";
     
 
     % Create figure window
-    boxwidth = 20; 
+    boxheight = 20; 
     figheight = 600; 
     fig = figure('Name', 'Visit Editor', 'Position', [100 100 1200 figheight]);
    
 
     % ==== SUBJECT INFO ====
-    uicontrol(fig,'Style','text','String','Subject ID','Position',[20 570 60 boxwidth],'HorizontalAlignment','left');
-    subjID = uicontrol(fig,'Style','edit','String',visit.Subject.ID,'Position',[80 570 100 boxwidth]);
+    uicontrol(fig,'Style','text','String','Subject ID','Position',[20 570 60 boxheight],'HorizontalAlignment','left');
+    subjID = uicontrol(fig,'Style','edit','String',visit.Subject.ID,'Position',[80 570 100 boxheight]);
 
     uicontrol(fig,'Style','text','String','Age','Position',[20 550 60 20],'HorizontalAlignment','left');
     age = uicontrol(fig,'Style','edit','String',num2str(visit.Subject.age),'Position',[80 550 100 20]);
@@ -198,6 +198,47 @@ dataDir = "D:\ARDR Data\";
     uicontrol(fig,'Style','text','String','IRB Number','Position',[20 440 60 20],'HorizontalAlignment','left');
     irbNumber = uicontrol(fig,'Style','edit','String',visit.VisitInfo.irbNumber,'Position',[80 440 100 20]);
 
+
+    % ==== Otoscopy ====
+    uicontrol(fig,'Style','text','String','Otoscopy','Position',[820 310 140 20],'HorizontalAlignment','center');
+
+    uicontrol(fig,'Style','text','String','Comment','Position',[820 280 60 20],'HorizontalAlignment','left');
+    otoComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[880 280 120 20]);
+
+    uicontrol(fig,'Style','text','String','Equipment','Position',[820 260 60 20],'HorizontalAlignment','left');
+    otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment,'Position',[880 260 120 20]);
+
+ 
+    % ==== WBT ====
+    uicontrol(fig,'Style','text','String','Wideband Tymp','Position',[820 210 140 20],'HorizontalAlignment','center');
+    uicontrol(fig,'Style','text','String','L','Position',[880 190 60 20],'HorizontalAlignment','center');
+    uicontrol(fig,'Style','text','String','R','Position',[940 190 60 20],'HorizontalAlignment','center');
+
+    uicontrol(fig,'Style','text','String','Pressure','Position',[820 170 60 20],'HorizontalAlignment','left');
+    WBTpressureL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.PRESSURE,'Position',[880 170 60 20]);
+    WBTpressureR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.PRESSURE,'Position',[940 170 60 20]);
+
+    uicontrol(fig,'Style','text','String','Freq','Position',[820 150 60 20],'HorizontalAlignment','left');
+    WBTfreqL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.FREQ,'Position',[880 150 60 20]);
+    WBTfreqR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.FREQ,'Position',[940 150 60 20]);
+
+    uicontrol(fig,'Style','text','String','Absorbance','Position',[820 130 60 20],'HorizontalAlignment','left');
+    WBTabsorbanceL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.ABSORBANCE,'Position',[880 130 60 20]);
+    WBTabsorbanceR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.ABSORBANCE,'Position',[940 130 60 20]);
+
+    uicontrol(fig,'Style','text','String','Comment','Position',[820 100 60 20],'HorizontalAlignment','left');
+    WBTComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[880 100 120 20]);
+
+    uicontrol(fig,'Style','text','String','Equipment','Position',[820 80 60 20],'HorizontalAlignment','left');
+    WBTEquipment = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.device,'Position',[880 80 120 20]);
+
+    uicontrol(fig,'Style','text','String','Calib Date','Position',[820 60 60 20],'HorizontalAlignment','left');
+    WBTEquipmentCalibDate = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.calibDate,'Position',[880 60 120 20]);
+
+    uicontrol(fig,'Style','text','String','Serial #','Position',[820 40 60 20],'HorizontalAlignment','left');
+    WBTEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.serialNumber,'Position',[880 40 120 20]);
+
+ 
     % ==== SUBMIT BUTTON ====
     uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 150 40],...
         'Callback', @(src, event)submitCallback());
