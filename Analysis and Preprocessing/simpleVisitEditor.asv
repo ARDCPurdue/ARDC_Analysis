@@ -20,6 +20,7 @@ dateOfTest = datetime(extractBetween(file, '_', '.mat'), 'InputFormat', 'MMddyyy
 
 %% ==== Initialize Visit ====
 % Set initial data structure
+disp("a")
 Subject.ID = "";
 Subject.age = "";
 Subject.gender = "";
@@ -138,8 +139,9 @@ elseif isfield(visit, 'Subject')
     Subject.gender = visit.Subject.gender;
     Subject.amplification = visit.Subject.amplification;
 end
-%% todo - AJ
-% Set up VisitInfo from old visit file into new structure
+
+%% Set up VisitInfo from old visit file into new structure
+disp("Retrieving Visit Info...")
 if isfield(visit, 'VisitInfo')
     VisitInfo = visit.VisitInfo;
     try
