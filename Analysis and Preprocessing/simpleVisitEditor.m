@@ -18,8 +18,9 @@ visit = loaded.visit;
 
 dateOfTest = datetime(extractBetween(file, '_', '.mat'), 'InputFormat', 'MMddyyyy');
 
-%% ==== Initialize Visit ====
+% ==== Initialize Visit ====
 % Set initial data structure
+disp("Intializing Variables...")
 Subject.ID = "";
 Subject.age = "";
 Subject.gender = "";
@@ -112,7 +113,7 @@ Measures.ACT.comments = "";
 Measures.ACT.equipment.device = "";
 Measures.ACT.equipment.calibDate = "";
 Measures.ACT.equipment.serialNumber = "";
-
+%%
 Measures.WBT.L.PRESSURE = "";
 Measures.WBT.L.FREQ = "";
 Measures.WBT.L.ABSORBANCE = "";
@@ -127,8 +128,9 @@ Measures.WBT.equipment.serialNumber = "";
 Measures.Otoscopy.comments = "";
 Measures.Otoscopy.equipment = "";
 
-%% ===== Fill in what's there from orig visit ====
+% ===== Fill in what's there from orig visit ====
 % Set up Subject information from old visit file into new structure
+disp("Retrieving Subject Info...")
 if isfield(visit, 'subjectID')
     Subject.ID = visit.subjectID;
     VisitInfo.researcher = visit.researcher;
@@ -138,8 +140,9 @@ elseif isfield(visit, 'Subject')
     Subject.gender = visit.Subject.gender;
     Subject.amplification = visit.Subject.amplification;
 end
-%% todo - AJ
+
 % Set up VisitInfo from old visit file into new structure
+disp("Retrieving Visit Info...")
 if isfield(visit, 'VisitInfo')
     VisitInfo = visit.VisitInfo;
     try
@@ -196,12 +199,18 @@ end
 
 
 %% Data for each measure
+disp("Retrieving Measures...")
+
 if isfield(visit, 'Measures')
     meas = fieldnames(visit.Measures);
     for f = 1:length(meas)
 
-        % Check For Audiogram Data
+        %Check For Audiogram Data
+        %%%There is a 1x1 cell for comments that was initialized in
+        %%%Measures.Audiometry
         if contains(meas{f}, 'audio', 'IgnoreCase', 1)
+            disp("    Retieving Audiogram Data...")
+
             Measures.Audiometry.AC.R = visit.Measures.(meas{f}).AC.R;
             Measures.Audiometry.AC.L = visit.Measures.(meas{f}).AC.L;
             Measures.Audiometry.BC.R = visit.Measures.(meas{f}).BC.R;
@@ -223,8 +232,9 @@ if isfield(visit, 'Measures')
                 Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).BC_HardwareLimits;
             end
 
-        % Check for QuickSIN Data
+        %Check for QuickSIN Data
         elseif contains(meas{f}, 'Quick', 'IgnoreCase', 1)
+            disp("    Retrieving QuickSIN Data...")
             Measures.QuickSIN.R = visit.Measures.(meas{f}).R;
             Measures.QuickSIN.L = visit.Measures.(meas{f}).L;
             try
@@ -240,6 +250,7 @@ if isfield(visit, 'Measures')
 
         % Check for DPOAE Data
         elseif contains(meas{f}, 'dpoae', 'IgnoreCase', 1)
+            disp("    Retrieving DPOAE Data...")
             Measures.DPOAE.R = visit.Measures.(meas{f}).R;
             Measures.DPOAE.L = visit.Measures.(meas{f}).L;
             Measures.DPOAE.other.researcher  = visit.Measures.(meas{f}).other.researcher;
@@ -250,6 +261,7 @@ if isfield(visit, 'Measures')
 
         % Check for Reflexes Data
         elseif contains(meas{f}, 'Reflex', 'IgnoreCase', 1)
+            disp("    Retrieving Reflexes Data...")
             Measures.Reflexes.ProbeR = visit.Measures.(meas{f}).ProbeR;
             Measures.Reflexes.ProbeL = visit.Measures.(meas{f}).ProbeL;
             try
@@ -266,6 +278,7 @@ if isfield(visit, 'Measures')
 
         % Check for WRS Data
         elseif contains(meas{f}, 'WRS', 'IgnoreCase', 1)
+            disp("    Retrieving WRS Data...")
             Measures.WRS.R = visit.Measures.(meas{f}).R;
             Measures.WRS.L = visit.Measures.(meas{f}).L;
 
@@ -273,35 +286,40 @@ if isfield(visit, 'Measures')
                 Measures.WRS.equipment= visit.Measures.(meas{f}).equipment;
                 Measures.WRS.comments = visit.Measures.(meas{f}).comments;
             end
-
-        % Check for ACT Data
-        elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
-            try
-                Measures.ACT = visit.Measures.ACT;
-            catch
-                warning("Does not have ACT info")
-            end
+%%% This section is overwriting the origional initialized variables. When
+%%% ACT is present in the comment it removes the scores so it cannot be
+%%% plotted later
+        % % Check for ACT Data
+        % elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
+        %     disp("    Retrieving ACT Data...")
+        %     try
+        %         Measures.ACT = visit.Measures.ACT;
+        %     catch
+        %         warning("Does not have ACT info")
+        %     end
 
         % Check for WBT Data
         elseif contains(meas{f}, 'WBT', 'IgnoreCase', 1)
+            disp("    Retrieving WBT Data...")
             Measures.WBT.R = visit.Measures.(meas{f}).R;
             Measures.WBT.L = visit.Measures.(meas{f}).L;
 
             try
                 Measures.WBT.equipment = visit.Measures.(meas{f}).equipment;
-                Measures.WBT.commments = visit.Measures.(meas{f}).comments;
+                Measures.WBT.comments = visit.Measures.(meas{f}).comments;
             catch
                 disp("Does not have WBT equipment info")
             end
 
-        % Check for Otoscopy Data
-        elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
-            Measures.Otoscopy.comments = visit.Measures.Otoscopy.comments;
-            Measures.Otoscopy.equipment = visit.Measures.Otoscopy.equipment;
+        % % Check for Otoscopy Data
+        % elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
+        %     disp("    Retrieving Otoscopy Data...")
+        %     Measures.Otoscopy.comments = visit.Measures.Otoscopy.comments;
+        %     Measures.Otoscopy.equipment = visit.Measures.Otoscopy.equipment;
         end
     end
 end
-
+%%
 
 % Create figure window
 boxheight = 20;
@@ -418,7 +436,7 @@ MEMRcomments = uicontrol(fig,'Style','edit','String', Measures.Reflexes.comments
 % ==== ACT ==== %
 
 uicontrol(fig,'Style','text','String','ACT','Position',[600 210 140 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
-
+%%E Error
 uicontrol(fig,'Style', 'text', 'String','Trial 1', 'Position', [600 190 140 20], 'HorizontalAlignment','left');
 ACTTrialOne = uicontrol(fig,'Style','edit', 'String', Measures.ACT.scores, 'Position',[630 190 30 20]); 
 
@@ -452,7 +470,7 @@ ACTnewComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 
 %Measures.ACT.equipment.calibDate = "";
 %Measures.ACT.equipment.serialNumber = "";
 
-% ==== Otoscopy ====
+% ==== Otoscopy ====      %%%Error%%%
 uicontrol(fig,'Style','text','String','Otoscopy','Position',[1070 190 140 20],'HorizontalAlignment','left', 'FontWeight','bold');
 
 uicontrol(fig,'Style','text','String','Equipment','Position',[1070 170 60 20],'HorizontalAlignment','left');

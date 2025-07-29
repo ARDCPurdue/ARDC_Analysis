@@ -18,9 +18,9 @@ visit = loaded.visit;
 
 dateOfTest = datetime(extractBetween(file, '_', '.mat'), 'InputFormat', 'MMddyyyy');
 
-%% ==== Initialize Visit ====
+% ==== Initialize Visit ====
 % Set initial data structure
-disp("a")
+disp("Intializing Variables...")
 Subject.ID = "";
 Subject.age = "";
 Subject.gender = "";
@@ -128,8 +128,9 @@ Measures.WBT.equipment.serialNumber = "";
 Measures.Otoscopy.comments = "";
 Measures.Otoscopy.equipment = "";
 
-%% ===== Fill in what's there from orig visit ====
+% ===== Fill in what's there from orig visit ====
 % Set up Subject information from old visit file into new structure
+disp("Retrieving Subject Info...")
 if isfield(visit, 'subjectID')
     Subject.ID = visit.subjectID;
     VisitInfo.researcher = visit.researcher;
@@ -140,7 +141,7 @@ elseif isfield(visit, 'Subject')
     Subject.amplification = visit.Subject.amplification;
 end
 
-%% Set up VisitInfo from old visit file into new structure
+% Set up VisitInfo from old visit file into new structure
 disp("Retrieving Visit Info...")
 if isfield(visit, 'VisitInfo')
     VisitInfo = visit.VisitInfo;
@@ -198,12 +199,18 @@ end
 
 
 %% Data for each measure
+disp("Retrieving Measures...")
+
 if isfield(visit, 'Measures')
     meas = fieldnames(visit.Measures);
     for f = 1:length(meas)
 
-        % Check For Audiogram Data
+        %Check For Audiogram Data
+        %%%There is a 1x1 cell for comments that was initialized in
+        %%%Measures.Audiometry
         if contains(meas{f}, 'audio', 'IgnoreCase', 1)
+            disp("    Retieving Audiogram Data...")
+
             Measures.Audiometry.AC.R = visit.Measures.(meas{f}).AC.R;
             Measures.Audiometry.AC.L = visit.Measures.(meas{f}).AC.L;
             Measures.Audiometry.BC.R = visit.Measures.(meas{f}).BC.R;
@@ -225,8 +232,9 @@ if isfield(visit, 'Measures')
                 Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).BC_HardwareLimits;
             end
 
-        % Check for QuickSIN Data
+        %Check for QuickSIN Data
         elseif contains(meas{f}, 'Quick', 'IgnoreCase', 1)
+            disp("    Retrieving QuickSIN Data...")
             Measures.QuickSIN.R = visit.Measures.(meas{f}).R;
             Measures.QuickSIN.L = visit.Measures.(meas{f}).L;
             try
@@ -242,6 +250,7 @@ if isfield(visit, 'Measures')
 
         % Check for DPOAE Data
         elseif contains(meas{f}, 'dpoae', 'IgnoreCase', 1)
+            disp("    Retrieving DPOAE Data...")
             Measures.DPOAE.R = visit.Measures.(meas{f}).R;
             Measures.DPOAE.L = visit.Measures.(meas{f}).L;
             Measures.DPOAE.other.researcher  = visit.Measures.(meas{f}).other.researcher;
@@ -252,6 +261,7 @@ if isfield(visit, 'Measures')
 
         % Check for Reflexes Data
         elseif contains(meas{f}, 'Reflex', 'IgnoreCase', 1)
+            disp("    Retrieving Reflexes Data...")
             Measures.Reflexes.ProbeR = visit.Measures.(meas{f}).ProbeR;
             Measures.Reflexes.ProbeL = visit.Measures.(meas{f}).ProbeL;
             try
@@ -268,6 +278,7 @@ if isfield(visit, 'Measures')
 
         % Check for WRS Data
         elseif contains(meas{f}, 'WRS', 'IgnoreCase', 1)
+            disp("    Retrieving WRS Data...")
             Measures.WRS.R = visit.Measures.(meas{f}).R;
             Measures.WRS.L = visit.Measures.(meas{f}).L;
 
@@ -278,6 +289,7 @@ if isfield(visit, 'Measures')
 
         % Check for ACT Data
         elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
+            disp("    Retrieving ACT Data...")
             try
                 Measures.ACT = visit.Measures.ACT;
             catch
@@ -286,12 +298,13 @@ if isfield(visit, 'Measures')
 
         % Check for WBT Data
         elseif contains(meas{f}, 'WBT', 'IgnoreCase', 1)
+            disp("    Retrieving WBT Data...")
             Measures.WBT.R = visit.Measures.(meas{f}).R;
             Measures.WBT.L = visit.Measures.(meas{f}).L;
 
             try
                 Measures.WBT.equipment = visit.Measures.(meas{f}).equipment;
-                Measures.WBT.commments = visit.Measures.(meas{f}).comments;
+                Measures.WBT.comments = visit.Measures.(meas{f}).comments;
             catch
                 disp("Does not have WBT equipment info")
             end
@@ -303,7 +316,7 @@ if isfield(visit, 'Measures')
         end
     end
 end
-
+%%
 
 % Create figure window
 boxheight = 20;
