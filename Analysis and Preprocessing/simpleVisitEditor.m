@@ -34,8 +34,6 @@ VisitInfo.studyProtocol = "";
 VisitInfo.location = "";
 VisitInfo.room = "";
 VisitInfo.dateComplied = "";
-VisitInfo.testDate = dateOfTest;
-
 
 Measures.Audiometry.AC.R = [];
 Measures.Audiometry.AC.L = [];
@@ -130,6 +128,7 @@ Measures.Otoscopy.comments = "";
 Measures.Otoscopy.equipment = "";
 
 % ===== Fill in what's there from orig visit ====
+% Set up Subject information from old visit file into new structure
 if isfield(visit, 'subjectID')
     Subject.ID = visit.subjectID;
     VisitInfo.researcher = visit.researcher;
@@ -140,112 +139,132 @@ elseif isfield(visit, 'Subject')
     Subject.amplification = visit.Subject.amplification;
 end
 
-% % Data for each measure
-% if isfield(visit, 'Measures')
-%     meas = fieldnames(visit.Measures);
-%     for f = 1:length(meas)
-%
-%         % Check For Audiogram Data
-%         if contains(meas{f}, 'audio', 'IgnoreCase', 1)
-%             Measures.Audiometry.AC.R = visit.Measures.(meas{f}).AC.R;
-%             Measures.Audiometry.AC.L = visit.Measures.(meas{f}).AC.L;
-%             Measures.Audiometry.BC.R = visit.Measures.(meas{f}).BC.R;
-%             Measures.Audiometry.BC.L = visit.Measures.(meas{f}).BC.L;
-%
-%             if isfield(visit.Measures.(meas{f}), 'equipment')
-%                 Measures.Audiometry.equipment.AC_transducer = visit.Measures.(meas{f}).equipment.AC_transducer;
-%                 Measures.Audiometry.equipment.BC_transducer = visit.Measures.(meas{f}).equipment.BC_transducer;
-%                 Measures.Audiometry.equipment.AC_HardwareLimits = visit.Measures.(meas{f}).equipment.AC_HardwareLimits;
-%                 Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).equipment.BC_HardwareLimits;
-%                 Measures.Audiometry.equipment.device = visit.Measures.(meas{f}).equipment.device;
-%                 Measures.Audiometry.equipment.calibDate = visit.Measures.(meas{f}).equipment.calibDate;
-%                 Measures.Audiometry.equipment.serialNumber = visit.Measures.(meas{f}).equipment.serialNumber;
-%                 Measures.Audiometry.comments = visit.Measures.(meas{f}).comments;
-%             else
-%                 Measures.Audiometry.equipment.AC_transducer = visit.Measures.(meas{f}).AC_transducer;
-%                 Measures.Audiometry.equipment.BC_transducer = visit.Measures.(meas{f}).BC_transducer;
-%                 Measures.Audiometry.equipment.AC_HardwareLimits = visit.Measures.(meas{f}).AC_HardwareLimits;
-%                 Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).BC_HardwareLimits;
-%             end
-%
-%         % Check for QuickSIN Data
-%         elseif contains(meas{f}, 'Quick', 'IgnoreCase', 1)
-%             Measures.QuickSIN.R = visit.Measures.(meas{f}).R;
-%             Measures.QuickSIN.L = visit.Measures.(meas{f}).L;
-%             try
-%                 Measures.QuickSIN.Bin = visit.Measures.(meas{f}).Bin;
-%             catch
-%                 Measures.QuickSIN.Bin = "";
-%             end
-%
-%             Measures.QuickSIN.equipment.device = visit.Measures.(meas{f}).equipment.device;
-%             Measures.QuickSIN.equipment.calibDate = visit.Measures.(meas{f}).equipment.calibDate;
-%             Measures.QuickSIN.equipment.serialNumber = visit.Measures.(meas{f}).equipment.serialNumber;
-%             Measures.QuickSIN.comments = visit.Measures.(meas{f}).comments;
-%
-%         % Check for DPOAE Data
-%         elseif contains(meas{f}, 'dpoae', 'IgnoreCase', 1)
-%             Measures.DPOAE.R = visit.Measures.(meas{f}).R;
-%             Measures.DPOAE.L = visit.Measures.(meas{f}).L;
-%             Measures.DPOAE.other.researcher  = visit.Measures.(meas{f}).other.researcher;
-%             try
-%                 Measures.DPOAE.equipment = visit.Measures.(meas{f}).equipment;
-%                 Measures.DPOAE.comments = visit.Measures.(meas{f}).comments;
-%             end
-%
-%         % Check for Reflexes Data
-%         elseif contains(meas{f}, 'Reflex', 'IgnoreCase', 1)
-%             Measures.Reflexes.ProbeR = visit.Measures.(meas{f}).ProbeR;
-%             Measures.Reflexes.ProbeL = visit.Measures.(meas{f}).ProbeL;
-%             try
-%                 Measures.Reflexes.equipment = visit.Measures.(meas{f}).equipment;
-%             catch
-%                 disp("reflex data does not contain equipment info")
-%             end
-%
-%             try
-%                 Measures.Reflexes.comments = visit.Measures.(meas{f}).comments;
-%             catch
-%                 disp("reflex data does not contain comments")
-%             end
-%
-%         % Check for WRS Data
-%         elseif contains(meas{f}, 'WRS', 'IgnoreCase', 1)
-%             Measures.WRS.R = visit.Measures.(meas{f}).R;
-%             Measures.WRS.L = visit.Measures.(meas{f}).L;
-%
-%             try
-%                 Measures.WRS.equipment= visit.Measures.(meas{f}).equipment;
-%                 Measures.WRS.comments = visit.Measures.(meas{f}).comments;
-%             end
-%
-%         % Check for ACT Data
-%         elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
-%             try
-%                 Measures.ACT = visit.Measures.ACT;
-%             catch
-%                 warning("Does not have ACT info")
-%             end
-%
-%         % Check for WBT Data
-%         elseif contains(meas{f}, 'WBT', 'IgnoreCase', 1)
-%             Measures.WBT.R = visit.Measures.(meas{f}).R;
-%             Measures.WBT.L = visit.Measures.(meas{f}).L;
-%
-%             try
-%                 Measures.WBT.equipment = visit.Measures.(meas{f}).equipment;
-%                 Measures.WBT.commments = visit.Measures.(meas{f}).comments;
-%             catch
-%                 disp("Does not have WBT equipment info")
-%             end
-%
-%         % Check for Otoscopy Data
-%         elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
-%             Measures.Otoscopy.comments = visit.Measures.Otoscopy.comments;
-%             Measures.Otoscopy.equipment = visit.Measures.Otoscopy.equipment;
-%         end
-%     end
-% end
+% Set up VisitInfo from old visit file into new structure
+if isfield(visit, 'VisitInfo')
+    VisitInfo = visit.VisitInfo;
+    try
+        VisitInfo.testDate = visit.VisitInfo.testDate;
+    catch 
+        disp("Didn't work because of visit info test date")
+    end
+    % VisitInfo.referringLab = visit.VisitInfo.referringLab;
+    % VisitInfo.irbNumber = visit.VisitInfo.irbNumber;
+    % VisitInfo.ARDRsigned = visit.VisitInfo.ARDRsigned;
+    % VisitInfo.researcher = "";
+    % VisitInfo.researcherOther = "";
+    % VisitInfo.studyProtocol = "";
+    % VisitInfo.location = "";
+    % VisitInfo.room = "";
+    % VisitInfo.dateComplied = "";
+end
+
+
+% Data for each measure
+if isfield(visit, 'Measures')
+    meas = fieldnames(visit.Measures);
+    for f = 1:length(meas)
+
+        % Check For Audiogram Data
+        if contains(meas{f}, 'audio', 'IgnoreCase', 1)
+            Measures.Audiometry.AC.R = visit.Measures.(meas{f}).AC.R;
+            Measures.Audiometry.AC.L = visit.Measures.(meas{f}).AC.L;
+            Measures.Audiometry.BC.R = visit.Measures.(meas{f}).BC.R;
+            Measures.Audiometry.BC.L = visit.Measures.(meas{f}).BC.L;
+
+            if isfield(visit.Measures.(meas{f}), 'equipment')
+                Measures.Audiometry.equipment.AC_transducer = visit.Measures.(meas{f}).equipment.AC_transducer;
+                Measures.Audiometry.equipment.BC_transducer = visit.Measures.(meas{f}).equipment.BC_transducer;
+                Measures.Audiometry.equipment.AC_HardwareLimits = visit.Measures.(meas{f}).equipment.AC_HardwareLimits;
+                Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).equipment.BC_HardwareLimits;
+                Measures.Audiometry.equipment.device = visit.Measures.(meas{f}).equipment.device;
+                Measures.Audiometry.equipment.calibDate = visit.Measures.(meas{f}).equipment.calibDate;
+                Measures.Audiometry.equipment.serialNumber = visit.Measures.(meas{f}).equipment.serialNumber;
+                Measures.Audiometry.comments = visit.Measures.(meas{f}).comments;
+            else
+                Measures.Audiometry.equipment.AC_transducer = visit.Measures.(meas{f}).AC_transducer;
+                Measures.Audiometry.equipment.BC_transducer = visit.Measures.(meas{f}).BC_transducer;
+                Measures.Audiometry.equipment.AC_HardwareLimits = visit.Measures.(meas{f}).AC_HardwareLimits;
+                Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).BC_HardwareLimits;
+            end
+
+        % Check for QuickSIN Data
+        elseif contains(meas{f}, 'Quick', 'IgnoreCase', 1)
+            Measures.QuickSIN.R = visit.Measures.(meas{f}).R;
+            Measures.QuickSIN.L = visit.Measures.(meas{f}).L;
+            try
+                Measures.QuickSIN.Bin = visit.Measures.(meas{f}).Bin;
+            catch
+                Measures.QuickSIN.Bin = "";
+            end
+
+            Measures.QuickSIN.equipment.device = visit.Measures.(meas{f}).equipment.device;
+            Measures.QuickSIN.equipment.calibDate = visit.Measures.(meas{f}).equipment.calibDate;
+            Measures.QuickSIN.equipment.serialNumber = visit.Measures.(meas{f}).equipment.serialNumber;
+            Measures.QuickSIN.comments = visit.Measures.(meas{f}).comments;
+
+        % Check for DPOAE Data
+        elseif contains(meas{f}, 'dpoae', 'IgnoreCase', 1)
+            Measures.DPOAE.R = visit.Measures.(meas{f}).R;
+            Measures.DPOAE.L = visit.Measures.(meas{f}).L;
+            Measures.DPOAE.other.researcher  = visit.Measures.(meas{f}).other.researcher;
+            try
+                Measures.DPOAE.equipment = visit.Measures.(meas{f}).equipment;
+                Measures.DPOAE.comments = visit.Measures.(meas{f}).comments;
+            end
+
+        % Check for Reflexes Data
+        elseif contains(meas{f}, 'Reflex', 'IgnoreCase', 1)
+            Measures.Reflexes.ProbeR = visit.Measures.(meas{f}).ProbeR;
+            Measures.Reflexes.ProbeL = visit.Measures.(meas{f}).ProbeL;
+            try
+                Measures.Reflexes.equipment = visit.Measures.(meas{f}).equipment;
+            catch
+                disp("reflex data does not contain equipment info")
+            end
+
+            try
+                Measures.Reflexes.comments = visit.Measures.(meas{f}).comments;
+            catch
+                disp("reflex data does not contain comments")
+            end
+
+        % Check for WRS Data
+        elseif contains(meas{f}, 'WRS', 'IgnoreCase', 1)
+            Measures.WRS.R = visit.Measures.(meas{f}).R;
+            Measures.WRS.L = visit.Measures.(meas{f}).L;
+
+            try
+                Measures.WRS.equipment= visit.Measures.(meas{f}).equipment;
+                Measures.WRS.comments = visit.Measures.(meas{f}).comments;
+            end
+
+        % Check for ACT Data
+        elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
+            try
+                Measures.ACT = visit.Measures.ACT;
+            catch
+                warning("Does not have ACT info")
+            end
+
+        % Check for WBT Data
+        elseif contains(meas{f}, 'WBT', 'IgnoreCase', 1)
+            Measures.WBT.R = visit.Measures.(meas{f}).R;
+            Measures.WBT.L = visit.Measures.(meas{f}).L;
+
+            try
+                Measures.WBT.equipment = visit.Measures.(meas{f}).equipment;
+                Measures.WBT.commments = visit.Measures.(meas{f}).comments;
+            catch
+                disp("Does not have WBT equipment info")
+            end
+
+        % Check for Otoscopy Data
+        elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
+            Measures.Otoscopy.comments = visit.Measures.Otoscopy.comments;
+            Measures.Otoscopy.equipment = visit.Measures.Otoscopy.equipment;
+        end
+    end
+end
 
 
 % Create figure window
@@ -296,7 +315,7 @@ uicontrol(fig,'Style','text','String','room','Position',[20 320 labelboxwidth 20
 room = uicontrol(fig,'Style','edit','String',VisitInfo.room,'Position',[80 320 100 20]);
 
 uicontrol(fig,'Style','text','String','dateComplied','Position',[20 300 labelboxwidth 20],'HorizontalAlignment','left');
-dateCompiled = uicontrol(fig,'Style','edit','String',string(VisitInfo.dateComplied),'Position',[80 300 100 20]);
+dateCompiled = uicontrol(fig,'Style','edit','String',string(VisitInfo.dateCompiled),'Position',[80 300 100 20]);
 
 % ==== Audiometry ====
 uicontrol(fig,'Style','text','String','Audiometry','Position',[20 280 labelboxwidth 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
