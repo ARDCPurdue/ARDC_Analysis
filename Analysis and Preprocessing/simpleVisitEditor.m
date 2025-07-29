@@ -1,7 +1,7 @@
 function simpleVisitEditor()
 
 %%%%% STUFF TO EDIT FOR A USER %%%%%
-dataDir = "C:\Users\saman\Desktop\Code\ARDC_Analysis\";
+dataDir = "C:\Users\ARDC User\Desktop\ARDR Data\";
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Load .mat file (you can customize the path)
@@ -136,6 +136,7 @@ if isfield(visit, 'subjectID')
     VisitInfo.researcher = visit.researcher;
     try
         Subject.age = visit.Age;
+    end
 elseif isfield(visit, 'Subject')
     Subject.ID = visit.Subject.ID;
     Subject.age = visit.Subject.age;
@@ -149,54 +150,54 @@ if isfield(visit, 'VisitInfo')
     VisitInfo = visit.VisitInfo;
     try
         VisitInfo.testDate = visit.VisitInfo.testDate;
-    catch 
+    catch
         disp("Didn't work because of visit info test date")
     end
     try
         VisitInfo.referringLab = visit.VisitInfo.referringLab;
-    catch 
+    catch
         disp("Didn't work because of visit info referring lab")
     end
     try
         VisitInfo.irbNumber  = visit.VisitInfo.irbNumber;
-    catch 
+    catch
         disp("Didn't work because of visit info irb number")
     end
     try
         VisitInfo.ARDRsigned  = visit.VisitInfo.ARDRsigned;
-    catch 
+    catch
         disp("Didn't work because of visit info ARDR signed")
-    end   
+    end
     try
         VisitInfo.researcher  = visit.VisitInfo.researcher;
-    catch 
+    catch
         disp("Didn't work because of visit info researcher")
-    end 
+    end
     try
         VisitInfo.researcherOther  = visit.VisitInfo.researcherOther;
-    catch 
+    catch
         disp("Didn't work because of visit info researcher other")
-    end 
+    end
     try
         VisitInfo.studyProtocol  = visit.VisitInfo.studyProtocol;
-    catch 
+    catch
         disp("Didn't work because of visit info study protocol")
-    end 
+    end
     try
         VisitInfo.location  = visit.VisitInfo.location;
-    catch 
+    catch
         disp("Didn't work because of visit info location")
-    end 
+    end
     try
         VisitInfo.room  = visit.VisitInfo.room;
-    catch 
+    catch
         disp("Didn't work because of visit info room")
-    end 
+    end
     try
         VisitInfo.dateCompiled  = visit.VisitInfo.dateCompiled;
-    catch 
+    catch
         disp("Didn't work because of visit info room")
-    end       
+    end
 end
 
 
@@ -206,18 +207,18 @@ disp("Retrieving Measures...")
 if isfield(visit, 'Measures')
     meas = fieldnames(visit.Measures); %% This method overwrites the origional initialized variables
     for f = 1:length(meas)
-
+        
         %Check For Audiogram Data
         %%%There is a 1x1 cell for comments that was initialized in
         %%%Measures.Audiometry
         if contains(meas{f}, 'audio', 'IgnoreCase', 1)
             disp("    Retieving Audiogram Data...")
-
+            
             Measures.Audiometry.AC.R = visit.Measures.(meas{f}).AC.R;
             Measures.Audiometry.AC.L = visit.Measures.(meas{f}).AC.L;
             Measures.Audiometry.BC.R = visit.Measures.(meas{f}).BC.R;
             Measures.Audiometry.BC.L = visit.Measures.(meas{f}).BC.L;
-
+            
             if isfield(visit.Measures.(meas{f}), 'equipment')
                 Measures.Audiometry.equipment.AC_transducer = visit.Measures.(meas{f}).equipment.AC_transducer;
                 Measures.Audiometry.equipment.BC_transducer = visit.Measures.(meas{f}).equipment.BC_transducer;
@@ -233,8 +234,8 @@ if isfield(visit, 'Measures')
                 Measures.Audiometry.equipment.AC_HardwareLimits = visit.Measures.(meas{f}).AC_HardwareLimits;
                 Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).BC_HardwareLimits;
             end
-
-        %Check for QuickSIN Data
+            
+            %Check for QuickSIN Data
         elseif contains(meas{f}, 'Quick', 'IgnoreCase', 1)
             disp("    Retrieving QuickSIN Data...")
             Measures.QuickSIN.R = visit.Measures.(meas{f}).R;
@@ -244,13 +245,13 @@ if isfield(visit, 'Measures')
             catch
                 Measures.QuickSIN.Bin = "";
             end
-
+            
             Measures.QuickSIN.equipment.device = visit.Measures.(meas{f}).equipment.device;
             Measures.QuickSIN.equipment.calibDate = visit.Measures.(meas{f}).equipment.calibDate;
             Measures.QuickSIN.equipment.serialNumber = visit.Measures.(meas{f}).equipment.serialNumber;
             Measures.QuickSIN.comments = visit.Measures.(meas{f}).comments;
-
-        % Check for DPOAE Data
+            
+            % Check for DPOAE Data
         elseif contains(meas{f}, 'dpoae', 'IgnoreCase', 1)
             disp("    Retrieving DPOAE Data...")
             Measures.DPOAE.R = visit.Measures.(meas{f}).R;
@@ -260,8 +261,8 @@ if isfield(visit, 'Measures')
                 Measures.DPOAE.equipment = visit.Measures.(meas{f}).equipment;
                 Measures.DPOAE.comments = visit.Measures.(meas{f}).comments;
             end
-
-        % Check for Reflexes Data
+            
+            % Check for Reflexes Data
         elseif contains(meas{f}, 'Reflex', 'IgnoreCase', 1)
             disp("    Retrieving Reflexes Data...")
             Measures.Reflexes.ProbeR = visit.Measures.(meas{f}).ProbeR;
@@ -271,81 +272,81 @@ if isfield(visit, 'Measures')
             catch
                 disp("reflex data does not contain equipment info")
             end
-
+            
             try
                 Measures.Reflexes.comments = visit.Measures.(meas{f}).comments;
             catch
                 disp("reflex data does not contain comments")
             end
-
-        % Check for WRS Data
+            
+            % Check for WRS Data
         elseif contains(meas{f}, 'WRS', 'IgnoreCase', 1)
             disp("    Retrieving WRS Data...")
             Measures.WRS.R = visit.Measures.(meas{f}).R;
             Measures.WRS.L = visit.Measures.(meas{f}).L;
-
+            
             try
                 Measures.WRS.equipment= visit.Measures.(meas{f}).equipment;
                 Measures.WRS.comments = visit.Measures.(meas{f}).comments;
             end
-%%% This section is overwriting the origional initialized variables. When
-%%% ACT is present in the comment it removes the scores so it cannot be
-%%% plotted later
-
-        % Check for ACT Data
+            %%% This section is overwriting the origional initialized variables. When
+            %%% ACT is present in the comment it removes the scores so it cannot be
+            %%% plotted later
+            
+            % Check for ACT Data
         elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
             disp("    Retrieving ACT Data...")
-            try 
+            try
                 Measures.ACT.scores = visit.Measures.ACT.scores; %not real
             catch
                 Measures.ACT.scores = "";
             end
-            try 
+            try
                 Measures.ACT.comments = visit.Measures.ACT.comments;
             catch
                 Measures.ACT.comments = "";
             end
-            try 
+            try
                 Measures.ACT.equipment.device = visit.Measures.ACT.equipment.device;
             catch
                 Measures.ACT.equipment.device = "";
             end
-            try 
+            try
                 Measures.ACT.equipment.calibDate = visit.Measures.ACT.equipment.calibDate;
             catch
                 Measures.ACT.equipment.calibDate = "";
             end
-            try 
+            try
                 Measures.ACT.equipment.serialNumber = visit.Measures.ACT.equipment.serialNumber;
             catch
                 Measures.ACT.equipment.serialNumber = "";
             end
-
+            
             % try
             %     Measures.ACT = visit.Measures.ACT;
             % catch
             %     warning("Does not have ACT info")
-            % 
+            %
             % end
-
-        %Check for WBT Data
+            
+            %Check for WBT Data
         elseif contains(meas{f}, 'WBT', 'IgnoreCase', 1)
             disp("    Retrieving WBT Data...")
             Measures.WBT.R = visit.Measures.(meas{f}).R;
             Measures.WBT.L = visit.Measures.(meas{f}).L;
-
+            
             try
                 Measures.WBT.equipment = visit.Measures.(meas{f}).equipment;
                 Measures.WBT.comments = visit.Measures.(meas{f}).comments;
             catch
                 disp("Does not have WBT equipment info")
             end
-
-        % % Check for Otoscopy Data Error
-        % elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
-        %     disp("    Retrieving Otoscopy Data...")
-        %     Measures.Otoscopy.comments = visit.Measures.Otoscopy.comments;
-        %     Measures.Otoscopy.equipment = visit.Measures.Otoscopy.equipment;
+            
+            % % Check for Otoscopy Data Error
+            % elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
+            %     disp("    Retrieving Otoscopy Data...")
+            %     Measures.Otoscopy.comments = visit.Measures.Otoscopy.comments;
+            %     Measures.Otoscopy.equipment = visit.Measures.Otoscopy.equipment;
         end
     end
 end
@@ -468,10 +469,10 @@ MEMRcomments = uicontrol(fig,'Style','edit','String', Measures.Reflexes.comments
 uicontrol(fig,'Style','text','String','ACT','Position',[600 210 140 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
 %%E Error
 uicontrol(fig,'Style', 'text', 'String','Trial 1', 'Position', [600 190 140 20], 'HorizontalAlignment','left');
-ACTTrialOne = uicontrol(fig,'Style','edit', 'String', Measures.ACT.scores, 'Position',[630 190 30 20]); 
+ACTTrialOne = uicontrol(fig,'Style','edit', 'String', Measures.ACT.scores, 'Position',[630 190 30 20]);
 
 uicontrol(fig,'Style', 'text', 'String','Trial 2', 'Position', [660 190 140 20], 'HorizontalAlignment','left');
-ACTTrialTwo = uicontrol(fig,'Style','edit', 'String', Measures.ACT.scores, 'Position',[690 190 30 20]); 
+ACTTrialTwo = uicontrol(fig,'Style','edit', 'String', Measures.ACT.scores, 'Position',[690 190 30 20]);
 
 uicontrol(fig,'Style', 'text', 'String','One Trial Only', 'Position', [720 190 140 20], 'HorizontalAlignment','left');
 ACTSingleTrial = uicontrol(fig,'Style','checkbox', 'Position', [790 190 140 20]);
@@ -480,13 +481,13 @@ uicontrol(fig,'Style', 'text', 'String','CNT', 'Position', [810 190 140 20], 'Ho
 ACTCNT = uicontrol(fig,'Style','checkbox', 'Position', [840 190 140 20]);
 
 uicontrol(fig,'Style', 'text', 'String','Equipment', 'Position', [600 170 140 20], 'HorizontalAlignment','left');
-ACTEquipment = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.device, 'Position',[660 170 100 20]); 
+ACTEquipment = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.device, 'Position',[660 170 100 20]);
 
 uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [760 170 140 20], 'HorizontalAlignment','left');
-ACTCalib = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.calibDate, 'Position',[790 170 65 20]); 
+ACTCalib = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.calibDate, 'Position',[790 170 65 20]);
 
 uicontrol(fig,'Style', 'text', 'String','Serial #', 'Position', [600 150 140 20], 'HorizontalAlignment','left');
-ACTSerialNum = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.serialNumber, 'Position',[660 150 100 20]); 
+ACTSerialNum = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.serialNumber, 'Position',[660 150 100 20]);
 
 uicontrol(fig,'Style','text','String','old comments','Position',[600 130 140 20],'HorizontalAlignment','left');
 ACToldComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 'Position', [600 60 120 70]);
@@ -535,114 +536,112 @@ WBTEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WBT.e
 
 % ==== QuickSIN ====
 
-    uicontrol(fig,'Style', 'text', 'String', 'QuickSIN', 'Position', [880 570 60 20], 'HorizontalAlignment','left','FontWeight','bold');
+uicontrol(fig,'Style', 'text', 'String', 'QuickSIN', 'Position', [880 570 60 20], 'HorizontalAlignment','left','FontWeight','bold');
 
-    uicontrol(fig,'Style', 'text', 'String','RE QuickSIN', 'Position', [880 550 150 boxheight], 'HorizontalAlignment','left', 'ForegroundColor', 'red');
-    RquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.R, 'Position',[945 550 30 boxheight]); 
+uicontrol(fig,'Style', 'text', 'String','RE QuickSIN', 'Position', [880 550 150 boxheight], 'HorizontalAlignment','left', 'ForegroundColor', 'red');
+RquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.R, 'Position',[945 550 30 boxheight]);
 
-    uicontrol(fig,'Style', 'text', 'String','DNT', 'Position',[980 550 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'red');
-    RquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 550 25 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','DNT', 'Position',[980 550 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'red');
+RquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 550 25 boxheight]);
 
-    uicontrol(fig,'Style', 'text', 'String','Equip', 'Position',[1025 550 150 boxheight], 'HorizontalAlignment','left');
-    QSequipdevice = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.device, 'Position',[1060 550 110 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','Equip', 'Position',[1025 550 150 boxheight], 'HorizontalAlignment','left');
+QSequipdevice = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.device, 'Position',[1060 550 110 boxheight]);
 
-    uicontrol(fig, 'Style', 'text', 'String','LE QuickSIN', 'Position', [880 530 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'blue');
-    LquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.L, 'Position',[945 530 30 boxheight]); 
+uicontrol(fig, 'Style', 'text', 'String','LE QuickSIN', 'Position', [880 530 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'blue');
+LquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.L, 'Position',[945 530 30 boxheight]);
 
-    uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [980 530 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'blue');
-    LquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 530 25 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [980 530 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'blue');
+LquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 530 25 boxheight]);
 
-    uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [1025 530 150 boxheight], 'HorizontalAlignment','left');
-    QSequipcalib = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.calibDate, 'Position',[1060 530 110 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [1025 530 150 boxheight], 'HorizontalAlignment','left');
+QSequipcalib = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.calibDate, 'Position',[1060 530 110 boxheight]);
 
-    uicontrol(fig, 'Style', 'text', 'String','Bin QuickSIN', 'Position', [880 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
-    BquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.Bin, 'Position',[945 510 30 boxheight]);
+uicontrol(fig, 'Style', 'text', 'String','Bin QuickSIN', 'Position', [880 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
+BquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.Bin, 'Position',[945 510 30 boxheight]);
 
-    uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [980 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
-    BquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 510 25 boxheight]);
-    
-    uicontrol(fig,'Style', 'text', 'String','Serial#', 'Position', [1025 510 150 boxheight], 'HorizontalAlignment','left');
-    QSequipSN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.serialNumber, 'Position',[1060 510 110 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [980 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
+BquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 510 25 boxheight]);
 
-    uicontrol(fig,'Style', 'text', 'String','Comments', 'Position', [880 490 150 boxheight], 'HorizontalAlignment','left');
-    QScomments = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.comments, 'Position',[945 470 225 40]);
+uicontrol(fig,'Style', 'text', 'String','Serial#', 'Position', [1025 510 150 boxheight], 'HorizontalAlignment','left');
+QSequipSN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.serialNumber, 'Position',[1060 510 110 boxheight]);
 
-
-    % ==== WRS ==== % 
-    uicontrol(fig,'Style', 'text', 'String', 'WRS', 'Position', [880 450 60 20], 'HorizontalAlignment','left', 'FontWeight', 'bold');
-
-    uicontrol(fig,'Style', 'text', 'String','Right Ear:', 'Position', [880 430 60 20], 'HorizontalAlignment','left', 'ForegroundColor','red');
-    
-    
-    uicontrol(fig,'Style', 'text', 'String','List', 'Position', [930 430 60 20], 'HorizontalAlignment','left');
-    RwrsList = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.list, 'Position',[950 430 100 20]);
-
-    uicontrol(fig,'Style', 'text', 'String','by diff', 'Position', [1060 430 150 boxheight], 'HorizontalAlignment','left');
-    RwrsListDiff = uicontrol(fig,'Style','checkbox', 'Position',[1090 430 25 boxheight]);
-
-    uicontrol(fig,'Style', 'text', 'String','List #', 'Position', [1110 430 150 boxheight], 'HorizontalAlignment','left');
-    RwrsListNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.listNumber, 'Position',[1140 430 25 boxheight]);
-
-    uicontrol(fig,'Style', 'text', 'String','Speech Level', 'Position', [880 410 150 boxheight], 'HorizontalAlignment','left');
-    RwrsSLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.speechLevel, 'Position',[950 410 50 20]);
-
-    uicontrol(fig,'Style', 'text', 'String','Masking Level', 'Position', [1005 410 150 boxheight], 'HorizontalAlignment','left');
-    RwrsMlevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.maskingLevel, 'Position',[1080 410 50 20]);
-    
-    uicontrol(fig,'Style', 'text', 'String','# correct', 'Position', [880 390 150 boxheight], 'HorizontalAlignment','left');
-    RwrsNumCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.numberWordCorrect, 'Position',[930 390 50 20]);
-
-    uicontrol(fig,'Style', 'text', 'String','total #', 'Position', [990 390 150 boxheight], 'HorizontalAlignment','left');
-    RwrsTotalNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.totalWordsPresented, 'Position',[1020 390 50 20]);
-
-    uicontrol(fig,'Style', 'text', 'String','% correct', 'Position', [1080 390 150 boxheight], 'HorizontalAlignment','left');
-    RwrsPercentCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.percentCorrect, 'Position',[1130 390 50 20]);
+uicontrol(fig,'Style', 'text', 'String','Comments', 'Position', [880 490 150 boxheight], 'HorizontalAlignment','left');
+QScomments = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.comments, 'Position',[945 470 225 40]);
 
 
-    uicontrol(fig,'Style', 'text', 'String','Left Ear:', 'Position', [880 350 60 20], 'HorizontalAlignment','left','ForegroundColor', 'blue');
-   
+% ==== WRS ==== %
+uicontrol(fig,'Style', 'text', 'String', 'WRS', 'Position', [880 450 60 20], 'HorizontalAlignment','left', 'FontWeight', 'bold');
 
-    uicontrol(fig,'Style', 'text', 'String','List', 'Position', [930 350 60 20], 'HorizontalAlignment','left');
-    LwrsList = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.list, 'Position',[950 350 100 20]);
-
-    uicontrol(fig,'Style', 'text', 'String','by diff', 'Position', [1060 350 150 boxheight], 'HorizontalAlignment','left');
-    LwrsListDiff = uicontrol(fig,'Style','checkbox', 'Position',[1090 350 25 boxheight]);
-
-    uicontrol(fig,'Style', 'text', 'String','List #', 'Position', [1110 350 150 boxheight], 'HorizontalAlignment','left');
-    LwrsListNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.listNumber, 'Position',[1140 350 25 boxheight]);
-
-    uicontrol(fig,'Style', 'text', 'String','Speech Level', 'Position', [880 330 150 boxheight], 'HorizontalAlignment','left');
-    LwrsSLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.speechLevel, 'Position',[950 330 50 20]);
-
-    uicontrol(fig,'Style', 'text', 'String','Masking Level', 'Position', [1005 330 150 boxheight], 'HorizontalAlignment','left');
-    LwrsMLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.maskingLevel, 'Position',[1080 330 50 20]);
-    
-    uicontrol(fig,'Style', 'text', 'String','# correct', 'Position', [880 310 150 boxheight], 'HorizontalAlignment','left');
-    LwrsNumCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.numberWordCorrect, 'Position',[930 310 50 20]);
-
-    uicontrol(fig,'Style', 'text', 'String','total #', 'Position', [990 310 150 boxheight], 'HorizontalAlignment','left');
-    LwrsTotalNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.totalWordsPresented, 'Position',[1020 310 50 20]);
-
-    uicontrol(fig,'Style', 'text', 'String','% correct', 'Position', [1080 310 150 boxheight], 'HorizontalAlignment','left');
-    LwrsPercentCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.percentCorrect, 'Position',[1130 310 50 20]);
+uicontrol(fig,'Style', 'text', 'String','Right Ear:', 'Position', [880 430 60 20], 'HorizontalAlignment','left', 'ForegroundColor','red');
 
 
-    uicontrol(fig,'Style','text','String','Equipment','Position',[880 280 60 20],'HorizontalAlignment','left');
-    WRSEquipment = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.device,'Position',[940 280 120 20]);
+uicontrol(fig,'Style', 'text', 'String','List', 'Position', [930 430 60 20], 'HorizontalAlignment','left');
+RwrsList = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.list, 'Position',[950 430 100 20]);
 
-    uicontrol(fig,'Style','text','String','Calib Date','Position',[880 260 60 20],'HorizontalAlignment','left');
-    WRSEquipmentCalibDate = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.calibDate,'Position',[940 260 120 20]);
+uicontrol(fig,'Style', 'text', 'String','by diff', 'Position', [1060 430 150 boxheight], 'HorizontalAlignment','left');
+RwrsListDiff = uicontrol(fig,'Style','checkbox', 'Position',[1090 430 25 boxheight]);
 
-    uicontrol(fig,'Style','text','String','Serial #','Position',[880 240 60 20],'HorizontalAlignment','left');
-    WRSEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.serialNumber,'Position',[940 240 120 20]);
+uicontrol(fig,'Style', 'text', 'String','List #', 'Position', [1110 430 150 boxheight], 'HorizontalAlignment','left');
+RwrsListNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.listNumber, 'Position',[1140 430 25 boxheight]);
 
-    uicontrol(fig,'Style','text','String','WRS Comment','Position',[1070 280 100 20],'HorizontalAlignment','left');
-    WRSComments = uicontrol(fig,'Style','edit','String', Measures.WRS.comments,'Position',[1070 220 110 60]);
+uicontrol(fig,'Style', 'text', 'String','Speech Level', 'Position', [880 410 150 boxheight], 'HorizontalAlignment','left');
+RwrsSLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.speechLevel, 'Position',[950 410 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','Masking Level', 'Position', [1005 410 150 boxheight], 'HorizontalAlignment','left');
+RwrsMlevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.maskingLevel, 'Position',[1080 410 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','# correct', 'Position', [880 390 150 boxheight], 'HorizontalAlignment','left');
+RwrsNumCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.numberWordCorrect, 'Position',[930 390 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','total #', 'Position', [990 390 150 boxheight], 'HorizontalAlignment','left');
+RwrsTotalNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.totalWordsPresented, 'Position',[1020 390 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','% correct', 'Position', [1080 390 150 boxheight], 'HorizontalAlignment','left');
+RwrsPercentCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.percentCorrect, 'Position',[1130 390 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','Left Ear:', 'Position', [880 350 60 20], 'HorizontalAlignment','left','ForegroundColor', 'blue');
+
+uicontrol(fig,'Style', 'text', 'String','List', 'Position', [930 350 60 20], 'HorizontalAlignment','left');
+LwrsList = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.list, 'Position',[950 350 100 20]);
+
+uicontrol(fig,'Style', 'text', 'String','by diff', 'Position', [1060 350 150 boxheight], 'HorizontalAlignment','left');
+LwrsListDiff = uicontrol(fig,'Style','checkbox', 'Position',[1090 350 25 boxheight]);
+
+uicontrol(fig,'Style', 'text', 'String','List #', 'Position', [1110 350 150 boxheight], 'HorizontalAlignment','left');
+LwrsListNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.listNumber, 'Position',[1140 350 25 boxheight]);
+
+uicontrol(fig,'Style', 'text', 'String','Speech Level', 'Position', [880 330 150 boxheight], 'HorizontalAlignment','left');
+LwrsSLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.speechLevel, 'Position',[950 330 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','Masking Level', 'Position', [1005 330 150 boxheight], 'HorizontalAlignment','left');
+LwrsMLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.maskingLevel, 'Position',[1080 330 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','# correct', 'Position', [880 310 150 boxheight], 'HorizontalAlignment','left');
+LwrsNumCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.numberWordCorrect, 'Position',[930 310 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','total #', 'Position', [990 310 150 boxheight], 'HorizontalAlignment','left');
+LwrsTotalNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.totalWordsPresented, 'Position',[1020 310 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','% correct', 'Position', [1080 310 150 boxheight], 'HorizontalAlignment','left');
+LwrsPercentCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.percentCorrect, 'Position',[1130 310 50 20]);
 
 
-    % ==== SUBMIT BUTTON ====
-    uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 150 40],...
-        'Callback', @(src, event)submitCallback());
+uicontrol(fig,'Style','text','String','Equipment','Position',[880 280 60 20],'HorizontalAlignment','left');
+WRSEquipment = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.device,'Position',[940 280 120 20]);
+
+uicontrol(fig,'Style','text','String','Calib Date','Position',[880 260 60 20],'HorizontalAlignment','left');
+WRSEquipmentCalibDate = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.calibDate,'Position',[940 260 120 20]);
+
+uicontrol(fig,'Style','text','String','Serial #','Position',[880 240 60 20],'HorizontalAlignment','left');
+WRSEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.serialNumber,'Position',[940 240 120 20]);
+
+uicontrol(fig,'Style','text','String','WRS Comment','Position',[1070 280 100 20],'HorizontalAlignment','left');
+WRSComments = uicontrol(fig,'Style','edit','String', Measures.WRS.comments,'Position',[1070 220 110 60]);
+
+
+% ==== SUBMIT BUTTON ====
+uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 150 40],...
+    'Callback', @(src, event)submitCallback());
 
 
 % ==== CALLBACK FUNCTION ====
@@ -652,11 +651,11 @@ WBTEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WBT.e
         visit2.Subject.age = str2double(age.String);
         visit2.Subject.gender = gender.String;
         visit2.Subject.amplification = amplification.String;
-
+        
         visit2.VisitInfo.testDate = testDate.String;
         visit2.VisitInfo.referringLab = referringLab.String;
         visit2.VisitInfo.irbNumber = irbNumber.String;
-
+        
         % Save updated struct back to file
         %save(fullfile(path, 'New\', file), 'visit');
         msgbox('visit data saved successfully!', 'Success');
