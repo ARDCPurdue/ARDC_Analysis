@@ -127,20 +127,22 @@ Measures.WBT.equipment.serialNumber = "";
 
 Measures.Otoscopy.comments = "";
 Measures.Otoscopy.equipment = "";
-
+%%
 % ===== Fill in what's there from orig visit ====
 % Set up Subject information from old visit file into new structure
 disp("Retrieving Subject Info...")
 if isfield(visit, 'subjectID')
     Subject.ID = visit.subjectID;
     VisitInfo.researcher = visit.researcher;
+    try
+        Subject.age = visit.Age;
 elseif isfield(visit, 'Subject')
     Subject.ID = visit.Subject.ID;
     Subject.age = visit.Subject.age;
     Subject.gender = visit.Subject.gender;
     Subject.amplification = visit.Subject.amplification;
 end
-
+%%
 % Set up VisitInfo from old visit file into new structure
 disp("Retrieving Visit Info...")
 if isfield(visit, 'VisitInfo')
@@ -202,7 +204,7 @@ end
 disp("Retrieving Measures...")
 
 if isfield(visit, 'Measures')
-    meas = fieldnames(visit.Measures);
+    meas = fieldnames(visit.Measures); %% This method overwrites the origional initialized variables
     for f = 1:length(meas)
 
         %Check For Audiogram Data
@@ -289,16 +291,44 @@ if isfield(visit, 'Measures')
 %%% This section is overwriting the origional initialized variables. When
 %%% ACT is present in the comment it removes the scores so it cannot be
 %%% plotted later
-        % % Check for ACT Data
-        % elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
-        %     disp("    Retrieving ACT Data...")
-        %     try
-        %         Measures.ACT = visit.Measures.ACT;
-        %     catch
-        %         warning("Does not have ACT info")
-        %     end
 
-        % Check for WBT Data
+        % Check for ACT Data
+        elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
+            disp("    Retrieving ACT Data...")
+            try 
+                Measures.ACT.scores = visit.Measures.ACT.scores; %not real
+            catch
+                Measures.ACT.scores = "";
+            end
+            try 
+                Measures.ACT.comments = visit.Measures.ACT.comments;
+            catch
+                Measures.ACT.comments = "";
+            end
+            try 
+                Measures.ACT.equipment.device = visit.Measures.ACT.equipment.device;
+            catch
+                Measures.ACT.equipment.device = "";
+            end
+            try 
+                Measures.ACT.equipment.calibDate = visit.Measures.ACT.equipment.calibDate;
+            catch
+                Measures.ACT.equipment.calibDate = "";
+            end
+            try 
+                Measures.ACT.equipment.serialNumber = visit.Measures.ACT.equipment.serialNumber;
+            catch
+                Measures.ACT.equipment.serialNumber = "";
+            end
+
+            % try
+            %     Measures.ACT = visit.Measures.ACT;
+            % catch
+            %     warning("Does not have ACT info")
+            % 
+            % end
+
+        %Check for WBT Data
         elseif contains(meas{f}, 'WBT', 'IgnoreCase', 1)
             disp("    Retrieving WBT Data...")
             Measures.WBT.R = visit.Measures.(meas{f}).R;
@@ -311,7 +341,7 @@ if isfield(visit, 'Measures')
                 disp("Does not have WBT equipment info")
             end
 
-        % % Check for Otoscopy Data
+        % % Check for Otoscopy Data Error
         % elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
         %     disp("    Retrieving Otoscopy Data...")
         %     Measures.Otoscopy.comments = visit.Measures.Otoscopy.comments;
@@ -463,12 +493,6 @@ ACToldComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 
 
 uicontrol(fig,'Style','text','String','new comments','Position',[740 130 140 20],'HorizontalAlignment','left')
 ACTnewComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 'Position', [740 60 120 70]);
-
-%Measures.ACT.scores = "";
-%Measures.ACT.comments = "";
-%Measures.ACT.equipment.device = "";
-%Measures.ACT.equipment.calibDate = "";
-%Measures.ACT.equipment.serialNumber = "";
 
 % ==== Otoscopy ====      %%%Error%%%
 uicontrol(fig,'Style','text','String','Otoscopy','Position',[1070 190 140 20],'HorizontalAlignment','left', 'FontWeight','bold');
