@@ -113,7 +113,7 @@ Measures.ACT.comments = "";
 Measures.ACT.equipment.device = "";
 Measures.ACT.equipment.calibDate = "";
 Measures.ACT.equipment.serialNumber = "";
-%%
+
 Measures.WBT.L.PRESSURE = "";
 Measures.WBT.L.FREQ = "";
 Measures.WBT.L.ABSORBANCE = "";
@@ -800,8 +800,8 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.QuickSIN.equipment.calibDate = QSequipcalib.String; %Type
         visit2.Measures.QuickSIN.equipment.serialNumber = QSequipSN.String; %Type
         visit2.Measures.QuickSIN.comments = QScomments.String;
-        
 
+        disp('    DPOAEs...')
         visit2.Measures.DPOAE.R.noisefloor = Measures.DPOAE.R.noisefloor;
         visit2.Measures.DPOAE.R.mean_response = Measures.DPOAE.R.mean_response;
         visit2.Measures.DPOAE.R.f1 = Measures.DPOAE.R.f1;
@@ -824,8 +824,54 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.DPOAE.equipment.serialNumber = DPOAEserialnum.String; %Type
         visit2.Measures.DPOAE.comments = DPOAEcomments.String;
 
+        disp('    MEME...')
+        visit2.Measures.Reflexes.Frequencies = [500 1e3 2e3 4e3];
+        visit2.Measures.Reflexes.ProbeR.Ipsi = Measures.Reflexes.ProbeR.Ipsi;
+        visit2.Measures.Reflexes.ProbeR.Contra = Measures.Reflexes.ProbeR.Contra;
+        visit2.Measures.Reflexes.ProbeL.Ipsi = Measures.Reflexes.ProbeL.Ipsi;
+        visit2.Measures.Reflexes.ProbeL.Contra = Measures.Reflexes.ProbeL.Contra;
+        visit2.Measures.Reflexes.equipment.device = MEMRequipment.String;
+        visit2.Measures.Reflexes.equipment.calibDate = MEMRcalibDate.String; %Type
+        visit2.Measures.Reflexes.equipment.serialNumber = MEMRserialNum.String; %Type
+        visit2.Measures.Reflexes.comments = MEMRcomments.String;
 
+        disp('    WRS...') %add by difficulty checkbox
+        visit2.Measures.WRS.R.speechLevel = RwrsSLevel.String; %Type;
+        visit2.Measures.WRS.R.maskingLevel = RwrsMlevel.String; %Type
+        visit2.Measures.WRS.R.numberWordCorrect = RwrsNumCorrect.String; %Type
+        visit2.Measures.WRS.R.totalWordsPresented = RwrsTotalNum.String; %Type
+        visit2.Measures.WRS.R.list = RwrsList.String;
+        visit2.Measures.WRS.R.listNumber = RwrsListNum.String; %Type
+        visit2.Measures.WRS.R.percentCorrect = RwrsPercentCorrect.String; %Type
+        visit2.Measures.WRS.L.speechLevel = LwrsSLevel.String; %Type
+        visit2.Measures.WRS.L.maskingLevel = LwrsMLevel.String; %Type;
+        visit2.Measures.WRS.L.numberWordCorrect = LwrsNumCorrect.String; %Type;
+        visit2.Measures.WRS.L.totalWordsPresented = LwrsTotalNum.String; %Type;
+        visit2.Measures.WRS.L.list = LwrsList.String;
+        visit2.Measures.WRS.L.listNumber = LwrsListNum.String; %Type
+        visit2.Measures.WRS.L.percentCorrect = LwrsPercentCorrect.String; %Type
+        visit2.Measures.WRS.equipment.device = WRSEquipment.String;
+        visit2.Measures.WRS.equipment.calibDate = WRSEquipmentCalibDate.String; %Type
+        visit2.Measures.WRS.equipment.serialNumber = WRSEquipmentSerialNumber.String; %Type
+        visit2.Measures.WRS.comments = WRSComments.String;
 
+        disp('    ACT...') 
+        visit2.Measures.ACT.scores = ""; %% need to add this
+        visit2.Measures.ACT.comments = ""; %% need to add this (old and new)
+        visit2.Measures.ACT.equipment.device = ACTEquipment.String;
+        visit2.Measures.ACT.equipment.calibDate = ACTCalib.String; %Type
+        visit2.Measures.ACT.equipment.serialNumber = ACTSerialNum.String; %Type
+
+        visit2.Measures.WBT.L.PRESSURE = Measures.WBT.L.PRESSURE;
+        visit2.Measures.WBT.L.FREQ = Measures.WBT.L.FREQ;
+        visit2.Measures.WBT.L.ABSORBANCE = "";
+        visit2.Measures.WBT.R.PRESSURE = "";
+        visit2.Measures.WBT.R.FREQ = "";
+        visit2.Measures.WBT.R.ABSORBANCE = "";
+        visit2.Measures.WBT.comments = "";
+        visit2.Measures.WBT.equipment.device = "";
+        visit2.Measures.WBT.equipment.calibDate = "";
+        visit2.Measures.WBT.equipment.serialNumber = "";
 
 
         visit3 = visit2;
@@ -835,6 +881,42 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         msgbox('visit data saved successfully!', 'Success');
     end
 end
+
+
+
+
+
+% uicontrol(fig,'Style','text','String','Pressure','Position',[880 170 60 20],'HorizontalAlignment','left');
+% WBTpressureL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.PRESSURE,'Position',[940 170 60 20]);
+% WBTpressureR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.PRESSURE,'Position',[1000 170 60 20]);
+% 
+% uicontrol(fig,'Style','text','String','Freq','Position',[880 150 60 20],'HorizontalAlignment','left');
+% WBTfreqL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.FREQ,'Position',[940 150 60 20]);
+% WBTfreqR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.FREQ,'Position',[1000 150 60 20]);
+% 
+% uicontrol(fig,'Style','text','String','Absorbance','Position',[880 130 60 20],'HorizontalAlignment','left');
+% WBTabsorbanceL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.ABSORBANCE,'Position',[940 130 60 20]);
+% WBTabsorbanceR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.ABSORBANCE,'Position',[1000 130 60 20]);
+% 
+% 
+% uicontrol(fig,'Style','text','String','Comment','Position',[880 100 60 20],'HorizontalAlignment','left');
+% WBTComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[940 100 120 20]);
+% 
+% uicontrol(fig,'Style','text','String','Equipment','Position',[880 80 60 20],'HorizontalAlignment','left');
+% WBTEquipment = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.device,'Position',[940 80 120 20]);
+% 
+% uicontrol(fig,'Style','text','String','Calib Date','Position',[880 60 60 20],'HorizontalAlignment','left');
+% WBTEquipmentCalibDate = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.calibDate,'Position',[940 60 120 20]);
+% 
+% uicontrol(fig,'Style','text','String','Serial #','Position',[880 40 60 20],'HorizontalAlignment','left');
+% WBTEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.serialNumber,'Position',[940 40 120 20]);
+
+
+
+
+
+
+
 
 
 

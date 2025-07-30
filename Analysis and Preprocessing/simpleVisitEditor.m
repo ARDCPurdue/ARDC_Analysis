@@ -113,7 +113,7 @@ Measures.ACT.comments = "";
 Measures.ACT.equipment.device = "";
 Measures.ACT.equipment.calibDate = "";
 Measures.ACT.equipment.serialNumber = "";
-%%
+
 Measures.WBT.L.PRESSURE = "";
 Measures.WBT.L.FREQ = "";
 Measures.WBT.L.ABSORBANCE = "";
@@ -835,8 +835,44 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.Reflexes.equipment.serialNumber = MEMRserialNum.String; %Type
         visit2.Measures.Reflexes.comments = MEMRcomments.String;
 
+        disp('    WRS...') %add by difficulty checkbox
+        visit2.Measures.WRS.R.speechLevel = RwrsSLevel.String; %Type;
+        visit2.Measures.WRS.R.maskingLevel = RwrsMlevel.String; %Type
+        visit2.Measures.WRS.R.numberWordCorrect = RwrsNumCorrect.String; %Type
+        visit2.Measures.WRS.R.totalWordsPresented = RwrsTotalNum.String; %Type
+        visit2.Measures.WRS.R.list = RwrsList.String;
+        visit2.Measures.WRS.R.listNumber = RwrsListNum.String; %Type
+        visit2.Measures.WRS.R.percentCorrect = RwrsPercentCorrect.String; %Type
+        visit2.Measures.WRS.L.speechLevel = LwrsSLevel.String; %Type
+        visit2.Measures.WRS.L.maskingLevel = LwrsMLevel.String; %Type;
+        visit2.Measures.WRS.L.numberWordCorrect = LwrsNumCorrect.String; %Type;
+        visit2.Measures.WRS.L.totalWordsPresented = LwrsTotalNum.String; %Type;
+        visit2.Measures.WRS.L.list = LwrsList.String;
+        visit2.Measures.WRS.L.listNumber = LwrsListNum.String; %Type
+        visit2.Measures.WRS.L.percentCorrect = LwrsPercentCorrect.String; %Type
+        visit2.Measures.WRS.equipment.device = WRSEquipment.String;
+        visit2.Measures.WRS.equipment.calibDate = WRSEquipmentCalibDate.String; %Type
+        visit2.Measures.WRS.equipment.serialNumber = WRSEquipmentSerialNumber.String; %Type
+        visit2.Measures.WRS.comments = WRSComments.String;
 
+        disp('    ACT...') 
+        visit2.Measures.ACT.scores = ""; %% need to add this
+        visit2.Measures.ACT.comments = ""; %% need to add this (old and new)
+        visit2.Measures.ACT.equipment.device = ACTEquipment.String;
+        visit2.Measures.ACT.equipment.calibDate = ACTCalib.String; %Type
+        visit2.Measures.ACT.equipment.serialNumber = ACTSerialNum.String; %Type
 
+        disp('    WBT...') %Some of these are not editable
+        visit2.Measures.WBT.L.PRESSURE = Measures.WBT.L.PRESSURE;
+        visit2.Measures.WBT.L.FREQ = Measures.WBT.L.FREQ;
+        visit2.Measures.WBT.L.ABSORBANCE = Measures.WBT.L.ABSORBANCE;
+        visit2.Measures.WBT.R.PRESSURE = Measures.WBT.R.PRESSURE;
+        visit2.Measures.WBT.R.FREQ = Measures.WBT.R.FREQ;
+        visit2.Measures.WBT.R.ABSORBANCE = Measures.WBT.R.ABSORBANCE;
+        visit2.Measures.WBT.comments = WBTComments.String;
+        visit2.Measures.WBT.equipment.device = WBTEquipment.String;
+        visit2.Measures.WBT.equipment.calibDate = WBTEquipmentCalibDate.String; %Type
+        visit2.Measures.WBT.equipment.serialNumber = WBTEquipmentSerialNumber.String; %Type
 
 
         visit3 = visit2;
@@ -846,6 +882,24 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         msgbox('visit data saved successfully!', 'Success');
     end
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
