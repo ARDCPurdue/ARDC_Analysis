@@ -794,13 +794,34 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
 
         disp('    QuickSIN...')
         visit2.Measures.QuickSIN.R = RquickSIN.String; %DNT Checkbox
-        visit2.Measures.QuickSIN.L = LquickSIN.String;
-        visit2.Measures.QuickSIN.Bin = "";
-        visit2.Measures.QuickSIN.equipment.device = QSequipdevice.String; %DNT Checkbox
-        visit2.Measures.QuickSIN.equipment.calibDate = "";
-        visit2.Measures.QuickSIN.equipment.serialNumber = "";
-        visit2.Measures.QuickSIN.comments = "";
+        visit2.Measures.QuickSIN.L = LquickSIN.String; %DNT Checkbox
+        visit2.Measures.QuickSIN.Bin = BquickSIN.String; %DNT Checkbox
+        visit2.Measures.QuickSIN.equipment.device = QSequipdevice.String; 
+        visit2.Measures.QuickSIN.equipment.calibDate = QSequipcalib.String; %Type
+        visit2.Measures.QuickSIN.equipment.serialNumber = QSequipSN.String; %Type
+        visit2.Measures.QuickSIN.comments = QScomments.String;
 
+        visit2.Measures.DPOAE.R.noisefloor = "";
+        visit2.Measures.DPOAE.R.mean_response = "";
+        visit2.Measures.DPOAE.R.f1 = "";
+        visit2.Measures.DPOAE.R.f2 = "";
+        visit2.Measures.DPOAE.R.DP = "";
+        visit2.Measures.DPOAE.R.f1_rec_dB = "";
+        visit2.Measures.DPOAE.R.f2_rec_dB = "";
+        visit2.Measures.DPOAE.R.fs = "";
+        visit2.Measures.DPOAE.L.noisefloor = "";
+        visit2.Measures.DPOAE.L.mean_response = "";
+        visit2.Measures.DPOAE.L.f1 = "";
+        visit2.Measures.DPOAE.L.f2 = "";
+        visit2.Measures.DPOAE.L.DP = "";
+        visit2.Measures.DPOAE.L.f1_rec_dB = "";
+        visit2.Measures.DPOAE.L.f2_rec_dB = "";
+        visit2.Measures.DPOAE.L.fs = "";
+        visit2.Measures.DPOAE.other.researcher  = DPOAEresearcher.String;
+        visit2.Measures.DPOAE.equipment.device = DPOAEdevice.String;
+        visit2.Measures.DPOAE.equipment.calibDate = DPOAEcalibDate.String; Type
+        visit2.Measures.DPOAE.equipment.serialNumber = DPOAEserialnum.;
+        visit2.Measures.DPOAE.comments = "";
 
 
 
@@ -818,21 +839,14 @@ end
 
 
 
-% uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [1025 530 150 boxheight], 'HorizontalAlignment','left');
-% QSequipcalib = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.calibDate, 'Position',[1060 530 110 boxheight]);
+% uicontrol(fig,'Style','text','String','Serial #','Position',[20 20 labelboxwidth 20],'HorizontalAlignment','left');
+% DPOAEserialnum = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.serialNumber,'Position',[80 20 100 20]);
 % 
-% uicontrol(fig, 'Style', 'text', 'String','Bin QuickSIN', 'Position', [880 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
-% BquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.Bin, 'Position',[945 510 30 boxheight]);
+% uicontrol(fig,'Style','text','String','DPOAEs Cont','Position',[200 570 labelboxwidth 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
 % 
-% uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [980 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
-% BquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 510 25 boxheight]);
-% 
-% uicontrol(fig,'Style', 'text', 'String','Serial#', 'Position', [1025 510 150 boxheight], 'HorizontalAlignment','left');
-% QSequipSN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.serialNumber, 'Position',[1060 510 110 boxheight]);
-% 
-% uicontrol(fig,'Style', 'text', 'String','Comments', 'Position', [880 490 150 boxheight], 'HorizontalAlignment','left');
-% QScomments = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.comments, 'Position',[945 470 225 40]);
-% 
+% uicontrol(fig,'Style','text','String','comments','Position',[200 550 labelboxwidth 20],'HorizontalAlignment','left');
+% DPOAEcomments = uicontrol(fig,'Style','edit','String', Measures.DPOAE.comments,'Position',[260 550 100 20]);
+
 
 
 

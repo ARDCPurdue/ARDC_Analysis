@@ -801,6 +801,27 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.QuickSIN.equipment.serialNumber = QSequipSN.String; %Type
         visit2.Measures.QuickSIN.comments = QScomments.String;
 
+        visit2.Measures.DPOAE.R.noisefloor = Measures.DPOAE.R.noisefloor;
+        visit2.Measures.DPOAE.R.mean_response = Measures.DPOAE.R.mean_response;
+        visit2.Measures.DPOAE.R.f1 = Measures.DPOAE.R.f1;
+        visit2.Measures.DPOAE.R.f2 = Measures.DPOAE.R.f2;
+        visit2.Measures.DPOAE.R.DP = Measures.DPOAE.R.DP;
+        visit2.Measures.DPOAE.R.f1_rec_dB = Measures.DPOAE.R.f1_rec_dB;
+        visit2.Measures.DPOAE.R.f2_rec_dB = Measures.DPOAE.R.f2_rec_dB;
+        visit2.Measures.DPOAE.R.fs = Measures.DPOAE.R.fs;
+        visit2.Measures.DPOAE.L.noisefloor = Measures.DPOAE.L.noisefloor;
+        visit2.Measures.DPOAE.L.mean_response = Measures.DPOAE.L.mean_response;
+        visit2.Measures.DPOAE.L.f1 = Measures.DPOAE.L.f1;
+        visit2.Measures.DPOAE.L.f2 = Measures.DPOAE.L.f2;
+        visit2.Measures.DPOAE.L.DP = Measures.DPOAE.L.DP;
+        visit2.Measures.DPOAE.L.f1_rec_dB = Measures.DPOAE.L.f1_rec_dB;
+        visit2.Measures.DPOAE.L.f2_rec_dB = Measures.DPOAE.L.f2_rec_dB;
+        visit2.Measures.DPOAE.L.fs = Measures.DPOAE.L.fs;
+        visit2.Measures.DPOAE.other.researcher  = DPOAEresearcher.String;
+        visit2.Measures.DPOAE.equipment.device = DPOAEdevice.String;
+        visit2.Measures.DPOAE.equipment.calibDate = DPOAEcalibDate.String; %Type
+        visit2.Measures.DPOAE.equipment.serialNumber = DPOAEserialnum.String; %Type
+        visit2.Measures.DPOAE.comments = DPOAEcomments.String;
 
 
 
@@ -813,6 +834,12 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         msgbox('visit data saved successfully!', 'Success');
     end
 end
+
+
+
+
+
+
 
 
 
