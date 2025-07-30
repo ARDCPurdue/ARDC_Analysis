@@ -251,12 +251,26 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             catch
                 Measures.QuickSIN.Bin = "";
             end
-            
-            Measures.QuickSIN.equipment.device = visit.Measures.(meas{f}).equipment.device;
-            Measures.QuickSIN.equipment.calibDate = visit.Measures.(meas{f}).equipment.calibDate;
-            Measures.QuickSIN.equipment.serialNumber = visit.Measures.(meas{f}).equipment.serialNumber;
-            Measures.QuickSIN.comments = visit.Measures.(meas{f}).comments;
-            
+            try
+                Measures.QuickSIN.equipment.device = visit.Measures.(meas{f}).equipment.device;
+            catch
+                disp('Measures.QuickSIN.equipment.device not obtained')
+            end 
+            try
+                Measures.QuickSIN.equipment.calibDate = visit.Measures.(meas{f}).equipment.calibDate;
+            catch
+                disp('Measures.QuickSIN.equipment.calibDate not obtained')
+            end
+            try
+                Measures.QuickSIN.equipment.serialNumber = visit.Measures.(meas{f}).equipment.serialNumber;
+            catch
+                disp('Measures.QuickSIN.equipment.serialNumber not found')
+            end
+            try
+                Measures.QuickSIN.comments = visit.Measures.(meas{f}).comments;
+            catch
+                disp('Measures.QuickSIN.comments not found')
+            end
             % Check for DPOAE Data
         elseif contains(meas{f}, 'dpoae', 'IgnoreCase', 1)
             disp("    Retrieving DPOAE Data...")
@@ -689,7 +703,7 @@ ACTnewComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 
 uicontrol(fig,'Style','text','String','Otoscopy','Position',[1070 190 140 20],'HorizontalAlignment','left', 'FontWeight','bold');
 
 uicontrol(fig,'Style','text','String','Equipment','Position',[1070 170 60 20],'HorizontalAlignment','left');
-otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment.device,'Position',[1070 150 100 20]);
+otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment,'Position',[1070 150 100 20]);
 
 uicontrol(fig,'Style','text','String','Comment','Position',[1070 130 60 20],'HorizontalAlignment','left');
 otoComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[1070 40 100 80]);
