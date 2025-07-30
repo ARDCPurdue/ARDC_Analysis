@@ -343,10 +343,10 @@ if isfield(visit, 'Measures')
             end
             
             % % Check for Otoscopy Data Error
-            % elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
-            %     disp("    Retrieving Otoscopy Data...")
-            %     Measures.Otoscopy.comments = visit.Measures.Otoscopy.comments;
-            %     Measures.Otoscopy.equipment = visit.Measures.Otoscopy.equipment;
+            elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
+                disp("    Retrieving Otoscopy Data...")
+                Measures.Otoscopy.comments = visit.Measures.Otoscopy.comments;
+                Measures.Otoscopy.equipment = visit.Measures.Otoscopy.equipment;
         end
     end
 end
@@ -499,7 +499,7 @@ ACTnewComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 
 uicontrol(fig,'Style','text','String','Otoscopy','Position',[1070 190 140 20],'HorizontalAlignment','left', 'FontWeight','bold');
 
 uicontrol(fig,'Style','text','String','Equipment','Position',[1070 170 60 20],'HorizontalAlignment','left');
-otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment,'Position',[1070 150 100 20]);
+otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment.device,'Position',[1070 150 100 20]);
 
 uicontrol(fig,'Style','text','String','Comment','Position',[1070 130 60 20],'HorizontalAlignment','left');
 otoComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[1070 40 100 80]);
