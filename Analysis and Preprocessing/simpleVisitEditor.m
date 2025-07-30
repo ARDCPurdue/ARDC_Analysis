@@ -359,6 +359,8 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
 end
 
 %% if the measures are stored in the visit. structure
+%%% i tried to set this up as an if, ifelse loop, but it was not working in
+%%% that format
 if isfield(visit, 'Audiogram');
     disp('    Retrieving Audiogram data...')
     try
@@ -401,7 +403,20 @@ if isfield(visit, 'Audiogram');
         Measures.Audiometry.equipment.BC_HardwareLimits = visit.Audiogram.BC_HardwareLimits;
     catch
         disp('Measures.Audiometry.equipment.BC_HardwareLimits not retrieved')
-    end       
+    end  
+end
+if isfield(visit, 'QuickSIN')
+    disp('    Retrieving QuickSIN data...')
+    try
+        Measures.QuickSIN.R = visit.QuickSIN.R;
+    catch
+        disp('Measures.QuickSIN.R not retrieved')
+    end  
+    try
+        Measures.QuickSIN.L = visit.QuickSIN.L;
+    catch
+        disp('Measures.QuickSIN.L not retrieved')
+    end  
 end
 %%
 
