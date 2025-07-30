@@ -358,7 +358,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
     end
 end
 
-%% if the measures are stored in the visit. structure
+%% if the measures are stored in the visit. structure ie. ARDC 37
 %%% i tried to set this up as an if, ifelse loop, but it was not working in
 %%% that format
 if isfield(visit, 'Audiogram');
@@ -417,6 +417,50 @@ if isfield(visit, 'QuickSIN')
     catch
         disp('Measures.QuickSIN.L not retrieved')
     end  
+end
+if isfield(visit, 'dpOAE')
+    try
+        Measures.DPOAE.R.noisefloor = visit.dpOAE.R.noisefloor;
+    catch
+        disp('Measures.DPOAE.R.noisefloor not retrieved')
+    end  
+    try
+        Measures.DPOAE.R.mean_response = visit.dpOAE.R.mean_response;
+    catch
+        disp('Measures.DPOAE.R.mean_response not retrieved')
+    end  
+    try
+        Measures.DPOAE.R.f1 = visit.dpOAE.R.f1;
+    catch
+        disp('Measures.DPOAE.R.f1 not retrieved')
+    end  
+    try
+        Measures.DPOAE.R.f2 = visit.dpOAE.R.f2;
+    catch
+        disp('Measures.DPOAE.R.f1 not retrieved')
+    end      
+
+
+
+% Measures.DPOAE.R.f1 = "";
+% Measures.DPOAE.R.f2 = "";
+% Measures.DPOAE.R.DP = "";
+% Measures.DPOAE.R.f1_rec_dB = "";
+% Measures.DPOAE.R.f2_rec_dB = "";
+% Measures.DPOAE.R.fs = "";
+% Measures.DPOAE.L.noisefloor = "";
+% Measures.DPOAE.L.mean_response = "";
+% Measures.DPOAE.L.f1 = "";
+% Measures.DPOAE.L.f2 = "";
+% Measures.DPOAE.L.DP = "";
+% Measures.DPOAE.L.f1_rec_dB = "";
+% Measures.DPOAE.L.f2_rec_dB = "";
+% Measures.DPOAE.L.fs = "";
+% Measures.DPOAE.other.researcher  = "";
+% Measures.DPOAE.equipment.device = "";
+% Measures.DPOAE.equipment.calibDate = "";
+% Measures.DPOAE.equipment.serialNumber = "";
+% Measures.DPOAE.comments = "";
 end
 %%
 
@@ -715,17 +759,61 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
 % ==== CALLBACK FUNCTION ====
     function submitCallback()
         % Update visit struct from GUI
+        disp('Saving Subject Info...')
         visit2.Subject.ID = subjID.String;
         visit2.Subject.age = str2double(age.String);
         visit2.Subject.gender = gender.String;
         visit2.Subject.amplification = amplification.String;
         
-        visit2.VisitInfo.testDate = testDate.String;
+        disp('Saving Visit Info...')
+        visit2.VisitInfo.testDate = datetime(testDate.String, 'InputFormat', 'MMddyyyy');
         visit2.VisitInfo.referringLab = referringLab.String;
-        visit2.VisitInfo.irbNumber = irbNumber.String;
-        
+        visit2.VisitInfo.irbNumber = irbNumber.String; %type?
+        visit2.VisitInfo.ARDRsigned = ARDRsigned.String; %type?
+        visit2.VisitInfo.researcher = researcher.String;
+        visit2.VisitInfo.researcherOther = researcherOther.String;
+        visit2.VisitInfo.studyProtocol = studyProtocol.String;
+        visit2.VisitInfo.location = location.String;
+        visit2.VisitInfo.room = room.String;
+        visit2.VisitInfo.dateCompiled = dateCompiled.String; %type
+
+        disp('Saving Measures...')
+        disp('    Audiometry...')
+        visit2.Measures.Audiometry.AC.R = Measures.Audiometry.AC.R;
+        visit2.Measures.Audiometry.AC.L = Measures.Audiometry.AC.L;
+        visit2.Measures.Audiometry.BC.R = Measures.Audiometry.BC.R;
+        visit2.Measures.Audiometry.BC.L = Measures.Audiometry.BC.L;
+        visit2.Measures.Audiometry.equipment.AC_transducer = AC_trans.String;
+        visit2.Measures.Audiometry.equipment.BC_transducer = BC_trans.String;
+        visit2.Measures.Audiometry.equipment.AC_HardwareLimits = AC_Limit.String;
+        visit2.Measures.Audiometry.equipment.BC_HardwareLimits = BC_Limit.String;
+        visit2.Measures.Audiometry.equipment.device = Auddevice.String;
+        visit2.Measures.Audiometry.equipment.calibDate = AudcalibDate.String; %Type
+        visit2.Measures.Audiometry.equipment.serialNumber = Audserialnum.String; %Type
+        visit2.Measures.Audiometry.comments = Audcomments.String;
+
+
+
+
+
+
+
+
+        visit3 = visit2;
+
         % Save updated struct back to file
         %save(fullfile(path, 'New\', file), 'visit');
         msgbox('visit data saved successfully!', 'Success');
     end
 end
+
+
+
+
+
+
+
+
+
+
+
