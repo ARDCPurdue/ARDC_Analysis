@@ -218,7 +218,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
         %%%There is a 1x1 cell for comments that was initialized in
         %%%Measures.Audiometry
         if contains(meas{f}, 'audio', 'IgnoreCase', 1)
-            disp("    Retieving Audiogram Data...")
+            disp("    Retrieving Audiogram Data...")
             
             Measures.Audiometry.AC.R = visit.Measures.(meas{f}).AC.R;
             Measures.Audiometry.AC.L = visit.Measures.(meas{f}).AC.L;
@@ -501,29 +501,41 @@ if isfield(visit, 'dpOAE')
     catch
         disp('Measures.DPOAE.L.f2_rec_dB not retrieved')
     end 
-
-
-    try
-        Measures.DPOAE.L.fs = visit.dpOAE.L.fs;
-    catch
-        disp('Measures.DPOAE.L.f2_rec_dB not retrieved')
-    end 
-
-
-% Measures.DPOAE.L.noisefloor = "";
-% Measures.DPOAE.L.mean_response = "";
-% Measures.DPOAE.L.f1 = "";
-% Measures.DPOAE.L.f2 = "";
-% Measures.DPOAE.L.DP = "";
-% Measures.DPOAE.L.f1_rec_dB = "";
-% Measures.DPOAE.L.f2_rec_dB = "";
-% Measures.DPOAE.L.fs = "";
-% Measures.DPOAE.other.researcher  = "";
-% Measures.DPOAE.equipment.device = "";
-% Measures.DPOAE.equipment.calibDate = "";
-% Measures.DPOAE.equipment.serialNumber = "";
-% Measures.DPOAE.comments = "";
 end
+
+if isfield(visit, 'WBT')
+    disp ('    WBT...')
+    try
+        Measures.WBT.L.PRESSURE = visit.WBT.L.PRESSURE;
+    catch
+        disp('Measures.WBT.L.PRESSURE not retrieved')
+    end
+    try
+        Measures.WBT.L.FREQ = visit.WBT.L.FREQ;
+    catch
+        disp('Measures.WBT.L.FREQ not retrieved')
+    end
+    try
+        Measures.WBT.L.ABSORBANCE = visit.WBT.L.ABSORBANCE;
+    catch
+        disp('Measures.WBT.L.FREQ not retrieved')
+    end
+
+    
+
+    
+end
+
+
+
+
+% Measures.WBT.R.PRESSURE = "";
+% Measures.WBT.R.FREQ = "";
+% Measures.WBT.R.ABSORBANCE = "";
+% Measures.WBT.comments = "";
+% Measures.WBT.equipment.device = "";
+% Measures.WBT.equipment.calibDate = "";
+% Measures.WBT.equipment.serialNumber = "";
 %%
 
 % Create figure window

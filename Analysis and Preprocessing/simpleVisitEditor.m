@@ -417,7 +417,9 @@ if isfield(visit, 'QuickSIN')
         disp('Measures.QuickSIN.L not retrieved')
     end  
 end
+%%
 if isfield(visit, 'dpOAE')
+    disp('    DPOAEs')
 %Right
     try
         Measures.DPOAE.R.noisefloor = visit.dpOAE.R.noisefloor;
@@ -502,6 +504,42 @@ if isfield(visit, 'dpOAE')
         disp('Measures.DPOAE.L.f2_rec_dB not retrieved')
     end 
 end
+
+if isfield(visit, 'WBT')
+    disp ('    WBT...')
+    try
+        Measures.WBT.L.PRESSURE = visit.WBT.L.PRESSURE;
+    catch
+        disp('Measures.WBT.L.PRESSURE not retrieved')
+    end
+    try
+        Measures.WBT.L.FREQ = visit.WBT.L.FREQ;
+    catch
+        disp('Measures.WBT.L.FREQ not retrieved')
+    end
+    try
+        Measures.WBT.L.ABSORBANCE = visit.WBT.L.ABSORBANCE;
+    catch
+        disp('Measures.WBT.L.FREQ not retrieved')
+    end
+
+    try
+        Measures.WBT.R.PRESSURE = visit.WBT.R.PRESSURE;
+    catch
+        disp('Measures.WBT.R.PRESSURE not retrieved')
+    end
+    try
+        Measures.WBT.R.FREQ = visit.WBT.R.FREQ;
+    catch
+        disp('Measures.WBT.R.FREQ not retrieved')
+    end
+    try
+        Measures.WBT.R.ABSORBANCE = visit.WBT.R.ABSORBANCE;
+    catch
+        disp('Measures.WBT.R.FREQ not retrieved')
+    end
+end
+
 %%
 
 % Create figure window
@@ -510,18 +548,18 @@ figheight = 600;
 fig = figure('Name', 'Visit Editor', 'Position', [100 100 1200 figheight]);
 labelboxwidth = 100;
 
-% ==== SUBJECT INFO ====
+% ==== SUBJECT INFO ==== %Error
 uicontrol(fig,'Style','text','String','Subject ID','Position',[20 570 labelboxwidth 20],'HorizontalAlignment','left');
-subjID = uicontrol(fig,'Style','edit','String',visit.Subject.ID,'Position',[80 570 100 20]);
+subjID = uicontrol(fig,'Style','edit','String',Subject.ID,'Position',[80 570 100 20]);
 
 uicontrol(fig,'Style','text','String','Age','Position',[20 550 labelboxwidth 20],'HorizontalAlignment','left');
-age = uicontrol(fig,'Style','edit','String',num2str(visit.Subject.age),'Position',[80 550 100 20]);
+age = uicontrol(fig,'Style','edit','String',num2str(Subject.age),'Position',[80 550 100 20]);
 
 uicontrol(fig,'Style','text','String','Gender','Position',[20 530 labelboxwidth 20],'HorizontalAlignment','left');
-gender = uicontrol(fig,'Style','edit','String',visit.Subject.gender,'Position',[80 530 100 20]);
+gender = uicontrol(fig,'Style','edit','String',Subject.gender,'Position',[80 530 100 20]);
 
 uicontrol(fig,'Style','text','String','Amplification','Position',[20 510 labelboxwidth 20],'HorizontalAlignment','left');
-amplification = uicontrol(fig,'Style','edit','String',visit.Subject.amplification,'Position',[80 510 100 20]);
+amplification = uicontrol(fig,'Style','edit','String',Subject.amplification,'Position',[80 510 100 20]);
 
 % ==== VISIT INFO ====
 uicontrol(fig,'Style','text','String','Test Date','Position',[20 480 labelboxwidth 20],'HorizontalAlignment','left');
@@ -647,7 +685,7 @@ ACToldComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 
 uicontrol(fig,'Style','text','String','new comments','Position',[740 130 140 20],'HorizontalAlignment','left')
 ACTnewComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 'Position', [740 60 120 70]);
 
-% ==== Otoscopy ====      %%%Error%%%
+% % ==== Otoscopy ====      %%%Error%%%
 uicontrol(fig,'Style','text','String','Otoscopy','Position',[1070 190 140 20],'HorizontalAlignment','left', 'FontWeight','bold');
 
 uicontrol(fig,'Style','text','String','Equipment','Position',[1070 170 60 20],'HorizontalAlignment','left');
