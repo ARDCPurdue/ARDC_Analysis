@@ -801,6 +801,7 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.QuickSIN.equipment.serialNumber = QSequipSN.String; %Type
         visit2.Measures.QuickSIN.comments = QScomments.String;
 
+        disp('    DPOAEs...')
         visit2.Measures.DPOAE.R.noisefloor = Measures.DPOAE.R.noisefloor;
         visit2.Measures.DPOAE.R.mean_response = Measures.DPOAE.R.mean_response;
         visit2.Measures.DPOAE.R.f1 = Measures.DPOAE.R.f1;
@@ -823,6 +824,17 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.DPOAE.equipment.serialNumber = DPOAEserialnum.String; %Type
         visit2.Measures.DPOAE.comments = DPOAEcomments.String;
 
+        disp('    MEME...')
+        visit2.Measures.Reflexes.Frequencies = [500 1e3 2e3 4e3];
+        visit2.Measures.Reflexes.ProbeR.Ipsi = Measures.Reflexes.ProbeR.Ipsi;
+        visit2.Measures.Reflexes.ProbeR.Contra = Measures.Reflexes.ProbeR.Contra;
+        visit2.Measures.Reflexes.ProbeL.Ipsi = Measures.Reflexes.ProbeL.Ipsi;
+        visit2.Measures.Reflexes.ProbeL.Contra = Measures.Reflexes.ProbeL.Contra;
+        visit2.Measures.Reflexes.equipment.device = MEMRequipment.String;
+        visit2.Measures.Reflexes.equipment.calibDate = MEMRcalibDate.String; %Type
+        visit2.Measures.Reflexes.equipment.serialNumber = MEMRserialNum.String; %Type
+        visit2.Measures.Reflexes.comments = MEMRcomments.String;
+
 
 
 
@@ -834,9 +846,6 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         msgbox('visit data saved successfully!', 'Success');
     end
 end
-
-
-
 
 
 
