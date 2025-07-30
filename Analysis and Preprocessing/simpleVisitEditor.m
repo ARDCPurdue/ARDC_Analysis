@@ -874,6 +874,8 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.WBT.equipment.calibDate = WBTEquipmentCalibDate.String; %Type
         visit2.Measures.WBT.equipment.serialNumber = WBTEquipmentSerialNumber.String; %Type
 
+        visit2.Measures.Otoscopy.comments = otoComments.String;
+        visit2.Measures.Otoscopy.equipment = otoEquipment.String;
 
         visit3 = visit2;
 
@@ -882,10 +884,6 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         msgbox('visit data saved successfully!', 'Success');
     end
 end
-
-
-
-
 
 
 

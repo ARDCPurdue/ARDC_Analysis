@@ -862,17 +862,20 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.ACT.equipment.calibDate = ACTCalib.String; %Type
         visit2.Measures.ACT.equipment.serialNumber = ACTSerialNum.String; %Type
 
+        disp('    WBT...') %Some of these are not editable
         visit2.Measures.WBT.L.PRESSURE = Measures.WBT.L.PRESSURE;
         visit2.Measures.WBT.L.FREQ = Measures.WBT.L.FREQ;
-        visit2.Measures.WBT.L.ABSORBANCE = "";
-        visit2.Measures.WBT.R.PRESSURE = "";
-        visit2.Measures.WBT.R.FREQ = "";
-        visit2.Measures.WBT.R.ABSORBANCE = "";
-        visit2.Measures.WBT.comments = "";
-        visit2.Measures.WBT.equipment.device = "";
-        visit2.Measures.WBT.equipment.calibDate = "";
-        visit2.Measures.WBT.equipment.serialNumber = "";
+        visit2.Measures.WBT.L.ABSORBANCE = Measures.WBT.L.ABSORBANCE;
+        visit2.Measures.WBT.R.PRESSURE = Measures.WBT.R.PRESSURE;
+        visit2.Measures.WBT.R.FREQ = Measures.WBT.R.FREQ;
+        visit2.Measures.WBT.R.ABSORBANCE = Measures.WBT.R.ABSORBANCE;
+        visit2.Measures.WBT.comments = WBTComments.String;
+        visit2.Measures.WBT.equipment.device = WBTEquipment.String;
+        visit2.Measures.WBT.equipment.calibDate = WBTEquipmentCalibDate.String; %Type
+        visit2.Measures.WBT.equipment.serialNumber = WBTEquipmentSerialNumber.String; %Type
 
+        Measures.Otoscopy.comments = "";
+Measures.Otoscopy.equipment = "";
 
         visit3 = visit2;
 
@@ -886,30 +889,9 @@ end
 
 
 
-% uicontrol(fig,'Style','text','String','Pressure','Position',[880 170 60 20],'HorizontalAlignment','left');
-% WBTpressureL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.PRESSURE,'Position',[940 170 60 20]);
-% WBTpressureR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.PRESSURE,'Position',[1000 170 60 20]);
-% 
-% uicontrol(fig,'Style','text','String','Freq','Position',[880 150 60 20],'HorizontalAlignment','left');
-% WBTfreqL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.FREQ,'Position',[940 150 60 20]);
-% WBTfreqR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.FREQ,'Position',[1000 150 60 20]);
-% 
-% uicontrol(fig,'Style','text','String','Absorbance','Position',[880 130 60 20],'HorizontalAlignment','left');
-% WBTabsorbanceL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.ABSORBANCE,'Position',[940 130 60 20]);
-% WBTabsorbanceR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.ABSORBANCE,'Position',[1000 130 60 20]);
-% 
-% 
-% uicontrol(fig,'Style','text','String','Comment','Position',[880 100 60 20],'HorizontalAlignment','left');
-% WBTComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[940 100 120 20]);
-% 
-% uicontrol(fig,'Style','text','String','Equipment','Position',[880 80 60 20],'HorizontalAlignment','left');
-% WBTEquipment = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.device,'Position',[940 80 120 20]);
-% 
-% uicontrol(fig,'Style','text','String','Calib Date','Position',[880 60 60 20],'HorizontalAlignment','left');
-% WBTEquipmentCalibDate = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.calibDate,'Position',[940 60 120 20]);
-% 
-% uicontrol(fig,'Style','text','String','Serial #','Position',[880 40 60 20],'HorizontalAlignment','left');
-% WBTEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.serialNumber,'Position',[940 40 120 20]);
+
+
+
 
 
 
