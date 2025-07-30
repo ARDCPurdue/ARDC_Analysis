@@ -699,14 +699,14 @@ ACToldComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 
 uicontrol(fig,'Style','text','String','new comments','Position',[740 130 140 20],'HorizontalAlignment','left')
 ACTnewComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 'Position', [740 60 120 70]);
 
-% % ==== Otoscopy ====      %%%Error%%%
-uicontrol(fig,'Style','text','String','Otoscopy','Position',[1070 190 140 20],'HorizontalAlignment','left', 'FontWeight','bold');
-
-uicontrol(fig,'Style','text','String','Equipment','Position',[1070 170 60 20],'HorizontalAlignment','left');
-otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment,'Position',[1070 150 100 20]);
-
-uicontrol(fig,'Style','text','String','Comment','Position',[1070 130 60 20],'HorizontalAlignment','left');
-otoComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[1070 40 100 80]);
+% % % ==== Otoscopy ====      %%%Error%%%
+% uicontrol(fig,'Style','text','String','Otoscopy','Position',[1070 190 140 20],'HorizontalAlignment','left', 'FontWeight','bold');
+% 
+% uicontrol(fig,'Style','text','String','Equipment','Position',[1070 170 60 20],'HorizontalAlignment','left');
+% otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment,'Position',[1070 150 100 20]);
+% 
+% uicontrol(fig,'Style','text','String','Comment','Position',[1070 130 60 20],'HorizontalAlignment','left');
+% otoComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[1070 40 100 80]);
 
 % ==== WBT ====
 uicontrol(fig,'Style','text','String','Wideband Tymp','Position',[880 210 140 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
