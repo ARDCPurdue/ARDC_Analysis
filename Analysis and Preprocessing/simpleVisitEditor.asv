@@ -385,24 +385,25 @@ if isfield(visit, 'Audiogram');
     try
         Measures.Audiometry.equipment.AC_transducer = visit.Audiogram.AC_transducer;
     catch
-        disp('Measures.Audiometry.equipment.AC_transducer not retrieved')
+        disp('Measures.Audiometry.equipment.AC_transducer')
     end    
     try
-        Measures.Audiometry.equipment.BC_transducer = visit.Audiogram.BC_transducer;
+        Measures.Audiometry.equipment.AC_transducer = visit.Audiogram.AC_transducer;
     catch
-        disp('Measures.Audiometry.equipment.BC_transducer not retrieved')
-    end   
-    try
-        Measures.Audiometry.equipment.AC_HardwareLimits = visit.Audiogram.AC_HardwareLimits;
-    catch
-        disp('Measures.Audiometry.equipment.AC_HardwareLimits not retrieved')
-    end   
-    try
-        Measures.Audiometry.equipment.BC_HardwareLimits = visit.Audiogram.BC_HardwareLimits;
-    catch
-        disp('Measures.Audiometry.equipment.BC_HardwareLimits not retrieved')
-    end       
+        disp('Measures.Audiometry.equipment.AC_transducer')
+    end     
 end
+
+
+
+% Measures.Audiometry.equipment.AC_transducer = "";
+% Measures.Audiometry.equipment.BC_transducer = "";
+% Measures.Audiometry.equipment.AC_HardwareLimits = "";
+% Measures.Audiometry.equipment.BC_HardwareLimits = "";
+% Measures.Audiometry.equipment.device = "";
+% Measures.Audiometry.equipment.calibDate = "";
+% Measures.Audiometry.equipment.serialNumber = "";
+% Measures.Audiometry.comments = "";
 %%
 
 % Create figure window
