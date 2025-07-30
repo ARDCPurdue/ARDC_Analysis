@@ -792,7 +792,14 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.Audiometry.equipment.serialNumber = Audserialnum.String; %Type
         visit2.Measures.Audiometry.comments = Audcomments.String;
 
-
+        disp('    QuickSIN...')
+        visit2.Measures.QuickSIN.R = RquickSIN.String; %DNT Checkbox
+        visit2.Measures.QuickSIN.L = LquickSIN.String; %DNT Checkbox
+        visit2.Measures.QuickSIN.Bin = BquickSIN.String; %DNT Checkbox
+        visit2.Measures.QuickSIN.equipment.device = QSequipdevice.String; 
+        visit2.Measures.QuickSIN.equipment.calibDate = QSequipcalib.String; %Type
+        visit2.Measures.QuickSIN.equipment.serialNumber = QSequipSN.String; %Type
+        visit2.Measures.QuickSIN.comments = QScomments.String;
 
 
 

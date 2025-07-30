@@ -759,7 +759,7 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
 % ==== CALLBACK FUNCTION ====
     function submitCallback()
         % Update visit struct from GUI
-        disp('Saving')
+        disp('Saving Subject Info...')
         visit2.Subject.ID = subjID.String;
         visit2.Subject.age = str2double(age.String);
         visit2.Subject.gender = gender.String;
@@ -784,15 +784,22 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.Audiometry.BC.R = Measures.Audiometry.BC.R;
         visit2.Measures.Audiometry.BC.L = Measures.Audiometry.BC.L;
         visit2.Measures.Audiometry.equipment.AC_transducer = AC_trans.String;
-        visit2.Measures.Audiometry.equipment.BC_transducer = "";
-        visit2.Measures.Audiometry.equipment.AC_HardwareLimits = "";
-        visit2.Measures.Audiometry.equipment.BC_HardwareLimits = "";
-        visit2.Measures.Audiometry.equipment.device = "";
-        visit2.Measures.Audiometry.equipment.calibDate = "";
-        visit2.Measures.Audiometry.equipment.serialNumber = "";
-        visit2.Measures.Audiometry.comments = "";
+        visit2.Measures.Audiometry.equipment.BC_transducer = BC_trans.String;
+        visit2.Measures.Audiometry.equipment.AC_HardwareLimits = AC_Limit.String;
+        visit2.Measures.Audiometry.equipment.BC_HardwareLimits = BC_Limit.String;
+        visit2.Measures.Audiometry.equipment.device = Auddevice.String;
+        visit2.Measures.Audiometry.equipment.calibDate = AudcalibDate.String; %Type
+        visit2.Measures.Audiometry.equipment.serialNumber = Audserialnum.String; %Type
+        visit2.Measures.Audiometry.comments = Audcomments.String;
 
-
+        disp('    QuickSIN...')
+        visit2.Measures.QuickSIN.R = RquickSIN.String; %DNT Checkbox
+        visit2.Measures.QuickSIN.L = LquickSIN.String;
+        visit2.Measures.QuickSIN.Bin = "";
+        visit2.Measures.QuickSIN.equipment.device = QSequipdevice.String; %DNT Checkbox
+        visit2.Measures.QuickSIN.equipment.calibDate = "";
+        visit2.Measures.QuickSIN.equipment.serialNumber = "";
+        visit2.Measures.QuickSIN.comments = "";
 
 
 
@@ -808,33 +815,24 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
 end
 
 
-% % ==== Audiometry ====
 
-% uicontrol(fig,'Style','text','String','AC_trans','Position',[20 260 labelboxwidth 20],'HorizontalAlignment','left');
-% AC_trans = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.AC_transducer,'Position',[80 260 100 20]);
-% 
-% uicontrol(fig,'Style','text','String','BC_trans','Position',[20 240 labelboxwidth 20],'HorizontalAlignment','left');
-% BC_trans = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.BC_transducer,'Position',[80 240 100 20]);
-% 
-% uicontrol(fig,'Style','text','String','AC_Limit','Position',[20 220 labelboxwidth 20],'HorizontalAlignment','left');
-% AC_Limit = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.AC_HardwareLimits,'Position',[80 220 100 20]);
-% 
-% uicontrol(fig,'Style','text','String','BC_Limit','Position',[20 200 labelboxwidth 20],'HorizontalAlignment','left');
-% BC_Limit = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.BC_HardwareLimits,'Position',[80 200 100 20]);
-% 
-% uicontrol(fig,'Style','text','String','device','Position',[20 180 labelboxwidth 20],'HorizontalAlignment','left');
-% Auddevice = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.device,'Position',[80 180 100 20]);
-% 
-% uicontrol(fig,'Style','text','String','Serial #','Position',[20 160 labelboxwidth 20],'HorizontalAlignment','left');
-% Audserialnum = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.serialNumber,'Position',[80 160 100 20]);
-% 
-% uicontrol(fig,'Style','text','String','calibDate','Position',[20 140 labelboxwidth 20],'HorizontalAlignment','left');
-% AudcalibDate = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.calibDate,'Position',[80 140 100 20]);
-% 
-% uicontrol(fig,'Style','text','String','comments','Position',[20 120 labelboxwidth 20],'HorizontalAlignment','left');
-% Audcomments = uicontrol(fig,'Style','edit','String', Measures.Audiometry.comments,'Position',[80 120 100 20]);
-% 
 
+
+% uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [1025 530 150 boxheight], 'HorizontalAlignment','left');
+% QSequipcalib = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.calibDate, 'Position',[1060 530 110 boxheight]);
+% 
+% uicontrol(fig, 'Style', 'text', 'String','Bin QuickSIN', 'Position', [880 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
+% BquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.Bin, 'Position',[945 510 30 boxheight]);
+% 
+% uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [980 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
+% BquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 510 25 boxheight]);
+% 
+% uicontrol(fig,'Style', 'text', 'String','Serial#', 'Position', [1025 510 150 boxheight], 'HorizontalAlignment','left');
+% QSequipSN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.serialNumber, 'Position',[1060 510 110 boxheight]);
+% 
+% uicontrol(fig,'Style', 'text', 'String','Comments', 'Position', [880 490 150 boxheight], 'HorizontalAlignment','left');
+% QScomments = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.comments, 'Position',[945 470 225 40]);
+% 
 
 
 
