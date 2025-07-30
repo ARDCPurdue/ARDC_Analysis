@@ -127,7 +127,7 @@ Measures.WBT.equipment.serialNumber = "";
 
 Measures.Otoscopy.comments = "";
 Measures.Otoscopy.equipment = "";
-%%
+
 % ===== Fill in what's there from orig visit ====
 % Set up Subject information from old visit file into new structure
 disp("Retrieving Subject Info...")
@@ -144,7 +144,6 @@ elseif isfield(visit, 'Subject')
     Subject.amplification = visit.Subject.amplification;
 end
 
-%%
 % Set up VisitInfo from old visit file into new structure
 disp("Retrieving Visit Info...")
 if isfield(visit, 'VisitInfo')
@@ -361,7 +360,7 @@ end
 %% if the measures are stored in the visit. structure ie. ARDC 37
 %%% i tried to set this up as an if, ifelse loop, but it was not working in
 %%% that format
-if isfield(visit, 'Audiogram');
+if isfield(visit, 'Audiogram')
     disp('    Retrieving Audiogram data...')
     try
         Measures.Audiometry.AC.R = visit.Audiogram.AC.R;
@@ -419,6 +418,7 @@ if isfield(visit, 'QuickSIN')
     end  
 end
 if isfield(visit, 'dpOAE')
+%Right
     try
         Measures.DPOAE.R.noisefloor = visit.dpOAE.R.noisefloor;
     catch
@@ -437,17 +437,79 @@ if isfield(visit, 'dpOAE')
     try
         Measures.DPOAE.R.f2 = visit.dpOAE.R.f2;
     catch
-        disp('Measures.DPOAE.R.f1 not retrieved')
-    end      
+        disp('Measures.DPOAE.R.f2 not retrieved')
+    end   
+    try
+        Measures.DPOAE.R.DP = visit.dpOAE.R.DP;
+    catch
+        disp('Measures.DPOAE.R.DP not retrieved')
+    end  
+    try
+        Measures.DPOAE.R.f1_rec_dB = visit.dpOAE.R.f1_rec_dB;
+    catch
+        disp('Measures.DPOAE.R.f1_rec_dB not retrieved')
+    end 
+    try
+        Measures.DPOAE.R.f2_rec_dB = visit.dpOAE.R.f2_rec_dB;
+    catch
+        disp('Measures.DPOAE.R.f2_rec_dB not retrieved')
+    end 
+    try
+        Measures.DPOAE.R.fs = visit.dpOAE.R.fs;
+    catch
+        disp('Measures.DPOAE.R.f2_rec_dB not retrieved')
+    end 
+
+%Left
+    try
+        Measures.DPOAE.L.noisefloor = visit.dpOAE.L.noisefloor;
+    catch
+        disp('Measures.DPOAE.L.noisefloor not retrieved')
+    end  
+    try
+        Measures.DPOAE.L.mean_response = visit.dpOAE.L.mean_response;
+    catch
+        disp('Measures.DPOAE.L.mean_response not retrieved')
+    end  
+    try
+        Measures.DPOAE.L.f1 = visit.dpOAE.L.f1;
+    catch
+        disp('Measures.DPOAE.L.f1 not retrieved')
+    end  
+    try
+        Measures.DPOAE.L.f2 = visit.dpOAE.L.f2;
+    catch
+        disp('Measures.DPOAE.L.f2 not retrieved')
+    end   
+    try
+        Measures.DPOAE.L.DP = visit.dpOAE.L.DP;
+    catch
+        disp('Measures.DPOAE.L.DP not retrieved')
+    end  
+    try
+        Measures.DPOAE.L.f1_rec_dB = visit.dpOAE.L.f1_rec_dB;
+    catch
+        disp('Measures.DPOAE.L.f1_rec_dB not retrieved')
+    end 
+    try
+        Measures.DPOAE.L.f2_rec_dB = visit.dpOAE.L.f2_rec_dB;
+    catch
+        disp('Measures.DPOAE.L.f2_rec_dB not retrieved')
+    end 
+    try
+        Measures.DPOAE.L.fs = visit.dpOAE.L.fs;
+    catch
+        disp('Measures.DPOAE.L.f2_rec_dB not retrieved')
+    end 
 
 
+    try
+        Measures.DPOAE.L.fs = visit.dpOAE.L.fs;
+    catch
+        disp('Measures.DPOAE.L.f2_rec_dB not retrieved')
+    end 
 
-% Measures.DPOAE.R.f1 = "";
-% Measures.DPOAE.R.f2 = "";
-% Measures.DPOAE.R.DP = "";
-% Measures.DPOAE.R.f1_rec_dB = "";
-% Measures.DPOAE.R.f2_rec_dB = "";
-% Measures.DPOAE.R.fs = "";
+
 % Measures.DPOAE.L.noisefloor = "";
 % Measures.DPOAE.L.mean_response = "";
 % Measures.DPOAE.L.f1 = "";
@@ -874,8 +936,8 @@ uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 1
         visit2.Measures.WBT.equipment.calibDate = WBTEquipmentCalibDate.String; %Type
         visit2.Measures.WBT.equipment.serialNumber = WBTEquipmentSerialNumber.String; %Type
 
-        Measures.Otoscopy.comments = "";
-Measures.Otoscopy.equipment = "";
+        visit2.Measures.Otoscopy.comments = otoComments.String;
+        visit2.Measures.Otoscopy.equipment = otoEquipment.String;
 
         visit3 = visit2;
 
@@ -884,10 +946,6 @@ Measures.Otoscopy.equipment = "";
         msgbox('visit data saved successfully!', 'Success');
     end
 end
-
-
-
-
 
 
 
