@@ -393,6 +393,7 @@ end
 %%% that format
 if isfield(visit, 'Audiogram')
     disp('    Retrieving Audiogram data...')
+    audio_yes = 1; 
     try
         Measures.Audiometry.AC.R = visit.Audiogram.AC.R;
     catch
@@ -437,6 +438,7 @@ if isfield(visit, 'Audiogram')
 end
 if isfield(visit, 'QuickSIN')
     disp('    Retrieving QuickSIN data...')
+    quicksin_yes = 1;
     try
         Measures.QuickSIN.R = visit.QuickSIN.R;
     catch
@@ -451,6 +453,7 @@ end
 %%
 if isfield(visit, 'dpOAE')
     disp('    DPOAEs')
+    dp_yes = 1;
     %Right
     try
         Measures.DPOAE.R.noisefloor = visit.dpOAE.R.noisefloor;
@@ -538,6 +541,7 @@ end
 
 if isfield(visit, 'WBT')
     disp ('    WBT...')
+    wbt_yes = 1;
     try
         Measures.WBT.L.PRESSURE = visit.WBT.L.PRESSURE;
     catch
