@@ -717,7 +717,7 @@ uilabel(fig,'Text','comments','Position',[240 330 labelboxwidth 20],'HorizontalA
 fields2edit.MEMRcomments = uieditfield(fig, 'Value', fields.Measures.Reflexes.comments{1,1},'Position',[300 290 140 60]);
 
 % ==== ACT ==== %
-fields2edit.act_checkbox = uicheckbox(fig,'Value',act_yes,'Text','ACT','Position',[240 270 80 20]);
+fields2edit.act_checkbox = uicheckbox(fig,'Value',act_yes,'Text','ACT','Position',[240 270 20 60]);
 
 %%Error
 uilabel(fig,'Text','Trial 1', 'Position', [240 250 140 20], 'HorizontalAlignment','left');
@@ -749,7 +749,7 @@ fields2edit.ACTnewComments = uieditfield(fig,'Value', fields.Measures.ACT.commen
 
 
 % ==== Otoscopy ====
-fields2edit.otoscopy_checkbox = uicheckbox(fig,'Value',oto_yes,'Text','Otoscopy','Position',[1070-430 190 80 20]);
+fields2edit.otoscopy_checkbox = uicheckbox(fig,'Value',oto_yes,'Text','Otoscopy','Position',[1070-430 190 20 20]);
 
 uilabel(fig,'Text','Equipment','Position',[1070-430 170 60 20],'HorizontalAlignment','left');
 fields2edit.otoEquipment = uieditfield(fig, 'Value', fields.Measures.Otoscopy.equipment,'Position',[1070-430 150 110 20]);
@@ -758,7 +758,7 @@ uilabel(fig,'Text','Comment','Position',[1070-430 120 60 20],'HorizontalAlignmen
 fields2edit.otoComments = uieditfield(fig, 'Value', fields.Measures.Otoscopy.comments{1,1},'Position',[1070-430 40 110 80]);
 
 % ==== WBT ====
-fields2edit.wbt_checkbox = uicheckbox(fig,'Value',wbt_yes,'Text','Wideband Tymp','Position',[880-430 190 130 20]);
+fields2edit.wbt_checkbox = uicheckbox(fig,'Value',wbt_yes,'Text','Wideband Tymp','Position',[880-430 190 80 20]);
 uilabel(fig,'Text','L','Position',[940-430 170 60 20],'HorizontalAlignment','center');
 uilabel(fig,'Text','R','Position',[1000-430 170 60 20],'HorizontalAlignment','center');
 
@@ -793,7 +793,8 @@ uilabel(fig,'Text','Serial #','Position',[880-430 40 60 20],'HorizontalAlignment
 fields2edit.WBTEquipmentSerialNumber = uieditfield(fig, 'Value', fields.Measures.WBT.equipment.serialNumber,'Position',[940-430 40 120 20]);
 
 % ==== QuickSIN ====
-fields2edit.quicksin_checkbox = uicheckbox(fig, 'Value',quicksin_yes, 'Text', 'QuickSIN', 'Position',[880-430 570 80 20]);
+fields2edit.quicksin_checkbox = uicheckbox(fig, 'Value',quicksin_yes, 'Text', 'QuickSIN', 'Position',[880-430 570 20 20]);
+uilabel(fig,'Text', 'QuickSIN', 'Position', [880-430+20 570 60 20], 'HorizontalAlignment','left','FontWeight','bold');
 
 uilabel(fig,'Text','RE QuickSIN', 'Position', [880-430 550 150 boxheight], 'HorizontalAlignment','left',  'FontColor', 'red');
 fields2edit.RquickSIN = uieditfield(fig, 'Value', string(fields.Measures.QuickSIN.R), 'Position',[945-430 550 30 boxheight]);
@@ -827,7 +828,7 @@ fields2edit.QScomments = uieditfield(fig,'Value', fields.Measures.QuickSIN.comme
 
 
 % ==== WRS ==== %
-fields2edit.wrs_checkbox = uicheckbox(fig,'Value',wrs_yes,'Text','WRS','Position',[880-430 450 80 20]);
+fields2edit.wrs_checkbox = uicheckbox(fig,'Value',wrs_yes,'Text','WRS','Position',[880-430 450 20 20]);
 uilabel(fig,'Text', 'Right Ear:', 'Position', [880-430 430 60 20], 'HorizontalAlignment','left', 'FontColor','red');
 
 uilabel(fig,'Text','List', 'Position', [930-430 430 60 20], 'HorizontalAlignment','left');
