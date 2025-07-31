@@ -23,8 +23,8 @@ dateOfTest = datetime(extractBetween(file, '_', '.mat'), 'InputFormat', 'MMddyyy
 disp("Intializing Variables...")
 Subject.ID = "";
 Subject.age = "";
-Subject.gender = "";
-Subject.amplification = "";
+Subject.gender = "Unknown";
+Subject.amplification = "Unknown";
 VisitInfo.testDate = "";
 VisitInfo.referringLab = "";
 VisitInfo.irbNumber = "";
@@ -582,16 +582,16 @@ dropdown_lab = table2array(IRBs(:,"PI"));
 dropdown_IRB = table2array(IRBs(:,"IRBnum"));
 
 % Other standard dropdowns, not read from CSV. Could be edited if needed.
-dropdown_gender = {'Male', 'Female', 'Non-binary', 'No Response'};  % Replace with your options
+dropdown_gender = {'Male', 'Female', 'Non-binary', 'Unknown'};  % Replace with your options
 dropdown_amplification = {'None', 'Hearing Aids', 'Cochlear Implant','Other', 'Unknown'};
 
-% Get all locations
-all_locs = dir("DataSheets\Equipment_*");
-for i = 1:numel(all_locs)
-    locations(i) = extractBetween(all_locs(i).name, 'Equipment_', '_');
-    rms(i) = extractBetween(all_locs(i).name, sprintf('Equipment_%s_', locations{i}), '.csv');
-end
-unique_locations = unique(locations);
+% % Get all locations
+% all_locs = dir("DataSheets\Equipment_*");
+% for i = 1:numel(all_locs)
+%     locations(i) = extractBetween(all_locs(i).name, 'Equipment_', '_');
+%     rms(i) = extractBetween(all_locs(i).name, sprintf('Equipment_%s_', locations{i}), '.csv');
+% end
+% unique_locations = unique(locations);
 
 % Create figure window
 boxheight = 20;
@@ -603,16 +603,16 @@ labelboxhieght = 20;
 
 % ==== SUBJECT INFO ====
 uicontrol(fig,'Style','text','String','Subject ID','Position',[20 570 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-subjID = uicontrol(fig,'Style','edit','String',visit.Subject.ID,'Position',[90 570 140 20]);
+subjID = uicontrol(fig,'Style','edit','String',Subject.ID,'Position',[90 570 140 20]);
 
 uicontrol(fig,'Style','text','String','Age','Position',[20 550 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-age = uicontrol(fig,'Style','edit','String',num2str(visit.Subject.age),'Position',[90 550 140 20]);
+age = uicontrol(fig,'Style','edit','String',num2str(Subject.age),'Position',[90 550 140 20]);
 
 uicontrol(fig,'Style','text','String','Gender','Position',[20 530 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-gender = uidropdown(fig,'Value',visit.Subject.gender,'Items',dropdown_gender, 'Position',[90 530 140 20]);
+gender = uidropdown(fig,'Value',Subject.gender,'Items',dropdown_gender, 'Position',[90 530 140 20]);
 
 uicontrol(fig,'Style','text','String','Amplification','Position',[20 510 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-amplification = uidropdown(fig,'Value',visit.Subject.amplification,'Items', dropdown_amplification, 'Position',[90 510 140 20]);
+amplification = uidropdown(fig,'Value',Subject.amplification,'Items', dropdown_amplification, 'Position',[90 510 140 20]);
 
 
 % ==== VISIT INFO ====
@@ -754,7 +754,7 @@ otoscopy_checkbox = uicontrol(fig,'Style','checkbox','Value',oto_yes,'Position',
 uicontrol(fig,'Style','text','String','Otoscopy','Position',[1070-430+20 190 140-20 20],'HorizontalAlignment','left', 'FontWeight','bold');
 
 uicontrol(fig,'Style','text','String','Equipment','Position',[1070-430 170 60 20],'HorizontalAlignment','left');
-otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment.device,'Position',[1070-430 150 110 20]);
+otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment,'Position',[1070-430 150 110 20]);
 
 uicontrol(fig,'Style','text','String','Comment','Position',[1070-430 120 60 20],'HorizontalAlignment','left');
 otoComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[1070-430 40 110 80]);
