@@ -1,7 +1,7 @@
 function simpleVisitEditor()
 
 %%%%% STUFF TO EDIT FOR A USER %%%%%
-dataDir = "C:\Users\ARDC User\Desktop\ARDR Data\";
+dataDir = "C:\Users\isabe\OneDrive\Desktop\";
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Load .mat file (you can customize the path)
@@ -198,7 +198,7 @@ if isfield(visit, 'VisitInfo')
     catch
         disp("Didn't work because of visit info room")
     end
-elseif isfield(visit, 'time');
+elseif isfield(visit, 'time')
     try
         VisitInfo.testDate = visit.time;
     catch
@@ -556,295 +556,330 @@ end
 
 %%
 
+% Set some defaults for dropdowns and other fancy ui controls
+addpath('DataSheets')
+
+% Read in IRB data
+IRBs = readtable('IRBs.csv', 'TextType','string');
+dropdown_lab = table2array(IRBs(:,"PI"));
+dropdown_IRB = table2array(IRBs(:,"IRBnum"));
+
+% Other standard dropdowns, not read from CSV. Could be edited if needed.
+dropdown_gender = {'Male', 'Female', 'Non-binary', 'No Response'};  % Replace with your options
+dropdown_amplification = {'None', 'Hearing Aids', 'Cochlear Implant','Other', 'Unknown'};
+
+% Get all locations
+all_locs = dir("DataSheets\Equipment_*");
+for i = 1:numel(all_locs)
+    locations(i) = extractBetween(all_locs(i).name, 'Equipment_', '_');
+    rms(i) = extractBetween(all_locs(i).name, sprintf('Equipment_%s_', locations{i}), '.csv'); 
+end
+unique_locations = unique(locations); 
+
 % Create figure window
 boxheight = 20;
 figheight = 600;
-fig = figure('Name', 'Visit Editor', 'Position', [100 100 1200 figheight]);
-labelboxwidth = 100;
+fig = figure('Name', 'Visit Editor', 'Position', [100 100 760 figheight]);
+labelboxwidth = 140;
+labelboxhieght = 20;
 
-% ==== SUBJECT INFO ==== %Error
-uicontrol(fig,'Style','text','String','Subject ID','Position',[20 570 labelboxwidth 20],'HorizontalAlignment','left');
-subjID = uicontrol(fig,'Style','edit','String',Subject.ID,'Position',[80 570 100 20]);
 
-uicontrol(fig,'Style','text','String','Age','Position',[20 550 labelboxwidth 20],'HorizontalAlignment','left');
-age = uicontrol(fig,'Style','edit','String',num2str(Subject.age),'Position',[80 550 100 20]);
+% ==== SUBJECT INFO ====
+uicontrol(fig,'Style','text','String','Subject ID','Position',[20 570 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+subjID = uicontrol(fig,'Style','edit','String',visit.Subject.ID,'Position',[90 570 140 20]);
 
-uicontrol(fig,'Style','text','String','Gender','Position',[20 530 labelboxwidth 20],'HorizontalAlignment','left');
-gender = uicontrol(fig,'Style','edit','String',Subject.gender,'Position',[80 530 100 20]);
+uicontrol(fig,'Style','text','String','Age','Position',[20 550 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+age = uicontrol(fig,'Style','edit','String',num2str(visit.Subject.age),'Position',[90 550 140 20]);
 
-uicontrol(fig,'Style','text','String','Amplification','Position',[20 510 labelboxwidth 20],'HorizontalAlignment','left');
-amplification = uicontrol(fig,'Style','edit','String',Subject.amplification,'Position',[80 510 100 20]);
+uicontrol(fig,'Style','text','String','Gender','Position',[20 530 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+gender = uidropdown(fig,'Value',visit.Subject.gender,'Items',dropdown_gender, 'Position',[90 530 140 20]);
+
+uicontrol(fig,'Style','text','String','Amplification','Position',[20 510 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+amplification = uidropdown(fig,'Value',visit.Subject.amplification,'Items', dropdown_amplification, 'Position',[90 510 140 20]);
+
 
 % ==== VISIT INFO ====
-uicontrol(fig,'Style','text','String','Test Date','Position',[20 480 labelboxwidth 20],'HorizontalAlignment','left');
-testDate = uicontrol(fig, 'Style', 'edit','String', string(VisitInfo.testDate),'Position',[80 480 100 20]);
+uicontrol(fig,'Style','text','String','Test Date','Position',[20 480 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+testDate = uicontrol(fig, 'Style', 'edit','String', string(VisitInfo.testDate),'Position',[90 480 140 20]);
 
-uicontrol(fig,'Style','text','String','Refer Lab','Position',[20 460 labelboxwidth 20],'HorizontalAlignment','left');
-referringLab = uicontrol(fig,'Style','edit','String',VisitInfo.referringLab,'Position',[80 460 100 20]);
+% Needs to be dropdowns:
+uicontrol(fig,'Style','text','String','Refer Lab','Position',[20 460 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+referringLab = uicontrol(fig,'Style','edit','String',VisitInfo.referringLab,'Position',[90 460 140 20]);
 
-uicontrol(fig,'Style','text','String','IRB #','Position',[20 440 labelboxwidth 20],'HorizontalAlignment','left');
-irbNumber = uicontrol(fig,'Style','edit','String',VisitInfo.irbNumber,'Position',[80 440 100 20]);
+uicontrol(fig,'Style','text','String','IRB #','Position',[20 440 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+irbNumber = uicontrol(fig,'Style','edit','String',VisitInfo.irbNumber,'Position',[90 440 140 20]);
 
-uicontrol(fig,'Style','text','String','ARDRsigned','Position',[20 420 labelboxwidth 20],'HorizontalAlignment','left');
-ARDRsigned = uicontrol(fig,'Style','edit','String',VisitInfo.ARDRsigned,'Position',[80 420 100 20]);
+uicontrol(fig,'Style','text','String','ARDRsigned','Position',[20 420 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+isARDRsigned = 'unknown'; 
+if strcmp(VisitInfo.ARDRsigned, "1")
+    isARDRsigned = 'Yes';
+elseif strcmp(VisitInfo.ARDRsigned, "0")
+    isARDRsigned = 'No';
+end
+ARDRsigned = uidropdown(fig, 'Value',isARDRsigned, 'Items', {'Yes', 'No', 'unknown'}, 'Position',[90 420 140 20]);
 
-uicontrol(fig,'Style','text','String','researcher','Position',[20 400 labelboxwidth 20],'HorizontalAlignment','left');
-researcher = uicontrol(fig,'Style','edit','String',VisitInfo.researcher,'Position',[80 400 100 20]);
+uicontrol(fig,'Style','text','String','researcher','Position',[20 400 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+researcher = uicontrol(fig,'Style','edit','String',VisitInfo.researcher,'Position',[90 400 140 20]);
 
-uicontrol(fig,'Style','text','String','researcherOther','Position',[20 380 labelboxwidth 20],'HorizontalAlignment','left');
-researcherOther = uicontrol(fig,'Style','edit','String',VisitInfo.researcherOther,'Position',[80 380 100 20]);
+uicontrol(fig,'Style','text','String','researcherOther','Position',[20 380 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+researcherOther = uicontrol(fig,'Style','edit','String',VisitInfo.researcherOther,'Position',[90 380 140 20]);
 
-uicontrol(fig,'Style','text','String','studyProtocol','Position',[20 360 labelboxwidth 20],'HorizontalAlignment','left');
-studyProtocol = uicontrol(fig,'Style','edit','String',VisitInfo.studyProtocol,'Position',[80 360 100 20]);
+uicontrol(fig,'Style','text','String','studyProtocol','Position',[20 360 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+studyProtocol = uicontrol(fig,'Style','edit','String',VisitInfo.studyProtocol,'Position',[90 360 140 20]);
 
-uicontrol(fig,'Style','text','String','location','Position',[20 340 labelboxwidth 20],'HorizontalAlignment','left');
-location = uicontrol(fig,'Style','edit','String',VisitInfo.location,'Position',[80 340 100 20]);
+uicontrol(fig,'Style','text','String','location','Position',[20 340 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+location = uicontrol(fig,'Style','edit','String',VisitInfo.location,'Position',[90 340 140 20]);
 
-uicontrol(fig,'Style','text','String','room','Position',[20 320 labelboxwidth 20],'HorizontalAlignment','left');
-room = uicontrol(fig,'Style','edit','String',VisitInfo.room,'Position',[80 320 100 20]);
+uicontrol(fig,'Style','text','String','room','Position',[20 320 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+room = uicontrol(fig,'Style','edit','String',VisitInfo.room,'Position',[90 320 140 20]);
 
-uicontrol(fig,'Style','text','String','dateCompiled','Position',[20 300 labelboxwidth 20],'HorizontalAlignment','left');
-dateCompiled = uicontrol(fig,'Style','edit','String',string(VisitInfo.dateCompiled),'Position',[80 300 100 20]);
+uicontrol(fig,'Style','text','String','dateCompiled','Position',[20 300 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+dateCompiled = uicontrol(fig,'Style','edit','String',string(VisitInfo.dateCompiled),'Position',[90 300 140 20]);
 
 % ==== Audiometry ====
-uicontrol(fig,'Style','text','String','Audiometry','Position',[20 280 labelboxwidth 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
+uicontrol(fig,'Style','text','String','Audiometry','Position',[20 280 labelboxwidth labelboxhieght],'HorizontalAlignment','left', 'FontWeight', 'bold');
 
-uicontrol(fig,'Style','text','String','AC_trans','Position',[20 260 labelboxwidth 20],'HorizontalAlignment','left');
-AC_trans = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.AC_transducer,'Position',[80 260 100 20]);
+uicontrol(fig,'Style','text','String','AC_trans','Position',[20 260 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+AC_trans = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.AC_transducer,'Position',[90 260 140 20]);
 
-uicontrol(fig,'Style','text','String','BC_trans','Position',[20 240 labelboxwidth 20],'HorizontalAlignment','left');
-BC_trans = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.BC_transducer,'Position',[80 240 100 20]);
+uicontrol(fig,'Style','text','String','BC_trans','Position',[20 240 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+BC_trans = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.BC_transducer,'Position',[90 240 140 20]);
 
-uicontrol(fig,'Style','text','String','AC_Limit','Position',[20 220 labelboxwidth 20],'HorizontalAlignment','left');
-AC_Limit = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.AC_HardwareLimits,'Position',[80 220 100 20]);
+uicontrol(fig,'Style','text','String','AC_Limit','Position',[20 220 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+AC_Limit = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.AC_HardwareLimits,'Position',[90 220 140 20]);
 
-uicontrol(fig,'Style','text','String','BC_Limit','Position',[20 200 labelboxwidth 20],'HorizontalAlignment','left');
-BC_Limit = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.BC_HardwareLimits,'Position',[80 200 100 20]);
+uicontrol(fig,'Style','text','String','BC_Limit','Position',[20 200 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+BC_Limit = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.BC_HardwareLimits,'Position',[90 200 140 20]);
 
-uicontrol(fig,'Style','text','String','device','Position',[20 180 labelboxwidth 20],'HorizontalAlignment','left');
-Auddevice = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.device,'Position',[80 180 100 20]);
+uicontrol(fig,'Style','text','String','device','Position',[20 180 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+Auddevice = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.device,'Position',[90 180 140 20]);
 
-uicontrol(fig,'Style','text','String','Serial #','Position',[20 160 labelboxwidth 20],'HorizontalAlignment','left');
-Audserialnum = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.serialNumber,'Position',[80 160 100 20]);
+uicontrol(fig,'Style','text','String','Serial #','Position',[20 160 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+Audserialnum = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.serialNumber,'Position',[90 160 140 20]);
 
-uicontrol(fig,'Style','text','String','calibDate','Position',[20 140 labelboxwidth 20],'HorizontalAlignment','left');
-AudcalibDate = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.calibDate,'Position',[80 140 100 20]);
+uicontrol(fig,'Style','text','String','calibDate','Position',[20 140 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+AudcalibDate = uicontrol(fig,'Style','edit','String', Measures.Audiometry.equipment.calibDate,'Position',[90 140 140 20]);
 
-uicontrol(fig,'Style','text','String','comments','Position',[20 120 labelboxwidth 20],'HorizontalAlignment','left');
-Audcomments = uicontrol(fig,'Style','edit','String', Measures.Audiometry.comments,'Position',[80 120 100 20]);
+uicontrol(fig,'Style','text','String','comments','Position',[20 120 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
+Audcomments = uicontrol(fig,'Style','edit','String', Measures.Audiometry.comments,'Position',[90 40 140 100]);
 
 % ==== DPOAEs ====
-uicontrol(fig,'Style','text','String','DPOAEs','Position',[20 100 labelboxwidth 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
+uicontrol(fig,'Style','text','String','DPOAEs','Position',[240 570 labelboxwidth 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
 
-uicontrol(fig,'Style','text','String','researcher','Position',[20 80 labelboxwidth 20],'HorizontalAlignment','left');
-DPOAEresearcher = uicontrol(fig,'Style','edit','String', Measures.DPOAE.other.researcher,'Position',[80 80 100 20]);
+uicontrol(fig,'Style','text','String','researcher','Position',[240 550 labelboxwidth 20],'HorizontalAlignment','left');
+DPOAEresearcher = uicontrol(fig,'Style','edit','String', Measures.DPOAE.other.researcher,'Position',[300 550 140 20]);
 
-uicontrol(fig,'Style','text','String','device','Position',[20 60 labelboxwidth 20],'HorizontalAlignment','left');
-DPOAEdevice = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.device,'Position',[80 60 100 20]);
+uicontrol(fig,'Style','text','String','device','Position',[240 530 labelboxwidth 20],'HorizontalAlignment','left');
+DPOAEdevice = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.device,'Position',[300 530 140 20]);
 
-uicontrol(fig,'Style','text','String','calibDate','Position',[20 40 labelboxwidth 20],'HorizontalAlignment','left');
-DPOAEcalibDate = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.calibDate,'Position',[80 40 100 20]);
+uicontrol(fig,'Style','text','String','calibDate','Position',[240 510 labelboxwidth 20],'HorizontalAlignment','left');
+DPOAEcalibDate = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.calibDate,'Position',[300 510 140 20]);
 
-uicontrol(fig,'Style','text','String','Serial #','Position',[20 20 labelboxwidth 20],'HorizontalAlignment','left');
-DPOAEserialnum = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.serialNumber,'Position',[80 20 100 20]);
+uicontrol(fig,'Style','text','String','Serial #','Position',[240 490 labelboxwidth 20],'HorizontalAlignment','left');
+DPOAEserialnum = uicontrol(fig,'Style','edit','String', Measures.DPOAE.equipment.serialNumber,'Position',[300 490 140 20]);
 
-uicontrol(fig,'Style','text','String','DPOAEs Cont','Position',[200 570 labelboxwidth 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
-
-uicontrol(fig,'Style','text','String','comments','Position',[200 550 labelboxwidth 20],'HorizontalAlignment','left');
-DPOAEcomments = uicontrol(fig,'Style','edit','String', Measures.DPOAE.comments,'Position',[260 550 100 20]);
+uicontrol(fig,'Style','text','String','comments','Position',[240 470 labelboxwidth 20],'HorizontalAlignment','left');
+DPOAEcomments = uicontrol(fig,'Style','edit','String', Measures.DPOAE.comments,'Position',[300 430 140 60]);
 
 %====MEMR====
-uicontrol(fig,'Style','text','String','MEMR','Position',[200 530 labelboxwidth 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
+uicontrol(fig,'Style','text','String','MEMR','Position',[240 410 labelboxwidth 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
 
-uicontrol(fig,'Style','text','String','equipment','Position',[200 510 labelboxwidth 20],'HorizontalAlignment','left');
-MEMRequipment = uicontrol(fig,'Style','edit','String', Measures.Reflexes.equipment.device,'Position',[260 510 100 20]);
+uicontrol(fig,'Style','text','String','equipment','Position',[240 390 labelboxwidth 20],'HorizontalAlignment','left');
+MEMRequipment = uicontrol(fig,'Style','edit','String', Measures.Reflexes.equipment.device,'Position',[300 390 140 20]);
 
-uicontrol(fig,'Style','text','String','calibDate','Position',[200 490 labelboxwidth 20],'HorizontalAlignment','left');
-MEMRcalibDate = uicontrol(fig,'Style','edit','String', Measures.Reflexes.equipment.calibDate,'Position',[260 490 100 20]);
+uicontrol(fig,'Style','text','String','calibDate','Position',[240 370 labelboxwidth 20],'HorizontalAlignment','left');
+MEMRcalibDate = uicontrol(fig,'Style','edit','String', Measures.Reflexes.equipment.calibDate,'Position',[300 370 140 20]);
 
-uicontrol(fig,'Style','text','String','Serial #','Position',[200 470 labelboxwidth 20],'HorizontalAlignment','left');
-MEMRserialNum = uicontrol(fig,'Style','edit','String', Measures.Reflexes.equipment.serialNumber,'Position',[260 470 100 20]);
+uicontrol(fig,'Style','text','String','Serial #','Position',[240 350 labelboxwidth 20],'HorizontalAlignment','left');
+MEMRserialNum = uicontrol(fig,'Style','edit','String', Measures.Reflexes.equipment.serialNumber,'Position',[300 350 140 20]);
 
-uicontrol(fig,'Style','text','String','comments','Position',[200 450 labelboxwidth 20],'HorizontalAlignment','left');
-MEMRcomments = uicontrol(fig,'Style','edit','String', Measures.Reflexes.comments,'Position',[260 450 100 20]);
+uicontrol(fig,'Style','text','String','comments','Position',[240 330 labelboxwidth 20],'HorizontalAlignment','left');
+MEMRcomments = uicontrol(fig,'Style','edit','String', Measures.Reflexes.comments,'Position',[300 290 140 60]);
 
 % ==== ACT ==== %
 
-uicontrol(fig,'Style','text','String','ACT','Position',[600 210 140 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
+uicontrol(fig,'Style','text','String','ACT','Position',[240 270 140 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
 %%E Error
-uicontrol(fig,'Style', 'text', 'String','Trial 1', 'Position', [600 190 140 20], 'HorizontalAlignment','left');
-ACTTrialOne = uicontrol(fig,'Style','edit', 'String', Measures.ACT.scores, 'Position',[630 190 30 20]);
+uicontrol(fig,'Style', 'text', 'String','Trial 1', 'Position', [240 250 140 20], 'HorizontalAlignment','left');
+ACTTrialOne = uicontrol(fig,'Style','edit', 'String', Measures.ACT.scores, 'Position',[275 250 50 20]);
 
-uicontrol(fig,'Style', 'text', 'String','Trial 2', 'Position', [660 190 140 20], 'HorizontalAlignment','left');
-ACTTrialTwo = uicontrol(fig,'Style','edit', 'String', Measures.ACT.scores, 'Position',[690 190 30 20]);
+uicontrol(fig,'Style', 'text', 'String','Trial 2', 'Position', [330 250 140 20], 'HorizontalAlignment','left');
+ACTTrialTwo = uicontrol(fig,'Style','edit', 'String', Measures.ACT.scores, 'Position',[365 250 50 20]);
 
-uicontrol(fig,'Style', 'text', 'String','One Trial Only', 'Position', [720 190 140 20], 'HorizontalAlignment','left');
-ACTSingleTrial = uicontrol(fig,'Style','checkbox', 'Position', [790 190 140 20]);
+uicontrol(fig,'Style', 'text', 'String','One Trial Only', 'Position', [240 230 140 20], 'HorizontalAlignment','left');
+ACTSingleTrial = uicontrol(fig,'Style','checkbox', 'Position', [310 230 140 20]);
 
-uicontrol(fig,'Style', 'text', 'String','CNT', 'Position', [810 190 140 20], 'HorizontalAlignment','left');
-ACTCNT = uicontrol(fig,'Style','checkbox', 'Position', [840 190 140 20]);
+uicontrol(fig,'Style', 'text', 'String','CNT', 'Position', [330 230 140 20], 'HorizontalAlignment','left');
+ACTCNT = uicontrol(fig,'Style','checkbox', 'Position', [360 230 140 20]);
 
-uicontrol(fig,'Style', 'text', 'String','Equipment', 'Position', [600 170 140 20], 'HorizontalAlignment','left');
-ACTEquipment = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.device, 'Position',[660 170 100 20]);
+uicontrol(fig,'Style', 'text', 'String','Equipment', 'Position', [240 210 140 20], 'HorizontalAlignment','left');
+ACTEquipment = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.device, 'Position',[300 210 140 20]);
 
-uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [760 170 140 20], 'HorizontalAlignment','left');
-ACTCalib = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.calibDate, 'Position',[790 170 65 20]);
+uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [240 190 140 20], 'HorizontalAlignment','left');
+ACTCalib = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.calibDate, 'Position',[300 190 140 20]);
 
-uicontrol(fig,'Style', 'text', 'String','Serial #', 'Position', [600 150 140 20], 'HorizontalAlignment','left');
-ACTSerialNum = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.serialNumber, 'Position',[660 150 100 20]);
+uicontrol(fig,'Style', 'text', 'String','Serial #', 'Position', [240 170 140 20], 'HorizontalAlignment','left');
+ACTSerialNum = uicontrol(fig,'Style','edit', 'String', Measures.ACT.equipment.serialNumber, 'Position',[300 170 140 20]);
 
-uicontrol(fig,'Style','text','String','old comments','Position',[600 130 140 20],'HorizontalAlignment','left');
-ACToldComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 'Position', [600 60 120 70]);
+uicontrol(fig,'Style','text','String','old comments','Position',[240 150 140 20],'HorizontalAlignment','left');
+ACToldComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 'Position', [320 130 120 40]);
 
-uicontrol(fig,'Style','text','String','new comments','Position',[740 130 140 20],'HorizontalAlignment','left')
-ACTnewComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 'Position', [740 60 120 70]);
+uicontrol(fig,'Style','text','String','new comments','Position',[240 110 140 20],'HorizontalAlignment','left')
+ACTnewComments = uicontrol(fig,'Style','edit', 'String', Measures.ACT.comments, 'Position', [320 90 120 40]);
 
-% % % ==== Otoscopy ====      %%%Error%%%
-% uicontrol(fig,'Style','text','String','Otoscopy','Position',[1070 190 140 20],'HorizontalAlignment','left', 'FontWeight','bold');
-% 
-% uicontrol(fig,'Style','text','String','Equipment','Position',[1070 170 60 20],'HorizontalAlignment','left');
-% otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment,'Position',[1070 150 100 20]);
-% 
-% uicontrol(fig,'Style','text','String','Comment','Position',[1070 130 60 20],'HorizontalAlignment','left');
-% otoComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[1070 40 100 80]);
+
+% ==== Otoscopy ====      
+uicontrol(fig,'Style','text','String','Otoscopy','Position',[1070-430 190 140 20],'HorizontalAlignment','left', 'FontWeight','bold');
+
+uicontrol(fig,'Style','text','String','Equipment','Position',[1070-430 170 60 20],'HorizontalAlignment','left');
+otoEquipment = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.equipment.device,'Position',[1070-430 150 110 20]);
+
+uicontrol(fig,'Style','text','String','Comment','Position',[1070-430 120 60 20],'HorizontalAlignment','left');
+otoComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[1070-430 40 110 80]);
+
 
 % ==== WBT ====
-uicontrol(fig,'Style','text','String','Wideband Tymp','Position',[880 210 140 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
-uicontrol(fig,'Style','text','String','L','Position',[940 190 60 20],'HorizontalAlignment','center');
-uicontrol(fig,'Style','text','String','R','Position',[1000 190 60 20],'HorizontalAlignment','center');
+uicontrol(fig,'Style','text','String','Wideband Tymp','Position',[880-430 190 140 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
+uicontrol(fig,'Style','text','String','L','Position',[940-430 170 60 20],'HorizontalAlignment','center');
+uicontrol(fig,'Style','text','String','R','Position',[1000-430 170 60 20],'HorizontalAlignment','center');
 
-uicontrol(fig,'Style','text','String','Pressure','Position',[880 170 60 20],'HorizontalAlignment','left');
-WBTpressureL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.PRESSURE,'Position',[940 170 60 20]);
-WBTpressureR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.PRESSURE,'Position',[1000 170 60 20]);
+uicontrol(fig,'Style','text','String','Has WBT Data?','Position',[880-430 150 60 40],'HorizontalAlignment','left');
 
-uicontrol(fig,'Style','text','String','Freq','Position',[880 150 60 20],'HorizontalAlignment','left');
-WBTfreqL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.FREQ,'Position',[940 150 60 20]);
-WBTfreqR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.FREQ,'Position',[1000 150 60 20]);
+if isnumeric(Measures.WBT.R.PRESSURE(1))
+    hasDataR = "Data";
+else
+    hasDataR = "No Data"; 
+end
 
-uicontrol(fig,'Style','text','String','Absorbance','Position',[880 130 60 20],'HorizontalAlignment','left');
-WBTabsorbanceL = uicontrol(fig,'Style','edit','String', Measures.WBT.L.ABSORBANCE,'Position',[940 130 60 20]);
-WBTabsorbanceR = uicontrol(fig,'Style','edit','String', Measures.WBT.R.ABSORBANCE,'Position',[1000 130 60 20]);
+if isnumeric(Measures.WBT.L.PRESSURE(1))
+    hasDataL = "Data"; 
+else
+    hasDataL = "No Data"; 
+end
+
+WBTdataL = uicontrol(fig,'Style','text','String', hasDataL,'Position',[940-430 150 60 20]);
+WBTdataR = uicontrol(fig,'Style','text','String',hasDataR,'Position',[1000-430 150 60 20]);
 
 
-uicontrol(fig,'Style','text','String','Comment','Position',[880 100 60 20],'HorizontalAlignment','left');
-WBTComments = uicontrol(fig,'Style','edit','String', Measures.Otoscopy.comments,'Position',[940 100 120 20]);
+uicontrol(fig,'Style','text','String','Comment','Position',[880-430 130 60 20],'HorizontalAlignment','left');
+WBTComments = uicontrol(fig,'Style','edit','String', Measures.WBT.comments,'Position',[940-430 100 120 50]);
 
-uicontrol(fig,'Style','text','String','Equipment','Position',[880 80 60 20],'HorizontalAlignment','left');
-WBTEquipment = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.device,'Position',[940 80 120 20]);
+uicontrol(fig,'Style','text','String','Equipment','Position',[880-430 80 60 20],'HorizontalAlignment','left');
+WBTEquipment = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.device,'Position',[940-430 80 120 20]);
 
-uicontrol(fig,'Style','text','String','Calib Date','Position',[880 60 60 20],'HorizontalAlignment','left');
-WBTEquipmentCalibDate = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.calibDate,'Position',[940 60 120 20]);
+uicontrol(fig,'Style','text','String','Calib Date','Position',[880-430 60 60 20],'HorizontalAlignment','left');
+WBTEquipmentCalibDate = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.calibDate,'Position',[940-430 60 120 20]);
 
-uicontrol(fig,'Style','text','String','Serial #','Position',[880 40 60 20],'HorizontalAlignment','left');
-WBTEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.serialNumber,'Position',[940 40 120 20]);
+uicontrol(fig,'Style','text','String','Serial #','Position',[880-430 40 60 20],'HorizontalAlignment','left');
+WBTEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WBT.equipment.serialNumber,'Position',[940-430 40 120 20]);
 
 % ==== QuickSIN ====
 
-uicontrol(fig,'Style', 'text', 'String', 'QuickSIN', 'Position', [880 570 60 20], 'HorizontalAlignment','left','FontWeight','bold');
+uicontrol(fig,'Style', 'text', 'String', 'QuickSIN', 'Position', [880-430 570 60 20], 'HorizontalAlignment','left','FontWeight','bold');
 
-uicontrol(fig,'Style', 'text', 'String','RE QuickSIN', 'Position', [880 550 150 boxheight], 'HorizontalAlignment','left', 'ForegroundColor', 'red');
-RquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.R, 'Position',[945 550 30 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','RE QuickSIN', 'Position', [880-430 550 150 boxheight], 'HorizontalAlignment','left', 'ForegroundColor', 'red');
+RquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.R, 'Position',[945-430 550 30 boxheight]);
 
-uicontrol(fig,'Style', 'text', 'String','DNT', 'Position',[980 550 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'red');
-RquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 550 25 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','DNT', 'Position',[980-430 550 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'red');
+RquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005-430 550 25 boxheight]);
 
-uicontrol(fig,'Style', 'text', 'String','Equip', 'Position',[1025 550 150 boxheight], 'HorizontalAlignment','left');
-QSequipdevice = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.device, 'Position',[1060 550 110 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','Equip', 'Position',[1025-430 550 150 boxheight], 'HorizontalAlignment','left');
+QSequipdevice = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.device, 'Position',[1060-430 550 120 boxheight]);
 
-uicontrol(fig, 'Style', 'text', 'String','LE QuickSIN', 'Position', [880 530 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'blue');
-LquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.L, 'Position',[945 530 30 boxheight]);
+uicontrol(fig, 'Style', 'text', 'String','LE QuickSIN', 'Position', [880-430 530 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'blue');
+LquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.L, 'Position',[945-430 530 30 boxheight]);
 
-uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [980 530 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'blue');
-LquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 530 25 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [980-430 530 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'blue');
+LquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005-430 530 25 boxheight]);
 
-uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [1025 530 150 boxheight], 'HorizontalAlignment','left');
-QSequipcalib = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.calibDate, 'Position',[1060 530 110 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','Calib', 'Position', [1025-430 530 150 boxheight], 'HorizontalAlignment','left');
+QSequipcalib = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.calibDate, 'Position',[1060-430 530 120 boxheight]);
 
-uicontrol(fig, 'Style', 'text', 'String','Bin QuickSIN', 'Position', [880 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
-BquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.Bin, 'Position',[945 510 30 boxheight]);
+uicontrol(fig, 'Style', 'text', 'String','Bin QuickSIN', 'Position', [880-430 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
+BquickSIN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.Bin, 'Position',[945-430 510 30 boxheight]);
 
-uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [980 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
-BquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005 510 25 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','DNT', 'Position', [980-430 510 150 boxheight], 'HorizontalAlignment','left','ForegroundColor', 'green');
+BquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005-430 510 25 boxheight]);
 
-uicontrol(fig,'Style', 'text', 'String','Serial#', 'Position', [1025 510 150 boxheight], 'HorizontalAlignment','left');
-QSequipSN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.serialNumber, 'Position',[1060 510 110 boxheight]);
+uicontrol(fig,'Style', 'text', 'String','Serial#', 'Position', [1025-430 510 150 boxheight], 'HorizontalAlignment','left');
+QSequipSN = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.equipment.serialNumber, 'Position',[1060-430 510 120 boxheight]);
 
-uicontrol(fig,'Style', 'text', 'String','Comments', 'Position', [880 490 150 boxheight], 'HorizontalAlignment','left');
-QScomments = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.comments, 'Position',[945 470 225 40]);
+uicontrol(fig,'Style', 'text', 'String','Comments', 'Position', [880-430 490 150 boxheight], 'HorizontalAlignment','left');
+QScomments = uicontrol(fig,'Style','edit', 'String', Measures.QuickSIN.comments, 'Position',[945-430 470 235 40]);
 
 
 % ==== WRS ==== %
-uicontrol(fig,'Style', 'text', 'String', 'WRS', 'Position', [880 450 60 20], 'HorizontalAlignment','left', 'FontWeight', 'bold');
+uicontrol(fig,'Style', 'text', 'String', 'WRS', 'Position', [880-430 450 60 20], 'HorizontalAlignment','left', 'FontWeight', 'bold');
 
-uicontrol(fig,'Style', 'text', 'String','Right Ear:', 'Position', [880 430 60 20], 'HorizontalAlignment','left', 'ForegroundColor','red');
-
-
-uicontrol(fig,'Style', 'text', 'String','List', 'Position', [930 430 60 20], 'HorizontalAlignment','left');
-RwrsList = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.list, 'Position',[950 430 100 20]);
-
-uicontrol(fig,'Style', 'text', 'String','by diff', 'Position', [1060 430 150 boxheight], 'HorizontalAlignment','left');
-RwrsListDiff = uicontrol(fig,'Style','checkbox', 'Position',[1090 430 25 boxheight]);
-
-uicontrol(fig,'Style', 'text', 'String','List #', 'Position', [1110 430 150 boxheight], 'HorizontalAlignment','left');
-RwrsListNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.listNumber, 'Position',[1140 430 25 boxheight]);
-
-uicontrol(fig,'Style', 'text', 'String','Speech Level', 'Position', [880 410 150 boxheight], 'HorizontalAlignment','left');
-RwrsSLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.speechLevel, 'Position',[950 410 50 20]);
-
-uicontrol(fig,'Style', 'text', 'String','Masking Level', 'Position', [1005 410 150 boxheight], 'HorizontalAlignment','left');
-RwrsMlevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.maskingLevel, 'Position',[1080 410 50 20]);
-
-uicontrol(fig,'Style', 'text', 'String','# correct', 'Position', [880 390 150 boxheight], 'HorizontalAlignment','left');
-RwrsNumCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.numberWordCorrect, 'Position',[930 390 50 20]);
-
-uicontrol(fig,'Style', 'text', 'String','total #', 'Position', [990 390 150 boxheight], 'HorizontalAlignment','left');
-RwrsTotalNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.totalWordsPresented, 'Position',[1020 390 50 20]);
-
-uicontrol(fig,'Style', 'text', 'String','% correct', 'Position', [1080 390 150 boxheight], 'HorizontalAlignment','left');
-RwrsPercentCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.percentCorrect, 'Position',[1130 390 50 20]);
-
-uicontrol(fig,'Style', 'text', 'String','Left Ear:', 'Position', [880 350 60 20], 'HorizontalAlignment','left','ForegroundColor', 'blue');
-
-uicontrol(fig,'Style', 'text', 'String','List', 'Position', [930 350 60 20], 'HorizontalAlignment','left');
-LwrsList = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.list, 'Position',[950 350 100 20]);
-
-uicontrol(fig,'Style', 'text', 'String','by diff', 'Position', [1060 350 150 boxheight], 'HorizontalAlignment','left');
-LwrsListDiff = uicontrol(fig,'Style','checkbox', 'Position',[1090 350 25 boxheight]);
-
-uicontrol(fig,'Style', 'text', 'String','List #', 'Position', [1110 350 150 boxheight], 'HorizontalAlignment','left');
-LwrsListNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.listNumber, 'Position',[1140 350 25 boxheight]);
-
-uicontrol(fig,'Style', 'text', 'String','Speech Level', 'Position', [880 330 150 boxheight], 'HorizontalAlignment','left');
-LwrsSLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.speechLevel, 'Position',[950 330 50 20]);
-
-uicontrol(fig,'Style', 'text', 'String','Masking Level', 'Position', [1005 330 150 boxheight], 'HorizontalAlignment','left');
-LwrsMLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.maskingLevel, 'Position',[1080 330 50 20]);
-
-uicontrol(fig,'Style', 'text', 'String','# correct', 'Position', [880 310 150 boxheight], 'HorizontalAlignment','left');
-LwrsNumCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.numberWordCorrect, 'Position',[930 310 50 20]);
-
-uicontrol(fig,'Style', 'text', 'String','total #', 'Position', [990 310 150 boxheight], 'HorizontalAlignment','left');
-LwrsTotalNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.totalWordsPresented, 'Position',[1020 310 50 20]);
-
-uicontrol(fig,'Style', 'text', 'String','% correct', 'Position', [1080 310 150 boxheight], 'HorizontalAlignment','left');
-LwrsPercentCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.percentCorrect, 'Position',[1130 310 50 20]);
+uicontrol(fig,'Style', 'text', 'String','Right Ear:', 'Position', [880-430 430 60 20], 'HorizontalAlignment','left', 'ForegroundColor','red');
 
 
-uicontrol(fig,'Style','text','String','Equipment','Position',[880 280 60 20],'HorizontalAlignment','left');
-WRSEquipment = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.device,'Position',[940 280 120 20]);
+uicontrol(fig,'Style', 'text', 'String','List', 'Position', [930-430 430 60 20], 'HorizontalAlignment','left');
+RwrsList = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.list, 'Position',[950-430 430 100 20]);
 
-uicontrol(fig,'Style','text','String','Calib Date','Position',[880 260 60 20],'HorizontalAlignment','left');
-WRSEquipmentCalibDate = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.calibDate,'Position',[940 260 120 20]);
+uicontrol(fig,'Style', 'text', 'String','by diff', 'Position', [1060-430 430 150 boxheight], 'HorizontalAlignment','left');
+RwrsListDiff = uicontrol(fig,'Style','checkbox', 'Position',[1090-430 430 25 boxheight]);
 
-uicontrol(fig,'Style','text','String','Serial #','Position',[880 240 60 20],'HorizontalAlignment','left');
-WRSEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.serialNumber,'Position',[940 240 120 20]);
+uicontrol(fig,'Style', 'text', 'String','List #', 'Position', [1110-430 430 150 boxheight], 'HorizontalAlignment','left');
+RwrsListNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.listNumber, 'Position',[1140-430 430 40 boxheight]);
 
-uicontrol(fig,'Style','text','String','WRS Comment','Position',[1070 280 100 20],'HorizontalAlignment','left');
-WRSComments = uicontrol(fig,'Style','edit','String', Measures.WRS.comments,'Position',[1070 220 110 60]);
+uicontrol(fig,'Style', 'text', 'String','Speech Level', 'Position', [880-430 410 150 boxheight], 'HorizontalAlignment','left');
+RwrsSLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.speechLevel, 'Position',[950-430 410 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','Masking Level', 'Position', [1005-430 410 150 boxheight], 'HorizontalAlignment','left');
+RwrsMlevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.maskingLevel, 'Position',[1080-430 410 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','# correct', 'Position', [880-430 390 150 boxheight], 'HorizontalAlignment','left');
+RwrsNumCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.numberWordCorrect, 'Position',[930-430 390 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','total #', 'Position', [990-430 390 150 boxheight], 'HorizontalAlignment','left');
+RwrsTotalNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.totalWordsPresented, 'Position',[1020-430 390 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','% correct', 'Position', [1080-430 390 150 boxheight], 'HorizontalAlignment','left');
+RwrsPercentCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.R.percentCorrect, 'Position',[1130-430 390 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','Left Ear:', 'Position', [880-430 350 60 20], 'HorizontalAlignment','left','ForegroundColor', 'blue');
+
+uicontrol(fig,'Style', 'text', 'String','List', 'Position', [930-430 350 60 20], 'HorizontalAlignment','left');
+LwrsList = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.list, 'Position',[950-430 350 100 20]);
+
+uicontrol(fig,'Style', 'text', 'String','by diff', 'Position', [1060-430 350 150 boxheight], 'HorizontalAlignment','left');
+LwrsListDiff = uicontrol(fig,'Style','checkbox', 'Position',[1090-430 350 25 boxheight]);
+
+uicontrol(fig,'Style', 'text', 'String','List #', 'Position', [1110-430 350 150 boxheight], 'HorizontalAlignment','left');
+LwrsListNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.listNumber, 'Position',[1140-430 350 40 boxheight]);
+
+uicontrol(fig,'Style', 'text', 'String','Speech Level', 'Position', [880-430 330 150 boxheight], 'HorizontalAlignment','left');
+LwrsSLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.speechLevel, 'Position',[950-430 330 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','Masking Level', 'Position', [1005-430 330 150 boxheight], 'HorizontalAlignment','left');
+LwrsMLevel = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.maskingLevel, 'Position',[1080-430 330 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','# correct', 'Position', [880-430 310 150 boxheight], 'HorizontalAlignment','left');
+LwrsNumCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.numberWordCorrect, 'Position',[930-430 310 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','total #', 'Position', [990-430 310 150 boxheight], 'HorizontalAlignment','left');
+LwrsTotalNum = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.totalWordsPresented, 'Position',[1020-430 310 50 20]);
+
+uicontrol(fig,'Style', 'text', 'String','% correct', 'Position', [1080-430 310 150 boxheight], 'HorizontalAlignment','left');
+LwrsPercentCorrect = uicontrol(fig,'Style','edit', 'String', Measures.WRS.L.percentCorrect, 'Position',[1130-430 310 50 20]);
+
+
+uicontrol(fig,'Style','text','String','Equipment','Position',[880-430 280 60 20],'HorizontalAlignment','left');
+WRSEquipment = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.device,'Position',[940-430 280 120 20]);
+
+uicontrol(fig,'Style','text','String','Calib Date','Position',[880-430 260 60 20],'HorizontalAlignment','left');
+WRSEquipmentCalibDate = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.calibDate,'Position',[940-430 260 120 20]);
+
+uicontrol(fig,'Style','text','String','Serial #','Position',[880-430 240 60 20],'HorizontalAlignment','left');
+WRSEquipmentSerialNumber = uicontrol(fig,'Style','edit','String', Measures.WRS.equipment.serialNumber,'Position',[940-430 240 120 20]);
+
+uicontrol(fig,'Style','text','String','WRS Comment','Position',[1070-430 280 100 20],'HorizontalAlignment','left');
+WRSComments = uicontrol(fig,'Style','edit','String', Measures.WRS.comments,'Position',[1070-430 220 110 60]);
 
 
 % ==== SUBMIT BUTTON ====
-uicontrol(fig,'Style','pushbutton','String','Submit & Save','Position',[600 20 150 40],...
+uicontrol(fig,'Style', 'pushbutton','String','Submit & Save','ForegroundColor','k','BackgroundColor','g', 'FontSize', 14, 'FontWeight', 'bold','Position', [260 40 150 40],...
     'Callback', @(src, event)submitCallback());
 
 
