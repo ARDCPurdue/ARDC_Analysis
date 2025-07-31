@@ -1,5 +1,5 @@
 %function simpleVisitEditor()
-
+clear
 %%%%% STUFF TO EDIT FOR A USER %%%%%
 dataDir = "C:\Users\saman\Desktop\";
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,8 +23,8 @@ dateOfTest = datetime(extractBetween(file, '_', '.mat'), 'InputFormat', 'MMddyyy
 disp("Intializing Variables...")
 fields.Subject.ID = "";
 fields.Subject.age = "";
-fields.Subject.gender = "";
-fields.Subject.amplification = "";
+fields.Subject.gender = "unknown";
+fields.Subject.amplification = "Unknown";
 fields.VisitInfo.testDate = "";
 fields.VisitInfo.referringLab = "";
 fields.VisitInfo.irbNumber = "";
@@ -383,7 +383,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             disp("    Retrieving Otoscopy Data...")
             oto_yes = 1;
             fields.Measures.Otoscopy.comments = visit.Measures.Otoscopy.comments;
-            fields.Measures.Otoscopy.equipment = visit.Measures.Otoscopy.equipment;
+            fields.Measures.Otoscopy.equipment = visit.Measures.Otoscopy.equipment.device;
         end
     end
 end
@@ -584,7 +584,7 @@ dropdown_IRB = table2array(IRBs(:,"IRBnum"));
 dropdown_IRB(end+1) = "";
 
 % Other standard dropdowns, not read from CSV. Could be edited if needed.
-dropdown_gender = {'Male', 'Female', 'Non-binary', 'No Response'};  % Replace with your options
+dropdown_gender = {'Male', 'Female', 'Non-binary', 'No Response', 'unknown'};  % Replace with your options
 dropdown_amplification = {'None', 'Hearing Aids', 'Cochlear Implant','Other', 'Unknown'};
 
 % Get all locations
@@ -605,60 +605,59 @@ labelboxhieght = 20;
 
 % ==== SUBJECT INFO ====
 uilabel(fig,'Text','Subject ID','Position',[20 570 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.subjID = uieditfield(fig, 'Value',Subject.ID,'Position',[90 570 140 20]);
+fields2edit.subjID = uieditfield(fig, 'Value',fields.Subject.ID,'Position',[90 570 140 20]);
 
 uilabel(fig,'Text','Age','Position',[20 550 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.age = uieditfield(fig, 'Value',num2str(Subject.age),'Position',[90 550 140 20]);
+fields2edit.age = uieditfield(fig, 'Value',num2str(fields.Subject.age),'Position',[90 550 140 20]);
 
 uilabel(fig,'Text','Gender','Position',[20 530 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.gender = uidropdown(fig,'Value', Subject.gender,'Items',dropdown_gender, 'Position',[90 530 140 20]);
+fields2edit.gender = uidropdown(fig,'Value', fields.Subject.gender,'Items',dropdown_gender, 'Position',[90 530 140 20]);
 
 uilabel(fig,'Text', 'Amplification','Position',[20 510 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.amplification = uidropdown(fig,'Value', Subject.amplification,'Items', dropdown_amplification, 'Position',[90 510 140 20]);
+fields2edit.amplification = uidropdown(fig,'Value', fields.Subject.amplification,'Items', dropdown_amplification, 'Position',[90 510 140 20]);
 
 
 % ==== VISIT INFO ====
 uilabel(fig,'Text','Test Date','Position',[20 480 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.testDate = uidatepicker(fig, 'Value', VisitInfo.testDate,'Position',[90 480 140 20]);
+fields2edit.testDate = uidatepicker(fig, 'Value', datetime(fields.VisitInfo.testDate),'Position',[90 480 140 20]);
 
 % Needs to be dropdowns:
 uilabel(fig,'Text','Refer Lab','Position',[20 460 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.referringLab = uidropdown(fig, 'Value',VisitInfo.referringLab,'Items', dropdown_lab, 'Position',[90 460 140 20]);
+fields2edit.referringLab = uidropdown(fig, 'Value',fields.VisitInfo.referringLab,'Items', dropdown_lab, 'Position',[90 460 140 20]);
 
 uilabel(fig,'Text','IRB #','Position',[20 440 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.irbNumber = uidropdown(fig, 'Value',VisitInfo.irbNumber, 'Items', dropdown_IRB, 'Position',[90 440 140 20]);
+fields2edit.irbNumber = uidropdown(fig, 'Value',fields.VisitInfo.irbNumber, 'Items', dropdown_IRB, 'Position',[90 440 140 20]);
 
 uilabel(fig,'Text','ARDRsigned','Position',[20 420 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
 
 fields.isARDRsigned = 'unknown';
-if strcmp(VisitInfo.ARDRsigned, "1")
+if strcmp(fields.VisitInfo.ARDRsigned, "1")
     isARDRsigned = 'Yes';
-elseif strcmp(VisitInfo.ARDRsigned, "0")
+elseif strcmp(fields.VisitInfo.ARDRsigned, "0")
     isARDRsigned = 'No';
 end
 fields2edit.ARDRsigned = uidropdown(fig, 'Value',fields.isARDRsigned, 'Items', {'Yes', 'No', 'unknown'}, 'Position',[90 420 140 20]);
 
 uilabel(fig,'Text','researcher','Position',[20 400 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.researcher = uieditfield(fig, 'Value',VisitInfo.researcher,'Position',[90 400 140 20]);
+fields2edit.researcher = uieditfield(fig, 'Value',fields.VisitInfo.researcher,'Position',[90 400 140 20]);
 
 uilabel(fig,'Text','researcherOther','Position',[20 380 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.researcherOther = uieditfield(fig, 'Value',VisitInfo.researcherOther,'Position',[90 380 140 20]);
+fields2edit.researcherOther = uieditfield(fig, 'Value',fields.VisitInfo.researcherOther,'Position',[90 380 140 20]);
 
 uilabel(fig,'Text','studyProtocol','Position',[20 360 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.studyProtocol = uieditfield(fig, 'Value',VisitInfo.studyProtocol,'Position',[90 360 140 20]);
+fields2edit.studyProtocol = uieditfield(fig, 'Value',fields.VisitInfo.studyProtocol,'Position',[90 360 140 20]);
 
 uilabel(fig,'Text','location','Position',[20 340 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.location = uieditfield(fig, 'Value',VisitInfo.location,'Position',[90 340 140 20]);
+fields2edit.location = uieditfield(fig, 'Value',fields.VisitInfo.location,'Position',[90 340 140 20]);
 
 uilabel(fig,'Text','room','Position',[20 320 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.room = uieditfield(fig, 'Value',VisitInfo.room,'Position',[90 320 140 20]);
+fields2edit.room = uieditfield(fig, 'Value',fields.VisitInfo.room,'Position',[90 320 140 20]);
 
 uilabel(fig,'Text','dateCompiled','Position',[20 300 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.dateCompiled = uieditfield(fig, 'Value',string(VisitInfo.dateCompiled),'Position',[90 300 140 20]);
+fields2edit.dateCompiled = uieditfield(fig, 'Value',string(fields.VisitInfo.dateCompiled),'Position',[90 300 140 20]);
 
 % ==== Audiometry ====
-fields2edit.aud_checkbox = uicheckbox(fig,'Value',audio_yes,'Position',[20 280 labelboxwidth labelboxhieght]);
-uilabel(fig,'Text','Audiometry','Position',[20+20 280 labelboxwidth-20 labelboxhieght],'HorizontalAlignment','left', 'FontWeight', 'bold');
+fields2edit.aud_checkbox = uicheckbox(fig,'Value',audio_yes,'Text', 'Audiometry','Position',[20 280 labelboxwidth labelboxhieght]);
 
 uilabel(fig,'Text','AC_trans','Position',[20 260 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
 fields2edit.AC_trans = uieditfield(fig, 'Value', fields.Measures.Audiometry.equipment.AC_transducer,'Position',[90 260 140 20]);
@@ -685,8 +684,7 @@ uilabel(fig,'Text','comments','Position',[20 120 labelboxwidth labelboxhieght],'
 fields2edit.Audcomments = uieditfield(fig, 'Value', fields.Measures.Audiometry.comments{1,1},'Position',[90 40 140 100]);
 
 % ==== DPOAEs ====
-fields2edit.dp_checkbox = uicontrol(fig,'Style','checkbox','Value',dp_yes,'Position',[240 570 labelboxwidth labelboxhieght],'HorizontalAlignment','left', 'FontWeight', 'bold');
-uilabel(fig,'Text','DPOAEs','Position',[240+20 570 labelboxwidth-20 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
+fields2edit.dp_checkbox = uicheckbox(fig,'Value',dp_yes,'Text', 'DPOAES', 'Position',[240 570 labelboxwidth labelboxhieght]);
 
 uilabel(fig,'Text','researcher','Position',[240 550 labelboxwidth 20],'HorizontalAlignment','left');
 fields2edit.DPOAEresearcher = uieditfield(fig, 'Value', fields.Measures.DPOAE.other.researcher,'Position',[300 550 140 20]);
@@ -704,8 +702,7 @@ uilabel(fig,'Text','comments','Position',[240 470 labelboxwidth 20],'HorizontalA
 fields2edit.DPOAEcomments = uieditfield(fig, 'Value', fields.Measures.DPOAE.comments{1,1},'Position',[300 430 140 60]);
 
 %====MEMR====
-fields2edit.memr_checkbox = uicontrol(fig,'Style','checkbox','Value',memr_yes,'Position',[240 410 labelboxwidth labelboxhieght],'HorizontalAlignment','left', 'FontWeight', 'bold');
-uilabel(fig,'Text','MEMR','Position',[240+20 410 labelboxwidth-20 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
+fields2edit.memr_checkbox = uicheckbox(fig,'Value',memr_yes,'Text','MEMR','Position',[240 410 labelboxwidth labelboxhieght]);
 
 uilabel(fig,'Text','equipment','Position',[240 390 labelboxwidth 20],'HorizontalAlignment','left');
 fields2edit.MEMRequipment = uieditfield(fig, 'Value', fields.Measures.Reflexes.equipment.device,'Position',[300 390 140 20]);
@@ -720,8 +717,7 @@ uilabel(fig,'Text','comments','Position',[240 330 labelboxwidth 20],'HorizontalA
 fields2edit.MEMRcomments = uieditfield(fig, 'Value', fields.Measures.Reflexes.comments{1,1},'Position',[300 290 140 60]);
 
 % ==== ACT ==== %
-fields2edit.act_checkbox = uicontrol(fig,'Style','checkbox','Value',act_yes,'Position',[240 270 20 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
-uilabel(fig,'Text','ACT','Position',[240+20 270 140-20 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
+fields2edit.act_checkbox = uicheckbox(fig,'Value',act_yes,'Text','ACT','Position',[240 270 20 20]);
 
 %%Error
 uilabel(fig,'Text','Trial 1', 'Position', [240 250 140 20], 'HorizontalAlignment','left');
@@ -731,10 +727,10 @@ uilabel(fig,'Text','Trial 2', 'Position', [330 250 140 20], 'HorizontalAlignment
 fields2edit.ACTTrialTwo = uieditfield(fig,'Value', fields.Measures.ACT.scores, 'Position',[365 250 50 20]);
 
 uilabel(fig,'Text','One Trial Only', 'Position', [240 230 140 20], 'HorizontalAlignment','left');
-fields2edit.ACTSingleTrial = uicontrol(fig,'Style','checkbox', 'Position', [310 230 140 20]);
+fields2edit.ACTSingleTrial = uicheckbox(fig, 'Text', '', 'Position', [310 230 140 20]);
 
 uilabel(fig,'Text','CNT', 'Position', [330 230 140 20], 'HorizontalAlignment','left');
-fields2edit.ACTCNT = uicontrol(fig,'Style','checkbox', 'Position', [360 230 140 20]);
+fields2edit.ACTCNT = uicheckbox(fig, 'Text', '', 'Position', [360 230 140 20]);
 
 uilabel(fig,'Text','Equipment', 'Position', [240 210 140 20], 'HorizontalAlignment','left');
 fields2edit.ACTEquipment = uieditfield(fig,'Value', fields.Measures.ACT.equipment.device, 'Position',[300 210 140 20]);
@@ -753,18 +749,17 @@ fields2edit.ACTnewComments = uieditfield(fig,'Value', fields.Measures.ACT.commen
 
 
 % ==== Otoscopy ====
-fields2edit.otoscopy_checkbox = uicontrol(fig,'Style','checkbox','Value',oto_yes,'Position',[1070-430 190 20 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
+fields2edit.otoscopy_checkbox = uicheckbox(fig,'Value',oto_yes,'Text','Otoscopy','Position',[1070-430 190 20 20]);
 uilabel(fig,'Text','Otoscopy','Position',[1070-430+20 190 140-20 20],'HorizontalAlignment','left', 'FontWeight','bold');
 
 uilabel(fig,'Text','Equipment','Position',[1070-430 170 60 20],'HorizontalAlignment','left');
-fields2edit.otoEquipment = uieditfield(fig, 'Value', fields.Measures.Otoscopy.equipment.device,'Position',[1070-430 150 110 20]);
+fields2edit.otoEquipment = uieditfield(fig, 'Value', fields.Measures.Otoscopy.equipment,'Position',[1070-430 150 110 20]);
 
 uilabel(fig,'Text','Comment','Position',[1070-430 120 60 20],'HorizontalAlignment','left');
 fields2edit.otoComments = uieditfield(fig, 'Value', fields.Measures.Otoscopy.comments{1,1},'Position',[1070-430 40 110 80]);
 
 % ==== WBT ====
-fields2edit.wbt_checkbox = uicontrol(fig,'Style','checkbox','Value',wbt_yes,'Position',[880-430 190 20 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
-uilabel(fig,'Text','Wideband Tymp','Position',[880-430+20 190 140-20 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
+fields2edit.wbt_checkbox = uicheckbox(fig,'Value',wbt_yes,'Text','Wideband Tymp','Position',[880-430 190 20 20]);
 uilabel(fig,'Text','L','Position',[940-430 170 60 20],'HorizontalAlignment','center');
 uilabel(fig,'Text','R','Position',[1000-430 170 60 20],'HorizontalAlignment','center');
 
@@ -799,14 +794,14 @@ uilabel(fig,'Text','Serial #','Position',[880-430 40 60 20],'HorizontalAlignment
 fields2edit.WBTEquipmentSerialNumber = uieditfield(fig, 'Value', fields.Measures.WBT.equipment.serialNumber,'Position',[940-430 40 120 20]);
 
 % ==== QuickSIN ====
-fields2edit.quicksin_checkbox = uicheckbox(fig, 'Value',quicksin_yes,'Position',[880-430 570 20 20]);
+fields2edit.quicksin_checkbox = uicheckbox(fig, 'Value',quicksin_yes, 'Text', 'QuickSIN', 'Position',[880-430 570 20 20]);
 uilabel(fig,'Text', 'QuickSIN', 'Position', [880-430+20 570 60 20], 'HorizontalAlignment','left','FontWeight','bold');
 
 uilabel(fig,'Text','RE QuickSIN', 'Position', [880-430 550 150 boxheight], 'HorizontalAlignment','left',  'FontColor', 'red');
 fields2edit.RquickSIN = uieditfield(fig, 'Value', string(fields.Measures.QuickSIN.R), 'Position',[945-430 550 30 boxheight]);
 
 uilabel(fig,'Text','DNT', 'Position',[980-430 550 150 boxheight], 'HorizontalAlignment','left','FontColor', 'red');
-fields2edit.RquickSINDNT = uicheckbox(fig, 'Position',[1005-430 550 25 boxheight]);
+fields2edit.RquickSINDNT = uicheckbox(fig, 'Text', '', 'Position',[1005-430 550 25 boxheight]);
 
 uilabel(fig,'Text','Equip', 'Position',[1025-430 550 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.QSequipdevice = uieditfield(fig, 'Value', fields.Measures.QuickSIN.equipment.device, 'Position',[1060-430 550 120 boxheight]);
@@ -815,7 +810,7 @@ uilabel(fig,'Text','LE QuickSIN', 'Position', [880-430 530 150 boxheight], 'Hori
 fields2edit.LquickSIN = uieditfield(fig,'Value', string(fields.Measures.QuickSIN.L), 'Position',[945-430 530 30 boxheight]);
 
 uilabel(fig,'Text','DNT', 'Position', [980-430 530 150 boxheight], 'HorizontalAlignment','left','FontColor', 'blue');
-fields2edit.LquickSINDNT = uicheckbox(fig, 'Position',[1005-430 530 25 boxheight]);
+fields2edit.LquickSINDNT = uicheckbox(fig,'Text', '', 'Position',[1005-430 530 25 boxheight]);
 
 uilabel(fig,'Text','Calib', 'Position', [1025-430 530 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.QSequipcalib = uieditfield(fig,'Value', fields.Measures.QuickSIN.equipment.calibDate, 'Position',[1060-430 530 120 boxheight]);
@@ -824,7 +819,7 @@ uilabel(fig,'Text','Bin QuickSIN', 'Position', [880-430 510 150 boxheight], 'Hor
 fields2edit.BquickSIN = uieditfield(fig,'Value', string(fields.Measures.QuickSIN.Bin), 'Position',[945-430 510 30 boxheight]);
 
 uilabel(fig,'Text','DNT', 'Position', [980-430 510 150 boxheight], 'HorizontalAlignment','left','FontColor', 'green');
-fields2edit.BquickSINDNT = uicontrol(fig,'Style','checkbox', 'Position',[1005-430 510 25 boxheight]);
+fields2edit.BquickSINDNT = uicheckbox(fig, 'Text', '','Position',[1005-430 510 25 boxheight]);
 
 uilabel(fig,'Text','Serial#', 'Position', [1025-430 510 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.QSequipSN = uieditfield(fig,'Value', fields.Measures.QuickSIN.equipment.serialNumber, 'Position',[1060-430 510 120 boxheight]);
@@ -834,15 +829,14 @@ fields2edit.QScomments = uieditfield(fig,'Value', fields.Measures.QuickSIN.comme
 
 
 % ==== WRS ==== %
-fields2edit.wrs_checkbox = uicontrol(fig,'Style','checkbox','Value',wrs_yes,'Position',[880-430 450 20 20],'HorizontalAlignment','left', 'FontWeight', 'bold');
-uilabel(fig,'Text','WRS', 'Position', [880-430+20 450 60 20], 'HorizontalAlignment','left', 'FontWeight', 'bold');
+fields2edit.wrs_checkbox = uicheckbox(fig,'Value',wrs_yes,'Text','WRS','Position',[880-430 450 20 20]);
 uilabel(fig,'Text', 'Right Ear:', 'Position', [880-430 430 60 20], 'HorizontalAlignment','left', 'FontColor','red');
 
 uilabel(fig,'Text','List', 'Position', [930-430 430 60 20], 'HorizontalAlignment','left');
 fields2edit.RwrsList = uieditfield(fig,'Value', fields.Measures.WRS.R.list, 'Position',[950-430 430 100 20]);
 
 uilabel(fig,'Text','by diff', 'Position', [1060-430 430 150 boxheight], 'HorizontalAlignment','left');
-fields2edit.RwrsListDiff = uicontrol(fig,'Style','checkbox', 'Position',[1090-430 430 25 boxheight]);
+fields2edit.RwrsListDiff = uicheckbox(fig,'Text', '', 'Position',[1090-430 430 25 boxheight]);
 
 uilabel(fig,'Text','List #', 'Position', [1110-430 430 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.RwrsListNum = uieditfield(fig,'Value', fields.Measures.WRS.R.listNumber, 'Position',[1140-430 430 40 boxheight]);
@@ -868,7 +862,7 @@ uilabel(fig,'Text','List', 'Position', [930-430 350 60 20], 'HorizontalAlignment
 fields2edit.LwrsList = uieditfield(fig,'Value', fields.Measures.WRS.L.list, 'Position',[950-430 350 100 20]);
 
 uilabel(fig,'Text','by diff', 'Position', [1060-430 350 150 boxheight], 'HorizontalAlignment','left');
-fields2edit.LwrsListDiff = uicontrol(fig,'Style','checkbox', 'Position',[1090-430 350 25 boxheight]);
+fields2edit.LwrsListDiff = uicheckbox(fig,'Text', '', 'Position',[1090-430 350 25 boxheight]);
 
 uilabel(fig,'Text','List #', 'Position', [1110-430 350 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.LwrsListNum = uieditfield(fig,'Value', fields.Measures.WRS.L.listNumber, 'Position',[1140-430 350 40 boxheight]);
@@ -960,7 +954,7 @@ else
     visit2.Measures.QuickSIN.comments = fields2edit.QScomments.Value;
 end
 
-if dp_checkbox.Value == 0
+if fields2edit.dp_checkbox.Value == 0
     disp('no DPOAE Data')
 else
     disp('    DPOAEs...')
