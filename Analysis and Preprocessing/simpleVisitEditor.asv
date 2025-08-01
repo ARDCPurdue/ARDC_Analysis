@@ -788,10 +788,53 @@ uilabel(fig,'Text','Serial #','Position',[240 490 labelboxwidth 20],'HorizontalA
 fields2edit.DPOAEserialnum = uieditfield(fig, 'Value', fields.Measures.DPOAE.equipment.serialNumber,'Position',[300 490 140 20]);
 
 uilabel(fig,'Text','comments','Position',[240 470 labelboxwidth 20],'HorizontalAlignment','left');
-fields2edit.DPOAEcomments = uieditfield(fig, 'Value', fields.Measures.DPOAE.comments{1,1},'Position',[300 430 140 60]);
+fields2edit.DPOAEcomments = uieditfield(fig, 'Value', fields.Measures.DPOAE.comments{1,1},'Position',[300 460 140 30]);
 
 %====MEMR====
-fields2edit.memr_checkbox = uicheckbox(fig,'Value',memr_yes,'Text','MEMR','Position',[240 410 labelboxwidth labelboxhieght]);
+fields2edit.memr_checkbox = uicheckbox(fig,'Value',memr_yes,'Text','MEMR','Position',[240 440 labelboxwidth labelboxhieght]);
+
+uilabel(fig,'Text','L','Position',[300 430 60 20],'HorizontalAlignment','center');
+uilabel(fig,'Text','R','Position',[360 430 60 20],'HorizontalAlignment','center');
+
+uilabel(fig,'Text','Has MEMR?','Position',[240 400 75 40],'HorizontalAlignment','left');
+
+if isfield(fields.Measures.Reflexes.ProbeR, 'Ipsi')
+    hasDataR_MEMR = "Data"
+else
+    hasDataR_MEMR = "No Data"
+end
+
+if isfield(fields.Measures.Reflexes.ProbeL, 'Ipsi')
+    hasDataL_MEMR = "Data"
+else
+    hasDataL_MEMR = "No Data"
+end
+
+% WBTdataL = uilabel(fig,'Text', hasDataL,'Position',[940-430 150 60 20]);
+% WBTdataR = uilabel(fig,'Text',hasDataR,'Position',[1000-430 150 60 20]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 uilabel(fig,'Text','equipment','Position',[240 390 labelboxwidth 20],'HorizontalAlignment','left');
 fields2edit.MEMRequipment = uieditfield(fig, 'Value', fields.Measures.Reflexes.equipment.device,'Position',[300 390 140 20]);
@@ -994,15 +1037,17 @@ disp('Saving Visit Info...')
 visit2.VisitInfo.testDate = datetime(fields2edit.testDate.Value, 'InputFormat', 'MMddyyyy');
 visit2.VisitInfo.referringLab = fields2edit.referringLab.Value;
 visit2.VisitInfo.irbNumber = fields2edit.irbNumber.Value;
-    if strcomp(fields2edit.ARDRsigned.Value. 'Yes')
-        visit2.VisitInfo.ARDRsigned = 
-visit2.VisitInfo.ARDRsigned = fields2edit.ARDRsigned.Value;
+    if strcmp(fields2edit.ARDRsigned.Value, 'Yes')
+        visit2.VisitInfo.ARDRsigned = 1;
+    else
+        visit2.VisitInfo.ARDRsigned = 0;
+    end
 visit2.VisitInfo.researcher = fields2edit.researcher.Value;
 visit2.VisitInfo.researcherOther = fields2edit.researcherOther.Value;
 visit2.VisitInfo.studyProtocol = fields2edit.studyProtocol.Value;
 visit2.VisitInfo.location = fields2edit.location.Value;
 visit2.VisitInfo.room = fields2edit.room.Value;
-visit2.VisitInfo.dateCompiled = fields2edit.dateCompiled.Value; %type
+visit2.VisitInfo.dateCompiled = datetime('today');
 
 disp('Saving Measures...')
 

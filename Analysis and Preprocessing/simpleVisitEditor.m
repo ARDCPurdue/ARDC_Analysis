@@ -788,10 +788,30 @@ uilabel(fig,'Text','Serial #','Position',[240 490 labelboxwidth 20],'HorizontalA
 fields2edit.DPOAEserialnum = uieditfield(fig, 'Value', fields.Measures.DPOAE.equipment.serialNumber,'Position',[300 490 140 20]);
 
 uilabel(fig,'Text','comments','Position',[240 470 labelboxwidth 20],'HorizontalAlignment','left');
-fields2edit.DPOAEcomments = uieditfield(fig, 'Value', fields.Measures.DPOAE.comments{1,1},'Position',[300 430 140 60]);
+fields2edit.DPOAEcomments = uieditfield(fig, 'Value', fields.Measures.DPOAE.comments{1,1},'Position',[300 460 140 30]);
 
 %====MEMR====
-fields2edit.memr_checkbox = uicheckbox(fig,'Value',memr_yes,'Text','MEMR','Position',[240 410 labelboxwidth labelboxhieght]);
+fields2edit.memr_checkbox = uicheckbox(fig,'Value',memr_yes,'Text','MEMR','Position',[240 440 labelboxwidth labelboxhieght]);
+
+uilabel(fig,'Text','L','Position',[310 430 60 20],'HorizontalAlignment','center');
+uilabel(fig,'Text','R','Position',[370 430 60 20],'HorizontalAlignment','center');
+
+uilabel(fig,'Text','Has MEMR?','Position',[240 400 75 40],'HorizontalAlignment','left');
+
+if isfield(fields.Measures.Reflexes.ProbeR, 'Ipsi')
+    hasDataR_MEMR = "Data"
+else
+    hasDataR_MEMR = "No Data"
+end
+
+if isfield(fields.Measures.Reflexes.ProbeL, 'Ipsi')
+    hasDataL_MEMR = "Data";
+else
+    hasDataL_MEMR = "No Data";
+end
+
+MEMRdataL = uilabel(fig,'Text', hasDataL_MEMR,'Position',[370 410 60 20],'HorizontalAlignment','center');
+MEMRdataR = uilabel(fig,'Text',hasDataR_MEMR,'Position',[310 410 60 20],'HorizontalAlignment','center');
 
 uilabel(fig,'Text','equipment','Position',[240 390 labelboxwidth 20],'HorizontalAlignment','left');
 fields2edit.MEMRequipment = uieditfield(fig, 'Value', fields.Measures.Reflexes.equipment.device,'Position',[300 390 140 20]);
@@ -853,7 +873,7 @@ uilabel(fig,'Text','R','Position',[1000-430 170 60 20],'HorizontalAlignment','ce
 
 uilabel(fig,'Text','Has WBT Data?','Position',[880-430 150 60 40],'HorizontalAlignment','left');
 
-if isnumeric(fields.Measures.WBT.R.PRESSURE(1))%%%%%%%%
+if isnumeric(fields.Measures.WBT.R.PRESSURE(1))
     hasDataR = "Data";
 else
     hasDataR = "No Data";
@@ -865,8 +885,8 @@ else
     hasDataL = "No Data";
 end
 
-WBTdataL = uilabel(fig,'Text', hasDataL,'Position',[940-430 150 60 20]);
-WBTdataR = uilabel(fig,'Text',hasDataR,'Position',[1000-430 150 60 20]);
+WBTdataL = uilabel(fig,'Text', hasDataL,'Position',[940-430 150 60 20], 'HorizontalAlignment','center');
+WBTdataR = uilabel(fig,'Text',hasDataR,'Position',[1000-430 150 60 20], 'HorizontalAlignment','center');
 
 
 uilabel(fig,'Text','Comment','Position',[880-430 130 60 20],'HorizontalAlignment','left');
