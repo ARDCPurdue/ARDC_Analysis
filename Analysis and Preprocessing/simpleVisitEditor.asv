@@ -91,14 +91,14 @@ fields.Measures.Reflexes.comments = "";
 
 fields.Measures.WRS.R.speechLevel = "";
 fields.Measures.WRS.R.maskingLevel = "";
-fields.Measures.WRS.R.numberWordCorrect = "";
+fields.Measures.WRS.R.numberWordsCorrect = "";
 fields.Measures.WRS.R.totalWordsPresented = "";
 fields.Measures.WRS.R.list = "";
 fields.Measures.WRS.R.listNumber = "";
 fields.Measures.WRS.R.percentCorrect = "";
 fields.Measures.WRS.L.speechLevel = "";
 fields.Measures.WRS.L.maskingLevel = "";
-fields.Measures.WRS.L.numberWordCorrect = "";
+fields.Measures.WRS.L.numberWordsCorrect = "";
 fields.Measures.WRS.L.totalWordsPresented = "";
 fields.Measures.WRS.L.list = "";
 fields.Measures.WRS.L.listNumber = "";
@@ -108,7 +108,7 @@ fields.Measures.WRS.equipment.calibDate = "";
 fields.Measures.WRS.equipment.serialNumber = "";
 fields.Measures.WRS.comments = "";
 
-fields.Measures.ACT.scores = ";
+fields.Measures.ACT.scores = nan(2,1);
 fields.Measures.ACT.comments = "";
 fields.Measures.ACT.equipment.device = "";
 fields.Measures.ACT.equipment.calibDate = "";
@@ -167,7 +167,7 @@ if isfield(visit, 'VisitInfo')
     end
     try
         if ~isnan(visit.VisitInfo.researcher)
-        fields.VisitInfo.researcher  = visit.VisitInfo.researcher;
+            fields.VisitInfo.researcher  = visit.VisitInfo.researcher;
         end
     catch
         disp("Didn't work because of visit info researcher")
@@ -216,7 +216,7 @@ oto_yes = 0;
 if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' structure
     meas = fieldnames(visit.Measures);
     for f = 1:length(meas)
-
+        
         %Check For Audiogram Data
         %%%There is a 1x1 cell for comments that was initialized in
         %%%Measures.Audiometry
@@ -227,7 +227,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             fields.Measures.Audiometry.AC.L = visit.Measures.(meas{f}).AC.L;
             fields.Measures.Audiometry.BC.R = visit.Measures.(meas{f}).BC.R;
             fields.Measures.Audiometry.BC.L = visit.Measures.(meas{f}).BC.L;
-
+            
             if isfield(visit.Measures.(meas{f}), 'equipment')
                 fields.Measures.Audiometry.equipment.AC_transducer = visit.Measures.(meas{f}).equipment.AC_transducer;
                 fields.Measures.Audiometry.equipment.BC_transducer = visit.Measures.(meas{f}).equipment.BC_transducer;
@@ -243,7 +243,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
                 fields.Measures.Audiometry.equipment.AC_HardwareLimits = visit.Measures.(meas{f}).AC_HardwareLimits;
                 fields.Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).BC_HardwareLimits;
             end
-
+            
             %Check for QuickSIN Data
         elseif contains(meas{f}, 'Quick', 'IgnoreCase', 1)
             quicksin_yes = 1;
@@ -286,7 +286,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
                 fields.Measures.DPOAE.equipment = visit.Measures.(meas{f}).equipment;
                 fields.Measures.DPOAE.comments = visit.Measures.(meas{f}).comments;
             end
-
+            
             % Check for Reflexes Data
         elseif contains(meas{f}, 'Reflex', 'IgnoreCase', 1)
             disp("    Retrieving Reflexes Data...")
@@ -298,41 +298,118 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             catch
                 disp("reflex data does not contain equipment info")
             end
-
+            
             try
                 fields.Measures.Reflexes.comments = visit.Measures.(meas{f}).comments;
             catch
                 disp("reflex data does not contain comments")
             end
-
+            
             % Check for WRS Data
         elseif contains(meas{f}, 'WRS', 'IgnoreCase', 1)
             disp("    Retrieving WRS Data...")
             wrs_yes = 1;
-            fields.Measures.WRS.R = visit.Measures.(meas{f}).R;
-            fields.Measures.WRS.L = visit.Measures.(meas{f}).L;
-
+            
+            %Right
             try
+                fields.Measures.WRS.R.speechLevel = visit.Measures.WRS.R.speechLevel;
+            catch
+                disp('fields.Measures.WRS.R.speechLevel Failed')
+            end
+            try
+                fields.Measures.WRS.R.maskingLevel = visit.Measures.WRS.R.maskingLevel;
+            catch
+                disp('fields.Measures.WRS.R.maskingLevel Failed')
+            end
+            try
+                fields.Measures.WRS.R.numberWordsCorrect = visit.Measures.WRS.R.numberWordsCorrect;
+            catch
+                disp('fields.Measures.WRS.R.numberWordsCorrect Failed')
+            end 
+            try
+                fields.Measures.WRS.R.totalWordsPresented = visit.Measures.WRS.R.totalWordsPresented;
+            catch
+                disp('fields.Measures.WRS.R.totalWordsPresented Failed')
+            end             
+            try
+                fields.Measures.WRS.R.list = visit.Measures.WRS.R.list;
+            catch
+                disp('fields.Measures.WRS.R.list Failed')
+            end              
+            try
+                fields.Measures.WRS.R.listNumber = visit.Measures.WRS.R.listNumber;
+            catch
+                disp('fields.Measures.WRS.R.listNumber Failed')
+            end              
+            try
+                fields.Measures.WRS.R.percentCorrect = visit.Measures.WRS.R.percentCorrect;
+            catch
+                disp('fields.Measures.WRS.R.percentCorrect Failed')
+            end              
+              
+            % Left
+            try
+                fields.Measures.WRS.L.speechLevel = visit.Measures.WRS.L.speechLevel;
+            catch
+                disp('fields.Measures.WRS.L.speechLevel Failed')
+            end
+            try
+                fields.Measures.WRS.L.maskingLevel = visit.Measures.WRS.L.maskingLevel;
+            catch
+                disp('fields.Measures.WRS.L.maskingLevel Failed')
+            end
+            try
+                fields.Measures.WRS.L.numberWordsCorrect = visit.Measures.WRS.L.numberWordsCorrect;
+            catch
+                disp('fields.Measures.WRS.L.numberWordsCorrect Failed')
+            end 
+            try
+                fields.Measures.WRS.L.totalWordsPresented = visit.Measures.WRS.L.totalWordsPresented;
+            catch
+                disp('fields.Measures.WRS.L.totalWordsPresented Failed')
+            end             
+            try
+                fields.Measures.WRS.L.list = visit.Measures.WRS.L.list;
+            catch
+                disp('fields.Measures.WRS.L.list Failed')
+            end              
+            try
+                fields.Measures.WRS.L.listNumber = visit.Measures.WRS.L.listNumber;
+            catch
+                disp('fields.Measures.WRS.L.listNumber Failed')
+            end              
+            try
+                fields.Measures.WRS.L.percentCorrect = visit.Measures.WRS.L.percentCorrect;
+            catch
+                disp('fields.Measures.WRS.L.percentCorrect Failed')
+            end
+            
+            
+            try 
                 fields.Measures.WRS.equipment= visit.Measures.(meas{f}).equipment;
+            catch
+            end
+            try
                 fields.Measures.WRS.comments = visit.Measures.(meas{f}).comments;
+            catch
             end
             %%% This section is overwriting the origional initialized variables. When
             %%% ACT is present in the comment it removes the scores so it cannot be
             %%% plotted later
-
+            
             % Check for ACT Data
         elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
             disp("    Retrieving ACT Data...")
             act_yes =1;
             try
-                fields.Measures.ACT.scores(1) = visit.Measures.ACT.scores{1,1}; 
+                fields.Measures.ACT.scores(1,1) = str2double(visit.Measures.ACT.scores{1,1});
             catch
-                fields.Measures.ACT.scores = "";
+                disp("didn't find ACT #1")
             end
             try
-                fields.Measures.ACT.scores(2) = visit.Measures.ACT.scores{2,1};
+                fields.Measures.ACT.scores(2,1) = str2double(visit.Measures.ACT.scores{2,1});
             catch
-                fields.Measures.ACT.scores(2) = "";
+                disp("didn't find ACT #2")
             end
             try
                 fields.Measures.ACT.comments = visit.Measures.ACT.comments;
@@ -354,28 +431,27 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             catch
                 fields.Measures.ACT.equipment.serialNumber = "";
             end
-
-            % try
-            %     fields.Measures.ACT = visit.Measures.ACT;
-            % catch
-            %     warning("Does not have ACT info")
-            %
-            % end
-
+            
             %Check for WBT Data
         elseif contains(meas{f}, 'WBT', 'IgnoreCase', 1)
             disp("    Retrieving WBT Data...")
             wbt_yes = 1;
-            fields.Measures.WBT.R = visit.Measures.(meas{f}).R;
+            try
+                fields.Measures.WBT.R = visit.Measures.(meas{f}).R;
+            catch
+            end
+            try
             fields.Measures.WBT.L = visit.Measures.(meas{f}).L;
-
+            catch
+            end
+            
             try
                 fields.Measures.WBT.equipment = visit.Measures.(meas{f}).equipment;
                 fields.Measures.WBT.comments = visit.Measures.(meas{f}).comments;
             catch
                 disp("Does not have WBT equipment info")
             end
-
+            
             % % Check for Otoscopy Data Error
         elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
             disp("    Retrieving Otoscopy Data...")
@@ -411,7 +487,7 @@ if isfield(visit, 'Audiogram')
     catch
         disp('Measures.Audiometry.BC.L not retrieved')
     end
-
+    
     try
         fields.Measures.Audiometry.equipment.AC_transducer = visit.Audiogram.AC_transducer;
     catch
@@ -433,6 +509,8 @@ if isfield(visit, 'Audiogram')
         disp('Measures.Audiometry.equipment.BC_HardwareLimits not retrieved')
     end
 end
+
+% QuickSIN 2
 if isfield(visit, 'QuickSIN')
     disp('    Retrieving QuickSIN data...')
     try
@@ -446,7 +524,7 @@ if isfield(visit, 'QuickSIN')
         disp('Measures.QuickSIN.L not retrieved')
     end
 end
-%%
+% DPOAEs 2
 if isfield(visit, 'dpOAE')
     disp('    DPOAEs')
     %Right
@@ -490,7 +568,7 @@ if isfield(visit, 'dpOAE')
     catch
         disp('Measures.DPOAE.R.f2_rec_dB not retrieved')
     end
-
+    
     %Left
     try
         fields.Measures.DPOAE.L.noisefloor = visit.dpOAE.L.noisefloor;
@@ -552,7 +630,7 @@ if isfield(visit, 'WBT')
     catch
         disp('Measures.WBT.L.FREQ not retrieved')
     end
-
+    
     try
         fields.Measures.WBT.R.PRESSURE = visit.WBT.R.PRESSURE;
     catch
@@ -570,7 +648,7 @@ if isfield(visit, 'WBT')
     end
 end
 
-%%
+
 
 % Set some defaults for dropdowns and other fancy ui controls
 addpath('DataSheets')
@@ -630,7 +708,7 @@ fields2edit.irbNumber = uidropdown(fig, 'Value',fields.VisitInfo.irbNumber, 'Ite
 uilabel(fig,'Text','ARDRsigned','Position',[20 420 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
 
 % fields.isARDRsigned = 'unknown'; %%%%%%%%%%
-% 
+%
 % if (strcmp(fields.VisitInfo.ARDRsigned, "1") || fields.VisitInfo.ARDRsigned == 1)
 %     fields.isARDRsigned = 'Yes';
 % elseif strcmp(fields.VisitInfo.ARDRsigned, "0" || fields.VisitInfo.ARDRsigned == 0)
@@ -732,10 +810,10 @@ fields2edit.act_checkbox = uicheckbox(fig,'Value',act_yes,'Text','ACT','Position
 
 %%Error
 uilabel(fig,'Text','Trial 1', 'Position', [240 250 140 20], 'HorizontalAlignment','left');
-fields2edit.ACTTrialOne = uieditfield(fig,'Value', fields.Measures.ACT.scores(1), 'Position',[275 250 50 20]);
+fields2edit.ACTTrialOne = uieditfield(fig,'Value', string(fields.Measures.ACT.scores(1)), 'Position',[275 250 50 20]);
 
 uilabel(fig,'Text','Trial 2', 'Position', [330 250 140 20], 'HorizontalAlignment','left');
-fields2edit.ACTTrialTwo = uieditfield(fig,'Value', fields.Measures.ACT.scores(2), 'Position',[365 250 50 20]);
+fields2edit.ACTTrialTwo = uieditfield(fig,'Value', string(fields.Measures.ACT.scores(2)), 'Position',[365 250 50 20]);
 
 uilabel(fig,'Text','One Trial Only', 'Position', [240 230 140 20], 'HorizontalAlignment','left');
 fields2edit.ACTSingleTrial = uicheckbox(fig, 'Text', '', 'Position', [310 230 140 20]);
@@ -844,9 +922,6 @@ uilabel(fig,'Text', 'Right Ear:', 'Position', [880-430 430 60 20], 'HorizontalAl
 uilabel(fig,'Text','List', 'Position', [930-430 430 60 20], 'HorizontalAlignment','left');
 fields2edit.RwrsList = uieditfield(fig,'Value', fields.Measures.WRS.R.list, 'Position',[950-430 430 100 20]);
 
-uilabel(fig,'Text','by diff', 'Position', [1060-430 430 150 boxheight], 'HorizontalAlignment','left');
-fields2edit.RwrsListDiff = uicheckbox(fig,'Text', '', 'Position',[1090-430 430 25 boxheight]);
-
 uilabel(fig,'Text','List #', 'Position', [1110-430 430 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.RwrsListNum = uieditfield(fig,'Value', fields.Measures.WRS.R.listNumber, 'Position',[1140-430 430 40 boxheight]);
 
@@ -857,21 +932,18 @@ uilabel(fig,'Text','Masking Level', 'Position', [1005-430 410 150 boxheight], 'H
 fields2edit.RwrsMlevel = uieditfield(fig,'Value', fields.Measures.WRS.R.maskingLevel, 'Position',[1080-430 410 50 20]);
 
 uilabel(fig,'Text','# correct', 'Position', [880-430 390 150 boxheight], 'HorizontalAlignment','left');
-fields2edit.RwrsNumCorrect = uieditfield(fig,'Value', fields.Measures.WRS.R.numberWordCorrect, 'Position',[930-430 390 50 20]);
+fields2edit.RwrsNumCorrect = uieditfield(fig,'Value', fields.Measures.WRS.R.numberWordsCorrect, 'Position',[930-430 390 50 20]);
 
 uilabel(fig,'Text','total #', 'Position', [990-430 390 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.RwrsTotalNum = uieditfield(fig,'Value', fields.Measures.WRS.R.totalWordsPresented, 'Position',[1020-430 390 50 20]);
 
 uilabel(fig,'Text','% correct', 'Position', [1080-430 390 150 boxheight], 'HorizontalAlignment','left');
-RwrsPercentCorrect = uieditfield(fig,'Value', fields.Measures.WRS.R.percentCorrect, 'Position',[1130-430 390 50 20]);
+fields2edit.RwrsPercentCorrect = uieditfield(fig,'Value', string(fields.Measures.WRS.R.percentCorrect), 'Position',[1130-430 390 50 20]);
 
 uilabel(fig,'Text','Left Ear:', 'Position', [880-430 350 60 20], 'HorizontalAlignment','left','FontColor', 'blue');
 
 uilabel(fig,'Text','List', 'Position', [930-430 350 60 20], 'HorizontalAlignment','left');
 fields2edit.LwrsList = uieditfield(fig,'Value', fields.Measures.WRS.L.list, 'Position',[950-430 350 100 20]);
-
-uilabel(fig,'Text','by diff', 'Position', [1060-430 350 150 boxheight], 'HorizontalAlignment','left');
-fields2edit.LwrsListDiff = uicheckbox(fig,'Text', '', 'Position',[1090-430 350 25 boxheight]);
 
 uilabel(fig,'Text','List #', 'Position', [1110-430 350 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.LwrsListNum = uieditfield(fig,'Value', fields.Measures.WRS.L.listNumber, 'Position',[1140-430 350 40 boxheight]);
@@ -883,13 +955,13 @@ uilabel(fig,'Text','Masking Level', 'Position', [1005-430 330 150 boxheight], 'H
 fields2edit.LwrsMLevel = uieditfield(fig,'Value', fields.Measures.WRS.L.maskingLevel, 'Position',[1080-430 330 50 20]);
 
 uilabel(fig,'Text','# correct', 'Position', [880-430 310 150 boxheight], 'HorizontalAlignment','left');
-fields2edit.LwrsNumCorrect = uieditfield(fig,'Value', fields.Measures.WRS.L.numberWordCorrect, 'Position',[930-430 310 50 20]);
+fields2edit.LwrsNumCorrect = uieditfield(fig,'Value', fields.Measures.WRS.L.numberWordsCorrect, 'Position',[930-430 310 50 20]);
 
 uilabel(fig,'Text','total #', 'Position', [990-430 310 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.LwrsTotalNum = uieditfield(fig,'Value', fields.Measures.WRS.L.totalWordsPresented, 'Position',[1020-430 310 50 20]);
 
 uilabel(fig,'Text','% correct', 'Position', [1080-430 310 150 boxheight], 'HorizontalAlignment','left');
-fields2edit.LwrsPercentCorrect = uieditfield(fig,'Value', fields.Measures.WRS.L.percentCorrect, 'Position',[1130-430 310 50 20]);
+fields2edit.LwrsPercentCorrect = uieditfield(fig,'Value', string(fields.Measures.WRS.L.percentCorrect), 'Position',[1130-430 310 50 20]);
 
 
 uilabel(fig,'Text','Equipment','Position',[880-430 280 60 20],'HorizontalAlignment','left');
@@ -921,8 +993,10 @@ visit2.Subject.amplification = fields2edit.amplification.Value;
 disp('Saving Visit Info...')
 visit2.VisitInfo.testDate = datetime(fields2edit.testDate.Value, 'InputFormat', 'MMddyyyy');
 visit2.VisitInfo.referringLab = fields2edit.referringLab.Value;
-visit2.VisitInfo.irbNumber = fields2edit.irbNumber.Value; %type?
-visit2.VisitInfo.ARDRsigned = fields2edit.ARDRsigned.Value; %type?
+visit2.VisitInfo.irbNumber = fields2edit.irbNumber.Value;
+    if strcomp(fields2edit.ARDRsigned.Value. 'Yes')
+        visit2.VisitInfo.ARDRsigned = 
+visit2.VisitInfo.ARDRsigned = fields2edit.ARDRsigned.Value;
 visit2.VisitInfo.researcher = fields2edit.researcher.Value;
 visit2.VisitInfo.researcherOther = fields2edit.researcherOther.Value;
 visit2.VisitInfo.studyProtocol = fields2edit.studyProtocol.Value;
@@ -1002,7 +1076,7 @@ else
     visit2.Measures.Reflexes.equipment.device = fields2edit.MEMRequipment.Value;
     visit2.Measures.Reflexes.equipment.calibDate = fields2edit.MEMRcalibDate.Value; %Type
     visit2.Measures.Reflexes.equipment.serialNumber = fields2edit.MEMRserialNum.Value; %Type
-    visit2.Measures.Reflexes.comments = MEMRcomments.Value;
+    visit2.Measures.Reflexes.comments = fields2edit.MEMRcomments.Value; %%%%%%
 end
 
 if fields2edit.wrs_checkbox.Value == 0
@@ -1011,14 +1085,14 @@ else
     disp('    WRS...') %add by difficulty checkbox
     visit2.Measures.WRS.R.speechLevel = fields2edit.RwrsSLevel.Value; %Type;
     visit2.Measures.WRS.R.maskingLevel = fields2edit.RwrsMlevel.Value; %Type
-    visit2.Measures.WRS.R.numberWordCorrect = fields2edit.RwrsNumCorrect.Value; %Type
+    visit2.Measures.WRS.R.numberWordsCorrect = fields2edit.RwrsNumCorrect.Value; %Type
     visit2.Measures.WRS.R.totalWordsPresented = fields2edit.RwrsTotalNum.Value; %Type
     visit2.Measures.WRS.R.list = fields2edit.RwrsList.Value;
     visit2.Measures.WRS.R.listNumber = fields2edit.RwrsListNum.Value; %Type
     visit2.Measures.WRS.R.percentCorrect = fields2edit.RwrsPercentCorrect.Value; %Type
     visit2.Measures.WRS.L.speechLevel = fields2edit.LwrsSLevel.Value; %Type
     visit2.Measures.WRS.L.maskingLevel = fields2edit.LwrsMLevel.Value; %Type;
-    visit2.Measures.WRS.L.numberWordCorrect = fields2edit.LwrsNumCorrect.Value; %Type;
+    visit2.Measures.WRS.L.numberWordsCorrect = fields2edit.LwrsNumCorrect.Value; %Type;
     visit2.Measures.WRS.L.totalWordsPresented = fields2edit.LwrsTotalNum.Value; %Type;
     visit2.Measures.WRS.L.list = fields2edit.LwrsList.Value;
     visit2.Measures.WRS.L.listNumber = fields2edit.LwrsListNum.Value; %Type
@@ -1063,6 +1137,7 @@ else
 end
 visit3 = visit2;
 
+
 file = sprintf('%s_%s', fields2edit.subjID.Value, fields.dateNum{1, 1});
 dirToSave = "C:\Users\ARDC User\Desktop\test_folder\";
 fileToSave = file; %[extractBefore(file, '.mat'), '_new.mat'];
@@ -1071,8 +1146,8 @@ fileToSave = file; %[extractBefore(file, '.mat'), '_new.mat'];
 save(fullfile(dirToSave, fileToSave), 'visit3');
 msgbox('visit data saved successfully!', 'Success');
 closeApp(fig)
-clc
-clear
+clc 
+clear all hidden
 end
 %end
 
