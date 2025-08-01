@@ -108,7 +108,7 @@ fields.Measures.WRS.equipment.calibDate = "";
 fields.Measures.WRS.equipment.serialNumber = "";
 fields.Measures.WRS.comments = "";
 
-fields.Measures.ACT.scores = "";
+fields.Measures.ACT.scores = ";
 fields.Measures.ACT.comments = "";
 fields.Measures.ACT.equipment.device = "";
 fields.Measures.ACT.equipment.calibDate = "";
@@ -127,6 +127,7 @@ fields.Measures.WBT.equipment.serialNumber = "";
 
 fields.Measures.Otoscopy.comments = "";
 fields.Measures.Otoscopy.equipment = "";
+
 
 % ===== Fill in what's there from orig visit ====
 % Set up Subject information from old visit file into new structure
@@ -324,9 +325,14 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             disp("    Retrieving ACT Data...")
             act_yes =1;
             try
-                fields.Measures.ACT.scores = visit.Measures.ACT.scores; %not real
+                fields.Measures.ACT.scores(1) = visit.Measures.ACT.scores{1,1}; 
             catch
                 fields.Measures.ACT.scores = "";
+            end
+            try
+                fields.Measures.ACT.scores(2) = visit.Measures.ACT.scores{2,1};
+            catch
+                fields.Measures.ACT.scores(2) = "";
             end
             try
                 fields.Measures.ACT.comments = visit.Measures.ACT.comments;
@@ -530,6 +536,7 @@ end
 
 if isfield(visit, 'WBT')
     disp ('    WBT...')
+    wbt_yes = 1;
     try
         fields.Measures.WBT.L.PRESSURE = visit.WBT.L.PRESSURE;
     catch
@@ -622,12 +629,24 @@ fields2edit.irbNumber = uidropdown(fig, 'Value',fields.VisitInfo.irbNumber, 'Ite
 
 uilabel(fig,'Text','ARDRsigned','Position',[20 420 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
 
+% fields.isARDRsigned = 'unknown'; %%%%%%%%%%
+% 
+% if (strcmp(fields.VisitInfo.ARDRsigned, "1") || fields.VisitInfo.ARDRsigned == 1)
+%     fields.isARDRsigned = 'Yes';
+% elseif strcmp(fields.VisitInfo.ARDRsigned, "0" || fields.VisitInfo.ARDRsigned == 0)
+%     fields.isARDRsigned = 'No';
+% end
+
 fields.isARDRsigned = 'unknown';
-if strcmp(fields.VisitInfo.ARDRsigned, "1")
-    isARDRsigned = 'Yes';
-elseif strcmp(fields.VisitInfo.ARDRsigned, "0")
-    isARDRsigned = 'No';
+
+ARDR_signed_val = fields.VisitInfo.ARDRsigned;
+if (ischar(ARDR_signed_val) && strcmp(ARDR_signed_val, '1')) || (isstring(ARDR_signed_val) && ARDR_signed_val == "1") || (isnumeric(ARDR_signed_val) && ARDR_signed_val == 1)
+    fields.isARDRsigned = 'Yes';
+elseif (ischar(ARDR_signed_val) && strcmp(ARDR_signed_val, '0')) || (isstring(ARDR_signed_val) && ARDR_signed_val == "0") || (isnumeric(ARDR_signed_val) && ARDR_signed_val == 0)
+    fields.isARDRsigned = 'No';
 end
+
+
 fields2edit.ARDRsigned = uidropdown(fig, 'Value',fields.isARDRsigned, 'Items', {'Yes', 'No', 'unknown'}, 'Position',[90 420 140 20]);
 
 uilabel(fig,'Text','researcher','Position',[20 400 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
@@ -713,10 +732,10 @@ fields2edit.act_checkbox = uicheckbox(fig,'Value',act_yes,'Text','ACT','Position
 
 %%Error
 uilabel(fig,'Text','Trial 1', 'Position', [240 250 140 20], 'HorizontalAlignment','left');
-fields2edit.ACTTrialOne = uieditfield(fig,'Value', fields.Measures.ACT.scores, 'Position',[275 250 50 20]);
+fields2edit.ACTTrialOne = uieditfield(fig,'Value', fields.Measures.ACT.scores(1), 'Position',[275 250 50 20]);
 
 uilabel(fig,'Text','Trial 2', 'Position', [330 250 140 20], 'HorizontalAlignment','left');
-fields2edit.ACTTrialTwo = uieditfield(fig,'Value', fields.Measures.ACT.scores, 'Position',[365 250 50 20]);
+fields2edit.ACTTrialTwo = uieditfield(fig,'Value', fields.Measures.ACT.scores(2), 'Position',[365 250 50 20]);
 
 uilabel(fig,'Text','One Trial Only', 'Position', [240 230 140 20], 'HorizontalAlignment','left');
 fields2edit.ACTSingleTrial = uicheckbox(fig, 'Text', '', 'Position', [310 230 140 20]);
@@ -756,7 +775,7 @@ uilabel(fig,'Text','R','Position',[1000-430 170 60 20],'HorizontalAlignment','ce
 
 uilabel(fig,'Text','Has WBT Data?','Position',[880-430 150 60 40],'HorizontalAlignment','left');
 
-if isnumeric(fields.Measures.WBT.R.PRESSURE(1))
+if isnumeric(fields.Measures.WBT.R.PRESSURE(1))%%%%%%%%
     hasDataR = "Data";
 else
     hasDataR = "No Data";
@@ -888,10 +907,10 @@ fields2edit.WRSComments = uieditfield(fig, 'Value', fields.Measures.WRS.comments
 
 % ==== SUBMIT BUTTON ====
 uibutton(fig,'text','Submit & Save','FontColor','k','BackgroundColor','g', 'FontSize', 14, 'FontWeight', 'bold','Position', [260 40 150 40],...
-    'ButtonPushedFcn', @(src, event)submitCallback(fields, fields2edit));
+    'ButtonPushedFcn', @(src, event)submitCallback(fields, fields2edit, fig));
 
 % ==== CALLBACK FUNCTION ====
-function submitCallback(fields, fields2edit)
+function submitCallback(fields, fields2edit, fig)
 % Update visit struct from GUI
 disp('Saving Subject Info...')
 visit2.Subject.ID = fields2edit.subjID.Value;
@@ -1036,7 +1055,7 @@ else
     visit2.Measures.WBT.equipment.serialNumber = fields2edit.WBTEquipmentSerialNumber.Value; %Type
 end
 
-if fields2edit.otoscopy_checkbox == 0
+if fields2edit.otoscopy_checkbox.Value == 0
     disp("No otoscopy info")
 else
     visit2.Measures.Otoscopy.comments = fields2edit.otoComments.Value;
@@ -1044,12 +1063,16 @@ else
 end
 visit3 = visit2;
 
-file = sprintf('%s_%s', fields2edit.subjID.Value, string(visit2.VisitInfo.testDate))
+file = sprintf('%s_%s', fields2edit.subjID.Value, fields.dateNum{1, 1});
 dirToSave = "C:\Users\ARDC User\Desktop\test_folder\";
-fileToSave = file %[extractBefore(file, '.mat'), '_new.mat']
+fileToSave = file; %[extractBefore(file, '.mat'), '_new.mat'];
 
 % Save updated struct back to file
 save(fullfile(dirToSave, fileToSave), 'visit3');
 msgbox('visit data saved successfully!', 'Success');
+closeApp(fig)
+clc
+clear
 end
 %end
+

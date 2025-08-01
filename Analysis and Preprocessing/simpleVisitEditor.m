@@ -108,7 +108,7 @@ fields.Measures.WRS.equipment.calibDate = "";
 fields.Measures.WRS.equipment.serialNumber = "";
 fields.Measures.WRS.comments = "";
 
-fields.Measures.ACT.scores = "";
+fields.Measures.ACT.scores = nan(2,1);
 fields.Measures.ACT.comments = "";
 fields.Measures.ACT.equipment.device = "";
 fields.Measures.ACT.equipment.calibDate = "";
@@ -127,6 +127,7 @@ fields.Measures.WBT.equipment.serialNumber = "";
 
 fields.Measures.Otoscopy.comments = "";
 fields.Measures.Otoscopy.equipment = "";
+
 
 % ===== Fill in what's there from orig visit ====
 % Set up Subject information from old visit file into new structure
@@ -166,7 +167,7 @@ if isfield(visit, 'VisitInfo')
     end
     try
         if ~isnan(visit.VisitInfo.researcher)
-        fields.VisitInfo.researcher  = visit.VisitInfo.researcher;
+            fields.VisitInfo.researcher  = visit.VisitInfo.researcher;
         end
     catch
         disp("Didn't work because of visit info researcher")
@@ -215,7 +216,7 @@ oto_yes = 0;
 if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' structure
     meas = fieldnames(visit.Measures);
     for f = 1:length(meas)
-
+        
         %Check For Audiogram Data
         %%%There is a 1x1 cell for comments that was initialized in
         %%%Measures.Audiometry
@@ -226,7 +227,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             fields.Measures.Audiometry.AC.L = visit.Measures.(meas{f}).AC.L;
             fields.Measures.Audiometry.BC.R = visit.Measures.(meas{f}).BC.R;
             fields.Measures.Audiometry.BC.L = visit.Measures.(meas{f}).BC.L;
-
+            
             if isfield(visit.Measures.(meas{f}), 'equipment')
                 fields.Measures.Audiometry.equipment.AC_transducer = visit.Measures.(meas{f}).equipment.AC_transducer;
                 fields.Measures.Audiometry.equipment.BC_transducer = visit.Measures.(meas{f}).equipment.BC_transducer;
@@ -242,7 +243,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
                 fields.Measures.Audiometry.equipment.AC_HardwareLimits = visit.Measures.(meas{f}).AC_HardwareLimits;
                 fields.Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).BC_HardwareLimits;
             end
-
+            
             %Check for QuickSIN Data
         elseif contains(meas{f}, 'Quick', 'IgnoreCase', 1)
             quicksin_yes = 1;
@@ -285,7 +286,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
                 fields.Measures.DPOAE.equipment = visit.Measures.(meas{f}).equipment;
                 fields.Measures.DPOAE.comments = visit.Measures.(meas{f}).comments;
             end
-
+            
             % Check for Reflexes Data
         elseif contains(meas{f}, 'Reflex', 'IgnoreCase', 1)
             disp("    Retrieving Reflexes Data...")
@@ -297,20 +298,20 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             catch
                 disp("reflex data does not contain equipment info")
             end
-
+            
             try
                 fields.Measures.Reflexes.comments = visit.Measures.(meas{f}).comments;
             catch
                 disp("reflex data does not contain comments")
             end
-
+            
             % Check for WRS Data
         elseif contains(meas{f}, 'WRS', 'IgnoreCase', 1)
             disp("    Retrieving WRS Data...")
             wrs_yes = 1;
             fields.Measures.WRS.R = visit.Measures.(meas{f}).R;
             fields.Measures.WRS.L = visit.Measures.(meas{f}).L;
-
+            
             try
                 fields.Measures.WRS.equipment= visit.Measures.(meas{f}).equipment;
                 fields.Measures.WRS.comments = visit.Measures.(meas{f}).comments;
@@ -318,15 +319,20 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             %%% This section is overwriting the origional initialized variables. When
             %%% ACT is present in the comment it removes the scores so it cannot be
             %%% plotted later
-
+            
             % Check for ACT Data
         elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
             disp("    Retrieving ACT Data...")
             act_yes =1;
             try
-                fields.Measures.ACT.scores = visit.Measures.ACT.scores; %not real
+                fields.Measures.ACT.scores(1,1) = str2double(visit.Measures.ACT.scores{1,1});
             catch
-                fields.Measures.ACT.scores = "";
+                disp("didn't find ACT #1")
+            end
+            try
+                fields.Measures.ACT.scores(2,1) = str2double(visit.Measures.ACT.scores{2,1});
+            catch
+                disp("didn't find ACT #2")
             end
             try
                 fields.Measures.ACT.comments = visit.Measures.ACT.comments;
@@ -348,28 +354,21 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             catch
                 fields.Measures.ACT.equipment.serialNumber = "";
             end
-
-            % try
-            %     fields.Measures.ACT = visit.Measures.ACT;
-            % catch
-            %     warning("Does not have ACT info")
-            %
-            % end
-
+            
             %Check for WBT Data
         elseif contains(meas{f}, 'WBT', 'IgnoreCase', 1)
             disp("    Retrieving WBT Data...")
             wbt_yes = 1;
             fields.Measures.WBT.R = visit.Measures.(meas{f}).R;
             fields.Measures.WBT.L = visit.Measures.(meas{f}).L;
-
+            
             try
                 fields.Measures.WBT.equipment = visit.Measures.(meas{f}).equipment;
                 fields.Measures.WBT.comments = visit.Measures.(meas{f}).comments;
             catch
                 disp("Does not have WBT equipment info")
             end
-
+            
             % % Check for Otoscopy Data Error
         elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
             disp("    Retrieving Otoscopy Data...")
@@ -405,7 +404,7 @@ if isfield(visit, 'Audiogram')
     catch
         disp('Measures.Audiometry.BC.L not retrieved')
     end
-
+    
     try
         fields.Measures.Audiometry.equipment.AC_transducer = visit.Audiogram.AC_transducer;
     catch
@@ -484,7 +483,7 @@ if isfield(visit, 'dpOAE')
     catch
         disp('Measures.DPOAE.R.f2_rec_dB not retrieved')
     end
-
+    
     %Left
     try
         fields.Measures.DPOAE.L.noisefloor = visit.dpOAE.L.noisefloor;
@@ -530,6 +529,7 @@ end
 
 if isfield(visit, 'WBT')
     disp ('    WBT...')
+    wbt_yes = 1;
     try
         fields.Measures.WBT.L.PRESSURE = visit.WBT.L.PRESSURE;
     catch
@@ -545,7 +545,7 @@ if isfield(visit, 'WBT')
     catch
         disp('Measures.WBT.L.FREQ not retrieved')
     end
-
+    
     try
         fields.Measures.WBT.R.PRESSURE = visit.WBT.R.PRESSURE;
     catch
@@ -622,12 +622,24 @@ fields2edit.irbNumber = uidropdown(fig, 'Value',fields.VisitInfo.irbNumber, 'Ite
 
 uilabel(fig,'Text','ARDRsigned','Position',[20 420 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
 
+% fields.isARDRsigned = 'unknown'; %%%%%%%%%%
+%
+% if (strcmp(fields.VisitInfo.ARDRsigned, "1") || fields.VisitInfo.ARDRsigned == 1)
+%     fields.isARDRsigned = 'Yes';
+% elseif strcmp(fields.VisitInfo.ARDRsigned, "0" || fields.VisitInfo.ARDRsigned == 0)
+%     fields.isARDRsigned = 'No';
+% end
+
 fields.isARDRsigned = 'unknown';
-if strcmp(fields.VisitInfo.ARDRsigned, "1")
-    isARDRsigned = 'Yes';
-elseif strcmp(fields.VisitInfo.ARDRsigned, "0")
-    isARDRsigned = 'No';
+
+ARDR_signed_val = fields.VisitInfo.ARDRsigned;
+if (ischar(ARDR_signed_val) && strcmp(ARDR_signed_val, '1')) || (isstring(ARDR_signed_val) && ARDR_signed_val == "1") || (isnumeric(ARDR_signed_val) && ARDR_signed_val == 1)
+    fields.isARDRsigned = 'Yes';
+elseif (ischar(ARDR_signed_val) && strcmp(ARDR_signed_val, '0')) || (isstring(ARDR_signed_val) && ARDR_signed_val == "0") || (isnumeric(ARDR_signed_val) && ARDR_signed_val == 0)
+    fields.isARDRsigned = 'No';
 end
+
+
 fields2edit.ARDRsigned = uidropdown(fig, 'Value',fields.isARDRsigned, 'Items', {'Yes', 'No', 'unknown'}, 'Position',[90 420 140 20]);
 
 uilabel(fig,'Text','researcher','Position',[20 400 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
@@ -713,10 +725,10 @@ fields2edit.act_checkbox = uicheckbox(fig,'Value',act_yes,'Text','ACT','Position
 
 %%Error
 uilabel(fig,'Text','Trial 1', 'Position', [240 250 140 20], 'HorizontalAlignment','left');
-fields2edit.ACTTrialOne = uieditfield(fig,'Value', fields.Measures.ACT.scores, 'Position',[275 250 50 20]);
+fields2edit.ACTTrialOne = uieditfield(fig,'Value', string(fields.Measures.ACT.scores(1)), 'Position',[275 250 50 20]);
 
 uilabel(fig,'Text','Trial 2', 'Position', [330 250 140 20], 'HorizontalAlignment','left');
-fields2edit.ACTTrialTwo = uieditfield(fig,'Value', fields.Measures.ACT.scores, 'Position',[365 250 50 20]);
+fields2edit.ACTTrialTwo = uieditfield(fig,'Value', string(fields.Measures.ACT.scores(2)), 'Position',[365 250 50 20]);
 
 uilabel(fig,'Text','One Trial Only', 'Position', [240 230 140 20], 'HorizontalAlignment','left');
 fields2edit.ACTSingleTrial = uicheckbox(fig, 'Text', '', 'Position', [310 230 140 20]);
@@ -756,7 +768,7 @@ uilabel(fig,'Text','R','Position',[1000-430 170 60 20],'HorizontalAlignment','ce
 
 uilabel(fig,'Text','Has WBT Data?','Position',[880-430 150 60 40],'HorizontalAlignment','left');
 
-if isnumeric(fields.Measures.WBT.R.PRESSURE(1))
+if isnumeric(fields.Measures.WBT.R.PRESSURE(1))%%%%%%%%
     hasDataR = "Data";
 else
     hasDataR = "No Data";
@@ -983,7 +995,7 @@ else
     visit2.Measures.Reflexes.equipment.device = fields2edit.MEMRequipment.Value;
     visit2.Measures.Reflexes.equipment.calibDate = fields2edit.MEMRcalibDate.Value; %Type
     visit2.Measures.Reflexes.equipment.serialNumber = fields2edit.MEMRserialNum.Value; %Type
-    visit2.Measures.Reflexes.comments = MEMRcomments.Value;
+    visit2.Measures.Reflexes.comments = fields2edit.MEMRcomments.Value; %%%%%%
 end
 
 if fields2edit.wrs_checkbox.Value == 0
@@ -1052,6 +1064,9 @@ fileToSave = file; %[extractBefore(file, '.mat'), '_new.mat'];
 save(fullfile(dirToSave, fileToSave), 'visit3');
 msgbox('visit data saved successfully!', 'Success');
 closeApp(fig)
+clc
+close all hidden 
+clear all hidden
 end
 %end
 
