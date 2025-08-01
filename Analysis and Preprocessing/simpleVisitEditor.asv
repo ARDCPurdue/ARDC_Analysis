@@ -793,48 +793,25 @@ fields2edit.DPOAEcomments = uieditfield(fig, 'Value', fields.Measures.DPOAE.comm
 %====MEMR====
 fields2edit.memr_checkbox = uicheckbox(fig,'Value',memr_yes,'Text','MEMR','Position',[240 440 labelboxwidth labelboxhieght]);
 
-uilabel(fig,'Text','L','Position',[300 430 60 20],'HorizontalAlignment','center');
-uilabel(fig,'Text','R','Position',[360 430 60 20],'HorizontalAlignment','center');
+uilabel(fig,'Text','L','Position',[310 430 60 20],'HorizontalAlignment','center');
+uilabel(fig,'Text','R','Position',[370 430 60 20],'HorizontalAlignment','center');
 
 uilabel(fig,'Text','Has MEMR?','Position',[240 400 75 40],'HorizontalAlignment','left');
 
 if isfield(fields.Measures.Reflexes.ProbeR, 'Ipsi')
-    hasDataR_MEMR = "Data"
+    hasDataR_MEMR = "Data";
 else
-    hasDataR_MEMR = "No Data"
+    hasDataR_MEMR = "No Data";
 end
 
 if isfield(fields.Measures.Reflexes.ProbeL, 'Ipsi')
-    hasDataL_MEMR = "Data"
+    hasDataL_MEMR = "Data";
 else
-    hasDataL_MEMR = "No Data"
+    hasDataL_MEMR = "No Data";
 end
 
-% WBTdataL = uilabel(fig,'Text', hasDataL,'Position',[940-430 150 60 20]);
-% WBTdataR = uilabel(fig,'Text',hasDataR,'Position',[1000-430 150 60 20]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+MEMRdataL = uilabel(fig,'Text', hasDataL_MEMR,'Position',[370 410 60 20],'HorizontalAlignment','center');
+MEMRdataR = uilabel(fig,'Text',hasDataR_MEMR,'Position',[310 410 60 20],'HorizontalAlignment','center');
 
 uilabel(fig,'Text','equipment','Position',[240 390 labelboxwidth 20],'HorizontalAlignment','left');
 fields2edit.MEMRequipment = uieditfield(fig, 'Value', fields.Measures.Reflexes.equipment.device,'Position',[300 390 140 20]);
@@ -896,7 +873,7 @@ uilabel(fig,'Text','R','Position',[1000-430 170 60 20],'HorizontalAlignment','ce
 
 uilabel(fig,'Text','Has WBT Data?','Position',[880-430 150 60 40],'HorizontalAlignment','left');
 
-if isnumeric(fields.Measures.WBT.R.PRESSURE(1))%%%%%%%%
+if isnumeric(fields.Measures.WBT.R.PRESSURE(1))
     hasDataR = "Data";
 else
     hasDataR = "No Data";
@@ -908,9 +885,8 @@ else
     hasDataL = "No Data";
 end
 
-WBTdataL = uilabel(fig,'Text', hasDataL,'Position',[940-430 150 60 20]);
-WBTdataR = uilabel(fig,'Text',hasDataR,'Position',[1000-430 150 60 20]);
-
+WBTdataL = uilabel(fig,'Text', hasDataL,'Position',[940-430 150 60 20], 'HorizontalAlignment','center');
+WBTdataR = uilabel(fig,'Text',hasDataR,'Position',[1000-430 150 60 20], 'HorizontalAlignment','center');
 
 uilabel(fig,'Text','Comment','Position',[880-430 130 60 20],'HorizontalAlignment','left');
 fields2edit.WBTComments = uieditfield(fig, 'Value', fields.Measures.WBT.comments{1,1},'Position',[940-430 100 120 50]);
@@ -944,9 +920,16 @@ fields2edit.LquickSINDNT = uicheckbox(fig,'Text', '', 'Position',[1005-430 530 2
 
 uilabel(fig,'Text','Calib', 'Position', [1025-430 530 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.QSequipcalib = uieditfield(fig,'Value', fields.Measures.QuickSIN.equipment.calibDate, 'Position',[1060-430 530 120 boxheight]);
-
+%%%%
 uilabel(fig,'Text','Bin QuickSIN', 'Position', [880-430 510 150 boxheight], 'HorizontalAlignment','left','FontColor', 'green');
 fields2edit.BquickSIN = uieditfield(fig,'Value', string(fields.Measures.QuickSIN.Bin), 'Position',[945-430 510 30 boxheight]);
+
+
+
+
+
+
+
 
 uilabel(fig,'Text','DNT', 'Position', [980-430 510 150 boxheight], 'HorizontalAlignment','left','FontColor', 'green');
 fields2edit.BquickSINDNT = uicheckbox(fig, 'Text', '','Position',[1005-430 510 25 boxheight]);

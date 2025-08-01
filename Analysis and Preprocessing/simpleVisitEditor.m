@@ -799,9 +799,9 @@ uilabel(fig,'Text','R','Position',[370 430 60 20],'HorizontalAlignment','center'
 uilabel(fig,'Text','Has MEMR?','Position',[240 400 75 40],'HorizontalAlignment','left');
 
 if isfield(fields.Measures.Reflexes.ProbeR, 'Ipsi')
-    hasDataR_MEMR = "Data"
+    hasDataR_MEMR = "Data";
 else
-    hasDataR_MEMR = "No Data"
+    hasDataR_MEMR = "No Data";
 end
 
 if isfield(fields.Measures.Reflexes.ProbeL, 'Ipsi')
@@ -887,7 +887,6 @@ end
 
 WBTdataL = uilabel(fig,'Text', hasDataL,'Position',[940-430 150 60 20], 'HorizontalAlignment','center');
 WBTdataR = uilabel(fig,'Text',hasDataR,'Position',[1000-430 150 60 20], 'HorizontalAlignment','center');
-
 
 uilabel(fig,'Text','Comment','Position',[880-430 130 60 20],'HorizontalAlignment','left');
 fields2edit.WBTComments = uieditfield(fig, 'Value', fields.Measures.WBT.comments{1,1},'Position',[940-430 100 120 50]);
