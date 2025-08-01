@@ -26,8 +26,8 @@ fields.Subject.age = "";
 fields.Subject.gender = "unknown";
 fields.Subject.amplification = "Unknown";
 fields.VisitInfo.testDate = dateOfTest;
-fields.VisitInfo.referringLab = "";
-fields.VisitInfo.irbNumber = "";
+fields.VisitInfo.referringLab = "Unknown";
+fields.VisitInfo.irbNumber = "Unknown";
 fields.VisitInfo.ARDRsigned = "";
 fields.VisitInfo.researcher = "";
 fields.VisitInfo.researcherOther = "";
@@ -656,16 +656,16 @@ addpath('DataSheets')
 % Read in IRB data
 IRBs = readtable('IRBs.csv', 'TextType','string');
 dropdown_lab = table2array(IRBs(:,"PI"));
-dropdown_lab(end+1) = "";
+dropdown_lab(end+1) = "Unknown";
 dropdown_IRB = table2array(IRBs(:,"IRBnum"));
-dropdown_IRB(end+1) = "";
+dropdown_IRB(end+1) = "Unknown";
 
 % Other standard dropdowns, not read from CSV. Could be edited if needed.
 dropdown_gender = {'Male', 'Female', 'Non-binary', 'No Response', 'unknown'};  % Replace with your options
 dropdown_amplification = {'None', 'Hearing Aids', 'Cochlear Implant','Other', 'Unknown'};
 
 % Get all locations
-all_locs = dir("DataSheets\Equipment_*");
+all_locs = dir(['DataSheets', filesep, 'Equipment_*']);
 for i = 1:numel(all_locs)
     locations(i) = extractBetween(all_locs(i).name, 'Equipment_', '_');
     rms(i) = extractBetween(all_locs(i).name, sprintf('Equipment_%s_', locations{i}), '.csv');
@@ -1002,6 +1002,9 @@ uibutton(fig,'text','Submit & Save','FontColor','k','BackgroundColor','g', 'Font
 
 % ==== CALLBACK FUNCTION ====
 function submitCallback(fields, fields2edit, fig)
+
+codeDirectory = pwd; 
+
 % Update visit struct from GUI
 disp('Saving Subject Info...')
 visit2.Subject.ID = fields2edit.subjID.Value;
@@ -1156,11 +1159,50 @@ else
     visit2.Measures.Otoscopy.comments = fields2edit.otoComments.Value;
     visit2.Measures.Otoscopy.equipment = fields2edit.otoEquipment.Value;
 end
-visit3 = visit2;
+
+% overwrite OG visit file with new edited visit. 
+visit = visit2;
+
+filename = sprintf('%s_%s', fields2edit.subjID.Value, fields.dateNum{1, 1});
 
 
-file = sprintf('%s_%s', fields2edit.subjID.Value, fields.dateNum{1, 1});
-dirToSave = "C:\Users\ARDC User\Desktop\test_folder\";
+% if data should go to certain folders, set where it goes here:
+generalDirToSave = "C:\Users\ARDC User\Desktop\FinalCompiled\";
+cd(generalDirToSave);
+
+ARDClabDir = ['ARDCLab Data\'];
+ARDRDir = ['ARDR Data\'];
+extDir = ['External Labs TEMP\'];
+
+if strcmp(visit.VisitInfo.referringLab, 'ARDC Lab')
+    cd(ARDClabDir);
+else
+    cd(extDir)
+    refPI = visit.VisitInfo.referringLab;
+    if ~exist(refPI, 'dir')
+        mkdir(refPI)
+    end
+    cd(visit.VisitInfo.referringLab)
+end
+
+save(filename, 'visit');
+cd(generalDirToSave)
+
+% if ARDR is signed and data can go to repo, also save it to that folder.
+if visit.VisitInfo.ARDRsigned
+    cd(ARDRDir)
+    save(filename, 'visit');
+end
+
+cd(codeDirectory)
+
+
+
+
+
+
+
+
 fileToSave = file; %[extractBefore(file, '.mat'), '_new.mat'];
 
 % Save updated struct back to file
@@ -1170,5 +1212,4 @@ closeApp(fig)
 clc 
 clear all hidden
 end
-%end
 

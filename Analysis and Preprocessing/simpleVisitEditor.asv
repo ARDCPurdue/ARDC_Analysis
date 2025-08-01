@@ -920,16 +920,9 @@ fields2edit.LquickSINDNT = uicheckbox(fig,'Text', '', 'Position',[1005-430 530 2
 
 uilabel(fig,'Text','Calib', 'Position', [1025-430 530 150 boxheight], 'HorizontalAlignment','left');
 fields2edit.QSequipcalib = uieditfield(fig,'Value', fields.Measures.QuickSIN.equipment.calibDate, 'Position',[1060-430 530 120 boxheight]);
-%%%%
+
 uilabel(fig,'Text','Bin QuickSIN', 'Position', [880-430 510 150 boxheight], 'HorizontalAlignment','left','FontColor', 'green');
 fields2edit.BquickSIN = uieditfield(fig,'Value', string(fields.Measures.QuickSIN.Bin), 'Position',[945-430 510 30 boxheight]);
-
-
-
-
-
-
-
 
 uilabel(fig,'Text','DNT', 'Position', [980-430 510 150 boxheight], 'HorizontalAlignment','left','FontColor', 'green');
 fields2edit.BquickSINDNT = uicheckbox(fig, 'Text', '','Position',[1005-430 510 25 boxheight]);
@@ -1163,11 +1156,50 @@ else
     visit2.Measures.Otoscopy.comments = fields2edit.otoComments.Value;
     visit2.Measures.Otoscopy.equipment = fields2edit.otoEquipment.Value;
 end
-visit3 = visit2;
+
+% overwrite OG visit file with new edited visit. 
+visit = visit2;
+
+filename = sprintf('%s_%s', fields2edit.subjID.Value, fields.dateNum{1, 1});
 
 
-file = sprintf('%s_%s', fields2edit.subjID.Value, fields.dateNum{1, 1});
-dirToSave = "C:\Users\ARDC User\Desktop\test_folder\";
+% if data should go to certain folders, set where it goes here:
+generalDirToSave = "C:\Users\ARDC User\Desktop\FinalCompiled\";
+cd(generalDirToSave);
+
+ARDClabDir = ['ARDCLab Data\'];
+ARDRDir = ['ARDR Data\'];
+extDir = ['External Labs TEMP\'];
+
+if strcmp(visit.VisitInfo.referringLab, 'ARDC Lab')
+    cd(ARDClabDir);
+else
+    cd(extDir)
+    refPI = visit.VisitInfo.referringLab;
+    if ~exist(refPI, 'dir')
+        mkdir(refPI)
+    end
+    cd(visit.VisitInfo.referringLab)
+end
+
+save(filename, 'visit');
+cd(generalDirToSave)
+
+% if ARDR is signed and data can go to repo, also save it to that folder.
+if visit.VisitInfo.ARDRsigned
+    cd(ARDRDir)
+    save(filename, 'visit');
+end
+
+cd(pd)
+
+
+
+
+
+
+
+
 fileToSave = file; %[extractBefore(file, '.mat'), '_new.mat'];
 
 % Save updated struct back to file

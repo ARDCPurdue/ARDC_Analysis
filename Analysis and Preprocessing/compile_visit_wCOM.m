@@ -58,11 +58,10 @@ for i = 1:length(files)
                 Audiometry.equipment.AC_HardwareLimits = AC_maxOut;
                 Audiometry.equipment.BC_transducer = BC_transduc;
                 Audiometry.equipment.BC_HardwareLimits = BC_maxOut;
-                QuickSIN.R = QS_R;
-                QuickSIN.L = QS_L;
+                tempQuickSIN.R = QS_R;
+                tempQuickSIN.L = QS_L;
 
                 visit.Measures.Audiometry = Audiometry;
-                visit.Measures.QuickSIN = QuickSIN;
 
                 disp('Audiometry Loaded');
 
@@ -186,9 +185,26 @@ for i = 1:length(files)
 
                 visit.Measures.ACT = ACT; 
 
-
+                % for Binaural QuickSIN data
+                if ~isfield(QuickSIN, 'DNT')
+                    tempQuickSIN.Bin = QuickSIN.Score;
+                else
+                    tempQuickSIN.Bin = 'Did not test';
+                end
         end
     end
+end
+
+if isfield(tempQuickSIN, 'R')
+    visit.Measures.QuickSIN.R = tempQuickSIN.R;
+end
+
+if isfield(tempQuickSIN, 'L')
+    visit.Measures.QuickSIN.L = tempQuickSIN.L;
+end
+
+if isfield(tempQuickSIN, 'Bin')
+    visit.Measures.QuickSIN.Bin = tempQuickSIN.Bin;
 end
 
 %Date/Time/Researcher/Reflexes/QuickSIN Performance
