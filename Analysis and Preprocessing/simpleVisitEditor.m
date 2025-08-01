@@ -17,7 +17,7 @@ end
 visit = loaded.visit;
 
 dateOfTest = datetime(extractBetween(file, '_', '.mat'), 'InputFormat', 'MMddyyyy');
-
+fields.dateNum = extractBetween(file, '_', '.mat');
 % ==== Initialize Visit ====
 % Set initial data structure
 disp("Intializing Variables...")
@@ -25,7 +25,7 @@ fields.Subject.ID = "";
 fields.Subject.age = "";
 fields.Subject.gender = "unknown";
 fields.Subject.amplification = "Unknown";
-fields.VisitInfo.testDate = "";
+fields.VisitInfo.testDate = dateOfTest;
 fields.VisitInfo.referringLab = "";
 fields.VisitInfo.irbNumber = "";
 fields.VisitInfo.ARDRsigned = "";
@@ -132,77 +132,69 @@ fields.Measures.Otoscopy.equipment = "";
 % Set up Subject information from old visit file into new structure
 disp("Retrieving Subject Info...")
 if isfield(visit, 'subjectID')
-    Subject.ID = visit.subjectID;
-    VisitInfo.researcher = visit.researcher;
+    fields.Subject.ID = visit.subjectID;
+    if ~isnan(visit.researcher)
+        fields.VisitInfo.researcher = visit.researcher;
+    end
     try
-        Subject.age = visit.Age;
+        fields.Subject.age = visit.Age;
     end
 elseif isfield(visit, 'Subject')
-    Subject.ID = visit.Subject.ID;
-    Subject.age = visit.Subject.age;
-    Subject.gender = visit.Subject.gender;
-    Subject.amplification = visit.Subject.amplification;
+    fields.Subject.ID = visit.Subject.ID;
+    fields.Subject.age = visit.Subject.age;
+    fields.Subject.gender = visit.Subject.gender;
+    fields.Subject.amplification = visit.Subject.amplification;
 end
 
 % Set up VisitInfo from old visit file into new structure
 disp("Retrieving Visit Info...")
 if isfield(visit, 'VisitInfo')
-    VisitInfo = visit.VisitInfo; %%I think this is overwriting prior to the try statements
     try
-        VisitInfo.testDate = visit.VisitInfo.testDate;
-    catch
-        disp("Didn't work because of visit info test date")
-    end
-    try
-        VisitInfo.referringLab = visit.VisitInfo.referringLab;
+        fields.VisitInfo.referringLab = visit.VisitInfo.referringLab;
     catch
         disp("Didn't work because of visit info referring lab")
     end
     try
-        VisitInfo.irbNumber  = visit.VisitInfo.irbNumber;
+        fields.VisitInfo.irbNumber  = visit.VisitInfo.irbNumber;
     catch
         disp("Didn't work because of visit info irb number")
     end
     try
-        VisitInfo.ARDRsigned  = visit.VisitInfo.ARDRsigned;
+        fields.VisitInfo.ARDRsigned  = visit.VisitInfo.ARDRsigned;
     catch
         disp("Didn't work because of visit info ARDR signed")
     end
     try
-        VisitInfo.researcher  = visit.VisitInfo.researcher;
+        if ~isnan(visit.VisitInfo.researcher)
+        fields.VisitInfo.researcher  = visit.VisitInfo.researcher;
+        end
     catch
         disp("Didn't work because of visit info researcher")
     end
     try
-        VisitInfo.researcherOther  = visit.VisitInfo.researcherOther;
+        fields.VisitInfo.researcherOther  = visit.VisitInfo.researcherOther;
     catch
         disp("Didn't work because of visit info researcher other")
     end
     try
-        VisitInfo.studyProtocol  = visit.VisitInfo.studyProtocol;
+        fields.VisitInfo.studyProtocol  = visit.VisitInfo.studyProtocol;
     catch
         disp("Didn't work because of visit info study protocol")
     end
     try
-        VisitInfo.location  = visit.VisitInfo.location;
+        fields.VisitInfo.location  = visit.VisitInfo.location;
     catch
         disp("Didn't work because of visit info location")
     end
     try
-        VisitInfo.room  = visit.VisitInfo.room;
+        fields.VisitInfo.room  = visit.VisitInfo.room;
     catch
         disp("Didn't work because of visit info room")
     end
     try
-        VisitInfo.dateCompiled  = visit.VisitInfo.dateCompiled;
+        fields.VisitInfo.dateCompiled  = visit.VisitInfo.dateCompiled;
     catch
         disp("Didn't work because of visit info room")
-    end
-elseif isfield(visit, 'time')
-    try
-        VisitInfo.testDate = visit.time;
-    catch
-        disp("Didn't work because of visit info test date")
     end
 end
 
@@ -896,10 +888,10 @@ fields2edit.WRSComments = uieditfield(fig, 'Value', fields.Measures.WRS.comments
 
 % ==== SUBMIT BUTTON ====
 uibutton(fig,'text','Submit & Save','FontColor','k','BackgroundColor','g', 'FontSize', 14, 'FontWeight', 'bold','Position', [260 40 150 40],...
-    'ButtonPushedFcn', @(src, event)submitCallback(fields, fields2edit));
+    'ButtonPushedFcn', @(src, event)submitCallback(fields, fields2edit, fig));
 
 % ==== CALLBACK FUNCTION ====
-function submitCallback(fields, fields2edit)
+function submitCallback(fields, fields2edit, fig)
 % Update visit struct from GUI
 disp('Saving Subject Info...')
 visit2.Subject.ID = fields2edit.subjID.Value;
@@ -998,24 +990,24 @@ if fields2edit.wrs_checkbox.Value == 0
     disp('No WRS data')
 else
     disp('    WRS...') %add by difficulty checkbox
-    visit2.Measures.WRS.R.speechLevel = field2edit.RwrsSLevel.Value; %Type;
-    visit2.Measures.WRS.R.maskingLevel = field2edit.RwrsMlevel.Value; %Type
-    visit2.Measures.WRS.R.numberWordCorrect = field2edit.RwrsNumCorrect.Value; %Type
-    visit2.Measures.WRS.R.totalWordsPresented = field2edit.RwrsTotalNum.Value; %Type
-    visit2.Measures.WRS.R.list = field2edit.RwrsList.Value;
-    visit2.Measures.WRS.R.listNumber = field2edit.RwrsListNum.Value; %Type
-    visit2.Measures.WRS.R.percentCorrect = field2edit.RwrsPercentCorrect.Value; %Type
-    visit2.Measures.WRS.L.speechLevel = field2edit.LwrsSLevel.Value; %Type
-    visit2.Measures.WRS.L.maskingLevel = field2edit.LwrsMLevel.Value; %Type;
-    visit2.Measures.WRS.L.numberWordCorrect = field2edit.LwrsNumCorrect.Value; %Type;
-    visit2.Measures.WRS.L.totalWordsPresented = field2edit.LwrsTotalNum.Value; %Type;
-    visit2.Measures.WRS.L.list = field2edit.LwrsList.Value;
-    visit2.Measures.WRS.L.listNumber = field2edit.LwrsListNum.Value; %Type
-    visit2.Measures.WRS.L.percentCorrect = field2edit.LwrsPercentCorrect.Value; %Type
-    visit2.Measures.WRS.equipment.device = field2edit.WRSEquipment.Value;
-    visit2.Measures.WRS.equipment.calibDate = field2edit.WRSEquipmentCalibDate.Value; %Type
-    visit2.Measures.WRS.equipment.serialNumber = field2edit.WRSEquipmentSerialNumber.Value; %Type
-    visit2.Measures.WRS.comments = field2edit.WRSComments.Value;
+    visit2.Measures.WRS.R.speechLevel = fields2edit.RwrsSLevel.Value; %Type;
+    visit2.Measures.WRS.R.maskingLevel = fields2edit.RwrsMlevel.Value; %Type
+    visit2.Measures.WRS.R.numberWordCorrect = fields2edit.RwrsNumCorrect.Value; %Type
+    visit2.Measures.WRS.R.totalWordsPresented = fields2edit.RwrsTotalNum.Value; %Type
+    visit2.Measures.WRS.R.list = fields2edit.RwrsList.Value;
+    visit2.Measures.WRS.R.listNumber = fields2edit.RwrsListNum.Value; %Type
+    visit2.Measures.WRS.R.percentCorrect = fields2edit.RwrsPercentCorrect.Value; %Type
+    visit2.Measures.WRS.L.speechLevel = fields2edit.LwrsSLevel.Value; %Type
+    visit2.Measures.WRS.L.maskingLevel = fields2edit.LwrsMLevel.Value; %Type;
+    visit2.Measures.WRS.L.numberWordCorrect = fields2edit.LwrsNumCorrect.Value; %Type;
+    visit2.Measures.WRS.L.totalWordsPresented = fields2edit.LwrsTotalNum.Value; %Type;
+    visit2.Measures.WRS.L.list = fields2edit.LwrsList.Value;
+    visit2.Measures.WRS.L.listNumber = fields2edit.LwrsListNum.Value; %Type
+    visit2.Measures.WRS.L.percentCorrect = fields2edit.LwrsPercentCorrect.Value; %Type
+    visit2.Measures.WRS.equipment.device = fields2edit.WRSEquipment.Value;
+    visit2.Measures.WRS.equipment.calibDate = fields2edit.WRSEquipmentCalibDate.Value; %Type
+    visit2.Measures.WRS.equipment.serialNumber = fields2edit.WRSEquipmentSerialNumber.Value; %Type
+    visit2.Measures.WRS.comments = fields2edit.WRSComments.Value;
 end
 
 if fields2edit.act_checkbox.Value == 0
@@ -1023,9 +1015,9 @@ if fields2edit.act_checkbox.Value == 0
 else
     visit2.Measures.ACT.scores = ""; %% need to add this
     visit2.Measures.ACT.comments = ""; %% need to add this (old and new)
-    visit2.Measures.ACT.equipment.device = field2edit.ACTEquipment.Value;
-    visit2.Measures.ACT.equipment.calibDate = field2edit.ACTCalib.Value; %Type
-    visit2.Measures.ACT.equipment.serialNumber = field2edit.ACTSerialNum.Value; %Type
+    visit2.Measures.ACT.equipment.device = fields2edit.ACTEquipment.Value;
+    visit2.Measures.ACT.equipment.calibDate = fields2edit.ACTCalib.Value; %Type
+    visit2.Measures.ACT.equipment.serialNumber = fields2edit.ACTSerialNum.Value; %Type
 end
 
 if fields2edit.wbt_checkbox.Value == 0
@@ -1038,25 +1030,28 @@ else
     visit2.Measures.WBT.R.PRESSURE = fields.Measures.WBT.R.PRESSURE;
     visit2.Measures.WBT.R.FREQ = fields.Measures.WBT.R.FREQ;
     visit2.Measures.WBT.R.ABSORBANCE = fields.Measures.WBT.R.ABSORBANCE;
-    visit2.Measures.WBT.comments = field2edit.WBTComments.Value;
-    visit2.Measures.WBT.equipment.device = field2edit.WBTEquipment.Value;
-    visit2.Measures.WBT.equipment.calibDate = field2edit.WBTEquipmentCalibDate.Value; %Type
-    visit2.Measures.WBT.equipment.serialNumber = field2edit.WBTEquipmentSerialNumber.Value; %Type
+    visit2.Measures.WBT.comments = fields2edit.WBTComments.Value;
+    visit2.Measures.WBT.equipment.device = fields2edit.WBTEquipment.Value;
+    visit2.Measures.WBT.equipment.calibDate = fields2edit.WBTEquipmentCalibDate.Value; %Type
+    visit2.Measures.WBT.equipment.serialNumber = fields2edit.WBTEquipmentSerialNumber.Value; %Type
 end
 
-if fields2edit.otoscopy_checkbox == 0
+if fields2edit.otoscopy_checkbox.Value == 0
     disp("No otoscopy info")
 else
-    visit2.Measures.Otoscopy.comments = field2edit.otoComments.Value;
-    visit2.Measures.Otoscopy.equipment = field2edit.otoEquipment.Value;
+    visit2.Measures.Otoscopy.comments = fields2edit.otoComments.Value;
+    visit2.Measures.Otoscopy.equipment = fields2edit.otoEquipment.Value;
 end
 visit3 = visit2;
 
-dirToSave = path;
-fileToSave = [extractBefore(file, '.mat'), '_new.mat']
+file = sprintf('%s_%s', fields2edit.subjID.Value, fields.dateNum{1, 1});
+dirToSave = "C:\Users\ARDC User\Desktop\test_folder\";
+fileToSave = file; %[extractBefore(file, '.mat'), '_new.mat'];
 
 % Save updated struct back to file
 save(fullfile(dirToSave, fileToSave), 'visit3');
 msgbox('visit data saved successfully!', 'Success');
+closeApp(fig)
 end
 %end
+
