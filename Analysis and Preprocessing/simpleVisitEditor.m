@@ -1,7 +1,7 @@
 %function simpleVisitEditor()
 clear
 %%%%% STUFF TO EDIT FOR A USER %%%%%
-dataDir = "C:\Users\ARDC User\Desktop\fromBox\Compiled\";
+dataDir = "C:\Users\ARDC User\Desktop\ARDCLab Data\";
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Load .mat file (you can customize the path)
@@ -1014,6 +1014,7 @@ visit2.Subject.amplification = fields2edit.amplification.Value;
 
 disp('Saving Visit Info...')
 visit2.VisitInfo.testDate = datetime(fields2edit.testDate.Value, 'InputFormat', 'MMddyyyy');
+visit2.VisitInfo.testDate.Format = 'MMddyyyy';
 visit2.VisitInfo.referringLab = fields2edit.referringLab.Value;
 visit2.VisitInfo.irbNumber = fields2edit.irbNumber.Value;
     if strcmp(fields2edit.ARDRsigned.Value, 'Yes')
@@ -1026,7 +1027,7 @@ visit2.VisitInfo.researcherOther = fields2edit.researcherOther.Value;
 visit2.VisitInfo.studyProtocol = fields2edit.studyProtocol.Value;
 visit2.VisitInfo.location = fields2edit.location.Value;
 visit2.VisitInfo.room = fields2edit.room.Value;
-visit2.VisitInfo.dateCompiled = datetime('today');
+visit2.VisitInfo.dateCompiled = datetime;
 
 disp('Saving Measures...')
 
@@ -1045,20 +1046,26 @@ else
     visit2.Measures.Audiometry.equipment.device = fields2edit.Auddevice.Value;
     visit2.Measures.Audiometry.equipment.calibDate = fields2edit.AudcalibDate.Value; %Type
     visit2.Measures.Audiometry.equipment.serialNumber = fields2edit.Audserialnum.Value; %Type
-    visit2.Measures.Audiometry.comments = fields2edit.Audcomments.Value;
+    visit2.Measures.Audiometry.comments = {fields2edit.Audcomments.Value};
 end
 
 if fields2edit.quicksin_checkbox.Value == 0
     disp('No QuickSIN data')
 else
     disp('    QuickSIN...')
-    visit2.Measures.QuickSIN.R = fields2edit.RquickSIN.Value; %DNT Checkbox
-    visit2.Measures.QuickSIN.L = fields2edit.LquickSIN.Value; %DNT Checkbox
-    visit2.Measures.QuickSIN.Bin = fields2edit.BquickSIN.Value; %DNT Checkbox
+    if fields2edit.RquickSINDNT.Value == 0
+        visit2.Measures.QuickSIN.R = str2double(fields2edit.RquickSIN.Value); %DNT Checkbox
+    end
+    if fields2edit.LquickSINDNT.Value == 0
+        visit2.Measures.QuickSIN.L = str2double(fields2edit.LquickSIN.Value); %DNT Checkbox
+    end
+    if fields2edit.BquickSINDNT.Value == 0
+        visit2.Measures.QuickSIN.Bin = str2double(fields2edit.BquickSIN.Value); %DNT Checkbox
+    end
     visit2.Measures.QuickSIN.equipment.device = fields2edit.QSequipdevice.Value;
     visit2.Measures.QuickSIN.equipment.calibDate = fields2edit.QSequipcalib.Value; %Type
     visit2.Measures.QuickSIN.equipment.serialNumber = fields2edit.QSequipSN.Value; %Type
-    visit2.Measures.QuickSIN.comments = fields2edit.QScomments.Value;
+    visit2.Measures.QuickSIN.comments = {fields2edit.QScomments.Value};
 end
 
 if fields2edit.dp_checkbox.Value == 0
@@ -1085,7 +1092,7 @@ else
     visit2.Measures.DPOAE.equipment.device = fields2edit.DPOAEdevice.Value;
     visit2.Measures.DPOAE.equipment.calibDate = fields2edit.DPOAEcalibDate.Value; %Type
     visit2.Measures.DPOAE.equipment.serialNumber = fields2edit.DPOAEserialnum.Value; %Type
-    visit2.Measures.DPOAE.comments = fields2edit.DPOAEcomments.Value;
+    visit2.Measures.DPOAE.comments = {fields2edit.DPOAEcomments.Value};
 end
 
 if fields2edit.memr_checkbox.Value == 0
@@ -1100,7 +1107,7 @@ else
     visit2.Measures.Reflexes.equipment.device = fields2edit.MEMRequipment.Value;
     visit2.Measures.Reflexes.equipment.calibDate = fields2edit.MEMRcalibDate.Value; %Type
     visit2.Measures.Reflexes.equipment.serialNumber = fields2edit.MEMRserialNum.Value; %Type
-    visit2.Measures.Reflexes.comments = fields2edit.MEMRcomments.Value; %%%%%%
+    visit2.Measures.Reflexes.comments = {fields2edit.MEMRcomments.Value}; %%%%%%
 end
 
 if fields2edit.wrs_checkbox.Value == 0
@@ -1113,25 +1120,29 @@ else
     visit2.Measures.WRS.R.totalWordsPresented = fields2edit.RwrsTotalNum.Value; %Type
     visit2.Measures.WRS.R.list = fields2edit.RwrsList.Value;
     visit2.Measures.WRS.R.listNumber = fields2edit.RwrsListNum.Value; %Type
-    visit2.Measures.WRS.R.percentCorrect = fields2edit.RwrsPercentCorrect.Value; %Type
+    visit2.Measures.WRS.R.percentCorrect = str2double(fields2edit.RwrsPercentCorrect.Value); %Type
     visit2.Measures.WRS.L.speechLevel = fields2edit.LwrsSLevel.Value; %Type
     visit2.Measures.WRS.L.maskingLevel = fields2edit.LwrsMLevel.Value; %Type;
     visit2.Measures.WRS.L.numberWordsCorrect = fields2edit.LwrsNumCorrect.Value; %Type;
     visit2.Measures.WRS.L.totalWordsPresented = fields2edit.LwrsTotalNum.Value; %Type;
     visit2.Measures.WRS.L.list = fields2edit.LwrsList.Value;
     visit2.Measures.WRS.L.listNumber = fields2edit.LwrsListNum.Value; %Type
-    visit2.Measures.WRS.L.percentCorrect = fields2edit.LwrsPercentCorrect.Value; %Type
+    visit2.Measures.WRS.L.percentCorrect = str2double(fields2edit.LwrsPercentCorrect.Value); %Type
     visit2.Measures.WRS.equipment.device = fields2edit.WRSEquipment.Value;
     visit2.Measures.WRS.equipment.calibDate = fields2edit.WRSEquipmentCalibDate.Value; %Type
     visit2.Measures.WRS.equipment.serialNumber = fields2edit.WRSEquipmentSerialNumber.Value; %Type
-    visit2.Measures.WRS.comments = fields2edit.WRSComments.Value;
+    visit2.Measures.WRS.comments = {fields2edit.WRSComments.Value};
 end
 
 if fields2edit.act_checkbox.Value == 0
     disp('    No ACT...')
 else
-    visit2.Measures.ACT.scores = ""; %% need to add this
-    visit2.Measures.ACT.comments = ""; %% need to add this (old and new)
+    if fields2edit.ACTSingleTrial == 1
+        visit2.Measures.ACT.scores = {str2double(fields2edit.ACTTrialOne.Value)}; 
+    else
+        visit2.Measures.ACT.scores = {str2double(fields2edit.ACTTrialOne.Value); str2double(fields2edit.ACTTrialTwo.Value)}; 
+    end
+    visit2.Measures.ACT.comments = {fields2edit.ACTnewComments.Value}; %% need to add this (old and new)
     visit2.Measures.ACT.equipment.device = fields2edit.ACTEquipment.Value;
     visit2.Measures.ACT.equipment.calibDate = fields2edit.ACTCalib.Value; %Type
     visit2.Measures.ACT.equipment.serialNumber = fields2edit.ACTSerialNum.Value; %Type
@@ -1147,7 +1158,7 @@ else
     visit2.Measures.WBT.R.PRESSURE = fields.Measures.WBT.R.PRESSURE;
     visit2.Measures.WBT.R.FREQ = fields.Measures.WBT.R.FREQ;
     visit2.Measures.WBT.R.ABSORBANCE = fields.Measures.WBT.R.ABSORBANCE;
-    visit2.Measures.WBT.comments = fields2edit.WBTComments.Value;
+    visit2.Measures.WBT.comments = {fields2edit.WBTComments.Value};
     visit2.Measures.WBT.equipment.device = fields2edit.WBTEquipment.Value;
     visit2.Measures.WBT.equipment.calibDate = fields2edit.WBTEquipmentCalibDate.Value; %Type
     visit2.Measures.WBT.equipment.serialNumber = fields2edit.WBTEquipmentSerialNumber.Value; %Type
@@ -1156,15 +1167,16 @@ end
 if fields2edit.otoscopy_checkbox.Value == 0
     disp("No otoscopy info")
 else
-    visit2.Measures.Otoscopy.comments = fields2edit.otoComments.Value;
-    visit2.Measures.Otoscopy.equipment = fields2edit.otoEquipment.Value;
+    visit2.Measures.Otoscopy.comments = {fields2edit.otoComments.Value};
+    visit2.Measures.Otoscopy.equipment.device = fields2edit.otoEquipment.Value;
+     visit2.Measures.Otoscopy.equipment.serialNumber = ""; 
+      visit2.Measures.Otoscopy.equipment.calibDate = ""; 
 end
 
 % overwrite OG visit file with new edited visit. 
 visit = visit2;
 
 filename = sprintf('%s_%s', fields2edit.subjID.Value, fields.dateNum{1, 1});
-
 
 % if data should go to certain folders, set where it goes here:
 generalDirToSave = "C:\Users\ARDC User\Desktop\FinalCompiled\";
@@ -1196,17 +1208,6 @@ end
 
 cd(codeDirectory)
 
-
-
-
-
-
-
-
-fileToSave = file; %[extractBefore(file, '.mat'), '_new.mat'];
-
-% Save updated struct back to file
-save(fullfile(dirToSave, fileToSave), 'visit3');
 msgbox('visit data saved successfully!', 'Success');
 closeApp(fig)
 clc 
