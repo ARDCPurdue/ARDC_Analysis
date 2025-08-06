@@ -9,6 +9,7 @@ global fields
 % Subject information
 subj.ID = get(fields.subjID, 'Value');
 subj.age = get(fields.age, 'Value');
+subj.age = str2double(subj.age); %SH updated 8/5/25
 subj.gender = get(fields.gender, 'Value');
 subj.amplification = get(fields.amplification, 'Value'); 
 

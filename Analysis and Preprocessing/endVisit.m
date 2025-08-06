@@ -196,6 +196,7 @@ fields.ProtocolName.ValueChangedFcn = @(dropdown,event) updateMeasures(p_measure
 
 % when closing the GUI
 app.CloseRequestFcn = @(app, event) closeApp(app, fields); 
+
 %% Submitting
 % Create submit button
 submit_button = uibutton(p_app,'Text','Submit', 'Position', [985, 5, 100, 35], ...
