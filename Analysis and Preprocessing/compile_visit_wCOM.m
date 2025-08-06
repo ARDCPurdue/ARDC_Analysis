@@ -58,8 +58,8 @@ for i = 1:length(files)
                 Audiometry.equipment.AC_HardwareLimits = AC_maxOut;
                 Audiometry.equipment.BC_transducer = BC_transduc;
                 Audiometry.equipment.BC_HardwareLimits = BC_maxOut;
-                tempQuickSIN.R = QS_R;
-                tempQuickSIN.L = QS_L;
+                visit.Measures.QuickSIN.R = QS_R;
+                visit.Measures.QuickSIN.L = QS_L;
 
                 visit.Measures.Audiometry = Audiometry;
 
@@ -186,26 +186,15 @@ for i = 1:length(files)
                 visit.Measures.ACT = ACT; 
 
                 % for Binaural QuickSIN data
-                if ~isfield(QuickSIN, 'DNT')
-                    tempQuickSIN.Bin = QuickSIN.Score;
-                else
-                    tempQuickSIN.Bin = 'Did not test';
+                if exist('QuickSIN', 'var')
+                    visit.Measures.QuickSIN.Bin = str2double(QuickSIN.Score);
                 end
+
         end
     end
 end
 
-if isfield(tempQuickSIN, 'R')
-    visit.Measures.QuickSIN.R = tempQuickSIN.R;
-end
 
-if isfield(tempQuickSIN, 'L')
-    visit.Measures.QuickSIN.L = tempQuickSIN.L;
-end
-
-if isfield(tempQuickSIN, 'Bin')
-    visit.Measures.QuickSIN.Bin = tempQuickSIN.Bin;
-end
 
 %Date/Time/Researcher/Reflexes/QuickSIN Performance
 %Assumes that Qualtrics Survey Results are saved in directory directly

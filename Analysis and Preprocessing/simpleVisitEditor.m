@@ -1209,8 +1209,7 @@ end
 cd(codeDirectory)
 
 msgbox('visit data saved successfully!', 'Success');
-closeApp(fig)
-clc 
+closeApp(fig) 
 clear all hidden
 end
 
