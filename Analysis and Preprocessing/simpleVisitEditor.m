@@ -401,16 +401,24 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
         elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
             disp("    Retrieving ACT Data...")
             act_yes =1;
-            try
-                fields.Measures.ACT.scores(1,1) = str2double(visit.Measures.ACT.scores{1,1});
-            catch
-                disp("didn't find ACT #1")
+            if ischar(visit.Measures.ACT.scores)
+                if contains(visit.Measures.ACT.scores, 'Could')
+                    cntACT = 1; 
+                end
+            else
+                cntACT = 0; 
+                try
+                    fields.Measures.ACT.scores(1,1) = str2double(visit.Measures.ACT.scores{1,1});
+                catch
+                    disp("didn't find ACT #1")
+                end
+                try
+                    fields.Measures.ACT.scores(2,1) = str2double(visit.Measures.ACT.scores{2,1});
+                catch
+                    disp("didn't find ACT #2")
+                end
             end
-            try
-                fields.Measures.ACT.scores(2,1) = str2double(visit.Measures.ACT.scores{2,1});
-            catch
-                disp("didn't find ACT #2")
-            end
+            
             try
                 fields.Measures.ACT.comments = visit.Measures.ACT.comments;
             catch
@@ -839,7 +847,7 @@ uilabel(fig,'Text','One Trial Only', 'Position', [240 230 140 20], 'HorizontalAl
 fields2edit.ACTSingleTrial = uicheckbox(fig, 'Text', '', 'Position', [310 230 140 20]);
 
 uilabel(fig,'Text','CNT', 'Position', [330 230 140 20], 'HorizontalAlignment','left');
-fields2edit.ACTCNT = uicheckbox(fig, 'Text', '', 'Position', [360 230 140 20]);
+fields2edit.ACTCNT = uicheckbox(fig, 'Value', cntACT , 'Text', '', 'Position', [360 230 140 20]);
 
 uilabel(fig,'Text','Equipment', 'Position', [240 210 140 20], 'HorizontalAlignment','left');
 fields2edit.ACTEquipment = uieditfield(fig,'Value', fields.Measures.ACT.equipment.device, 'Position',[300 210 140 20]);
@@ -1137,8 +1145,10 @@ end
 if fields2edit.act_checkbox.Value == 0
     disp('    No ACT...')
 else
-    if fields2edit.ACTSingleTrial == 1
+    if fields2edit.ACTSingleTrial.Value == 1
         visit2.Measures.ACT.scores = {str2double(fields2edit.ACTTrialOne.Value)}; 
+    elseif fields2edit.ACTCNT.Value == 1
+        visit2.Measures.ACT.scores = 'Could not test'; 
     else
         visit2.Measures.ACT.scores = {str2double(fields2edit.ACTTrialOne.Value); str2double(fields2edit.ACTTrialTwo.Value)}; 
     end

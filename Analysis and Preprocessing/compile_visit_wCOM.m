@@ -15,7 +15,7 @@ function visit = compile_visit_wCOM(data, study, subj)
 % functionality to EndVisit process)
 
 dataDir = 'C:\Users\ARDC User\Desktop\ALLRAWDATA';
-outputDir = 'C:\Users\ARDC User\Desktop\';
+outputDir = 'C:\Users\ARDC User\Desktop\FinalCompiled\';
 
 ARDClabDir = ['ARDCLab Data\'];
 ARDRDir = ['ARDR Data\'];
