@@ -216,7 +216,7 @@ oto_yes = 0;
 if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' structure
     meas = fieldnames(visit.Measures);
     for f = 1:length(meas)
-
+        
         %Check For Audiogram Data
         %%%There is a 1x1 cell for comments that was initialized in
         %%%Measures.Audiometry
@@ -227,7 +227,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             fields.Measures.Audiometry.AC.L = visit.Measures.(meas{f}).AC.L;
             fields.Measures.Audiometry.BC.R = visit.Measures.(meas{f}).BC.R;
             fields.Measures.Audiometry.BC.L = visit.Measures.(meas{f}).BC.L;
-
+            
             if isfield(visit.Measures.(meas{f}), 'equipment')
                 fields.Measures.Audiometry.equipment.AC_transducer = visit.Measures.(meas{f}).equipment.AC_transducer;
                 fields.Measures.Audiometry.equipment.BC_transducer = visit.Measures.(meas{f}).equipment.BC_transducer;
@@ -243,7 +243,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
                 fields.Measures.Audiometry.equipment.AC_HardwareLimits = visit.Measures.(meas{f}).AC_HardwareLimits;
                 fields.Measures.Audiometry.equipment.BC_HardwareLimits = visit.Measures.(meas{f}).BC_HardwareLimits;
             end
-
+            
             %Check for QuickSIN Data
         elseif contains(meas{f}, 'Quick', 'IgnoreCase', 1)
             quicksin_yes = 1;
@@ -279,14 +279,20 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
         elseif contains(meas{f}, 'dpoae', 'IgnoreCase', 1)
             disp("    Retrieving DPOAE Data...")
             dp_yes = 1;
-            fields.Measures.DPOAE.R = visit.Measures.(meas{f}).R;
-            fields.Measures.DPOAE.L = visit.Measures.(meas{f}).L;
-            fields.Measures.DPOAE.other.researcher  = visit.Measures.(meas{f}).other.researcher;
+            try
+                fields.Measures.DPOAE.R = visit.Measures.(meas{f}).R;
+            end
+            try
+                fields.Measures.DPOAE.L = visit.Measures.(meas{f}).L;
+            end
+            try
+                fields.Measures.DPOAE.other.researcher  = visit.Measures.(meas{f}).other.researcher;
+            end
             try
                 fields.Measures.DPOAE.equipment = visit.Measures.(meas{f}).equipment;
                 fields.Measures.DPOAE.comments = visit.Measures.(meas{f}).comments;
             end
-
+            
             % Check for Reflexes Data
         elseif contains(meas{f}, 'Reflex', 'IgnoreCase', 1)
             disp("    Retrieving Reflexes Data...")
@@ -298,18 +304,18 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             catch
                 disp("reflex data does not contain equipment info")
             end
-
+            
             try
                 fields.Measures.Reflexes.comments = visit.Measures.(meas{f}).comments;
             catch
                 disp("reflex data does not contain comments")
             end
-
+            
             % Check for WRS Data
         elseif contains(meas{f}, 'WRS', 'IgnoreCase', 1)
             disp("    Retrieving WRS Data...")
             wrs_yes = 1;
-
+            
             %Right
             try
                 fields.Measures.WRS.R.speechLevel = visit.Measures.WRS.R.speechLevel;
@@ -346,7 +352,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             catch
                 disp('fields.Measures.WRS.R.percentCorrect Failed')
             end
-
+            
             % Left
             try
                 fields.Measures.WRS.L.speechLevel = visit.Measures.WRS.L.speechLevel;
@@ -383,8 +389,8 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             catch
                 disp('fields.Measures.WRS.L.percentCorrect Failed')
             end
-
-
+            
+            
             try
                 fields.Measures.WRS.equipment= visit.Measures.(meas{f}).equipment;
             catch
@@ -396,12 +402,12 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             %%% This section is overwriting the origional initialized variables. When
             %%% ACT is present in the comment it removes the scores so it cannot be
             %%% plotted later
-
+            
             % Check for ACT Data
         elseif contains(meas{f}, 'ACT', 'IgnoreCase', 1)
             disp("    Retrieving ACT Data...")
             act_yes =1;
-            cntACT = 0; 
+            cntACT = 0;
             if isfield(visit.Measures.ACT, 'scores')
                 if ischar(visit.Measures.ACT.scores)
                     if contains(visit.Measures.ACT.scores, 'Could')
@@ -441,7 +447,7 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
             catch
                 fields.Measures.ACT.equipment.serialNumber = "";
             end
-
+            
             %Check for WBT Data
         elseif contains(meas{f}, 'WBT', 'IgnoreCase', 1)
             disp("    Retrieving WBT Data...")
@@ -454,14 +460,14 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
                 fields.Measures.WBT.L = visit.Measures.(meas{f}).L;
             catch
             end
-
+            
             try
                 fields.Measures.WBT.equipment = visit.Measures.(meas{f}).equipment;
                 fields.Measures.WBT.comments = visit.Measures.(meas{f}).comments;
             catch
                 disp("Does not have WBT equipment info")
             end
-
+            
             % % Check for Otoscopy Data Error
         elseif contains(meas{f}, 'otoscopy', 'IgnoreCase', 1)
             disp("    Retrieving Otoscopy Data...")
@@ -497,7 +503,7 @@ if isfield(visit, 'Audiogram')
     catch
         disp('Measures.Audiometry.BC.L not retrieved')
     end
-
+    
     try
         fields.Measures.Audiometry.equipment.AC_transducer = visit.Audiogram.AC_transducer;
     catch
@@ -578,7 +584,7 @@ if isfield(visit, 'dpOAE')
     catch
         disp('Measures.DPOAE.R.f2_rec_dB not retrieved')
     end
-
+    
     %Left
     try
         fields.Measures.DPOAE.L.noisefloor = visit.dpOAE.L.noisefloor;
@@ -640,7 +646,7 @@ if isfield(visit, 'WBT')
     catch
         disp('Measures.WBT.L.FREQ not retrieved')
     end
-
+    
     try
         fields.Measures.WBT.R.PRESSURE = visit.WBT.R.PRESSURE;
     catch
@@ -780,7 +786,7 @@ uilabel(fig,'Text','calibDate','Position',[20 140 labelboxwidth labelboxhieght],
 fields2edit.AudcalibDate = uieditfield(fig, 'Value', fields.Measures.Audiometry.equipment.calibDate,'Position',[90 140 140 20]);
 
 uilabel(fig,'Text','comments','Position',[20 120 labelboxwidth labelboxhieght],'HorizontalAlignment','left');
-fields2edit.Audcomments = uitextarea(fig, 'Value', fields.Measures.Audiometry.comments{1,1},'Position',[90 40 140 100], 'WordWrap', 'on');
+fields2edit.Audcomments = uitextarea(fig, 'Value', fields.Measures.Audiometry.comments{1,1},'Position',[90 40 140 100]);
 
 % ==== DPOAEs ====
 fields2edit.dp_checkbox = uicheckbox(fig,'Value',dp_yes,'Text', 'DPOAES', 'Position',[240 570 labelboxwidth labelboxhieght]);
@@ -798,7 +804,7 @@ uilabel(fig,'Text','Serial #','Position',[240 490 labelboxwidth 20],'HorizontalA
 fields2edit.DPOAEserialnum = uieditfield(fig, 'Value', fields.Measures.DPOAE.equipment.serialNumber,'Position',[300 490 140 20]);
 
 uilabel(fig,'Text','comments','Position',[240 470 labelboxwidth 20],'HorizontalAlignment','left');
-fields2edit.DPOAEcomments = uitextarea(fig, 'Value', fields.Measures.DPOAE.comments{1,1},'Position',[300 460 140 30], 'WordWrap', 'on');
+fields2edit.DPOAEcomments = uitextarea(fig, 'Value', fields.Measures.DPOAE.comments{1,1},'Position',[300 460 140 30]);
 
 %====MEMR====
 fields2edit.memr_checkbox = uicheckbox(fig,'Value',memr_yes,'Text','MEMR','Position',[240 440 labelboxwidth labelboxhieght]);
@@ -833,7 +839,7 @@ uilabel(fig,'Text','Serial #','Position',[240 350 labelboxwidth 20],'HorizontalA
 fields2edit.MEMRserialNum = uieditfield(fig, 'Value', fields.Measures.Reflexes.equipment.serialNumber,'Position',[300 350 140 20]);
 
 uilabel(fig,'Text','comments','Position',[240 330 labelboxwidth 20],'HorizontalAlignment','left');
-fields2edit.MEMRcomments = uitextarea(fig, 'Value', fields.Measures.Reflexes.comments{1,1},'Position',[300 290 140 60], 'WordWrap', 'on');
+fields2edit.MEMRcomments = uitextarea(fig, 'Value', fields.Measures.Reflexes.comments{1,1},'Position',[300 290 140 60]);
 
 % ==== ACT ==== %
 fields2edit.act_checkbox = uicheckbox(fig,'Value',act_yes,'Text','ACT','Position',[240 270 80 20]);
@@ -861,10 +867,10 @@ uilabel(fig,'Text','Serial #', 'Position', [240 170 140 20], 'HorizontalAlignmen
 fields2edit.ACTSerialNum = uieditfield(fig,'Value', fields.Measures.ACT.equipment.serialNumber, 'Position',[300 170 140 20]);
 
 uilabel(fig,'Text','old comments','Position',[240 150 140 20],'HorizontalAlignment','left');
-fields2edit.ACToldComments = uitextarea(fig,'Value', fields.Measures.ACT.comments{1,1}, 'Position', [320 130 120 40], 'WordWrap', 'on');
+fields2edit.ACToldComments = uitextarea(fig,'Value', fields.Measures.ACT.comments{1,1}, 'Position', [320 130 120 40]);
 
 uilabel(fig,'Text','new comments','Position',[240 110 140 20],'HorizontalAlignment','left')
-fields2edit.ACTnewComments = uitextarea(fig,'Value', fields.Measures.ACT.comments{1,1}, 'Position', [320 90 120 40], 'WordWrap', 'on');
+fields2edit.ACTnewComments = uitextarea(fig,'Value', fields.Measures.ACT.comments{1,1}, 'Position', [320 90 120 40]);
 
 
 % ==== Otoscopy ====
@@ -874,7 +880,7 @@ uilabel(fig,'Text','Equipment','Position',[1070-430 170 60 20],'HorizontalAlignm
 fields2edit.otoEquipment = uieditfield(fig, 'Value', fields.Measures.Otoscopy.equipment,'Position',[1070-430 150 110 20]);
 
 uilabel(fig,'Text','Comment','Position',[1070-430 120 60 20],'HorizontalAlignment','left');
-fields2edit.otoComments = uitextarea(fig, 'Value', fields.Measures.Otoscopy.comments{1,1},'Position',[1070-430 40 110 80], 'WordWrap', 'on');
+fields2edit.otoComments = uitextarea(fig, 'Value', fields.Measures.Otoscopy.comments{1,1},'Position',[1070-430 40 110 80]);
 
 % ==== WBT ====
 fields2edit.wbt_checkbox = uicheckbox(fig,'Value',wbt_yes,'Text','Wideband Tymp','Position',[880-430 190 130 20]);
@@ -899,7 +905,7 @@ WBTdataL = uilabel(fig,'Text', hasDataL,'Position',[940-430 150 60 20], 'Horizon
 WBTdataR = uilabel(fig,'Text',hasDataR,'Position',[1000-430 150 60 20], 'HorizontalAlignment','center');
 
 uilabel(fig,'Text','Comment','Position',[880-430 130 60 20],'HorizontalAlignment','left');
-fields2edit.WBTComments = uitextarea(fig, 'Value', fields.Measures.WBT.comments{1,1},'Position',[940-430 100 120 50], 'WordWrap', 'on');
+fields2edit.WBTComments = uitextarea(fig, 'Value', fields.Measures.WBT.comments{1,1},'Position',[940-430 100 120 50]);
 
 uilabel(fig,'Text','Equipment','Position',[880-430 80 60 20],'HorizontalAlignment','left');
 fields2edit.WBTEquipment = uieditfield(fig, 'Value', fields.Measures.WBT.equipment.device,'Position',[940-430 80 120 20]);
@@ -941,7 +947,7 @@ uilabel(fig,'Text','Serial#', 'Position', [1025-430 510 150 boxheight], 'Horizon
 fields2edit.QSequipSN = uieditfield(fig,'Value', fields.Measures.QuickSIN.equipment.serialNumber, 'Position',[1060-430 510 120 boxheight]);
 
 uilabel(fig,'Text','Comments', 'Position', [880-430 490 150 boxheight], 'HorizontalAlignment','left');
-fields2edit.QScomments = uitextarea(fig,'Value', fields.Measures.QuickSIN.comments{1,1}, 'Position',[945-430 470 235 40], 'WordWrap', 'on');
+fields2edit.QScomments = uitextarea(fig,'Value', fields.Measures.QuickSIN.comments{1,1}, 'Position',[945-430 470 235 40]);
 
 
 % ==== WRS ==== %
@@ -1003,7 +1009,7 @@ uilabel(fig,'Text','Serial #','Position',[880-430 240 60 20],'HorizontalAlignmen
 fields2edit.WRSEquipmentSerialNumber = uieditfield(fig, 'Value', fields.Measures.WRS.equipment.serialNumber,'Position',[940-430 240 120 20]);
 
 uilabel(fig,'Text','WRS Comment','Position',[1070-430 280 100 20],'HorizontalAlignment','left');
-fields2edit.WRSComments = uitextarea(fig, 'Value', fields.Measures.WRS.comments{1,1},'Position',[1070-430 220 110 60], 'WordWrap', 'on');
+fields2edit.WRSComments = uitextarea(fig, 'Value', fields.Measures.WRS.comments{1,1},'Position',[1070-430 220 110 60]);
 
 
 % ==== SUBMIT BUTTON ====
