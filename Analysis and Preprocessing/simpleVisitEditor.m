@@ -478,6 +478,15 @@ if isfield(visit, 'Measures') %% works if measures are stored in a 'Measures' st
     end
 end
 
+%% Handle the comments if they are more than one cell
+meas = fieldnames(fields.Measures);
+for f = 1:length(meas)
+    rows = size(fields.Measures.(meas{f}).comments,1); 
+    if rows > 1 
+        fields.Measures.(meas{f}).comments = strjoin([fields.Measures.(meas{f}).comments{:,1}]); 
+    end
+end
+
 %% if the measures are stored in the visit. structure ie. ARDC 37
 %%% i tried to set this up as an if, ifelse loop, but it was not working in
 %%% that format
