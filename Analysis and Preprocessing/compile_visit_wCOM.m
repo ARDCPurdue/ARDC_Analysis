@@ -113,6 +113,9 @@ for i = 1:length(files)
                         DPOAE.L.f2_rec_dB = f2_rec_dB;
                         DPOAE.L.fs = 44100; %WARNING! Assumes this is unchanged from my Titan dpOAE code.
                         DPOAE.other.researcher = researcher;
+                        if exist(raw_response, "var")
+                            DPOAE.L.raw_response = raw_response; 
+                        end
                         disp('Left OAE Loaded');
 
                     case 'R'
@@ -125,6 +128,9 @@ for i = 1:length(files)
                         DPOAE.R.f2_rec_dB = f2_rec_dB;
                         DPOAE.R.fs = 44100; %WARNING! Assumes this is unchanged from my Titan dpOAE code.
                         DPOAE.other.researcher = researcher;
+                        if exist(raw_response, "var")
+                            DPOAE.R.raw_response = raw_response; 
+                        end
                         disp('Right OAE Loaded');
 
                         visit.Measures.DPOAE = DPOAE;
