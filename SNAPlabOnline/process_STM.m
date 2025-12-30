@@ -1,7 +1,6 @@
-%% gap Data Parser and Analyzer
-% This script parses JSON data and analyzes gap 4khz results
-% Code initially from Joshua Alexander. Converted to Matlab by Sam Hauser
-% 12/2025.
+%% STM/ZaarACT Data Parser and Analyzer
+% This script parses JSON data and analyzes STM results
+% Code based on other measures. Created by SH 12/2025.
 
 %% Part 1: Parse JSON and create individual subject CSVs
 
@@ -12,16 +11,16 @@ data_save_dir = 'C:\Users\saman\Desktop\SLO\processed_data\'; %Location where th
 group_data_dir = 'C:\Users\saman\Desktop\SLO\group_data\'; %Location where the summary data will go
 
 % Load the JSON file
-json_path = fullfile(data_load_dir, 'ardcgaps4kHz_ardc_results_Apr25_2025.json');
+json_path = fullfile(data_load_dir, 'ardcSTM_ardc_results_Dec30_2025.json');
 fid = fopen(json_path, 'r', 'n', 'UTF-8');
 raw_json = fread(fid, inf, 'uint8=>char')';
 fclose(fid);
 all_subjects_data = jsondecode(raw_json);
 
 % Output folders
-gap_dir = fullfile(data_save_dir, 'gap_data');
-if ~exist(gap_dir, 'dir')
-    mkdir(gap_dir);
+stm_dir = fullfile(data_save_dir, 'STM_data');
+if ~exist(stm_dir, 'dir')
+    mkdir(stm_dir);
 end
 
 % Loop through each subject's trials
@@ -68,11 +67,11 @@ for s = 1:length(all_subjects_data)
                 end
             end
 
-            % Save Woods et al., 2017 trials  abd BMLD trials (headphone check)
+
             if ~isempty(condname)
                 count = count + 1;
 
-                response(count).Subject = subject_name;
+                response(count).Subject = string(subject_name);
                 response(count).trialnum = getFieldOrEmpty(trial, 'trialnum');
                 response(count).stimulus = getFieldOrEmpty(trial, 'stimulus');
                 response(count).rt = getFieldOrEmpty(trial, 'rt');
@@ -86,14 +85,13 @@ for s = 1:length(all_subjects_data)
         end
     end
 
-
     % Clean subject name for filename
     if ~isempty(subject_name)
         safe_subject = regexprep(subject_name, '[^\w\-]', '_');
 
         % Save Woods trials to CSV
         if ~isempty(response)
-            out_path = fullfile(gap_dir, [safe_subject '_gapDetection.csv']);
+            out_path = fullfile(stm_dir, [safe_subject '_STM.csv']);
             T = struct2table(response);
             writetable(T, out_path);
         end
@@ -101,21 +99,21 @@ for s = 1:length(all_subjects_data)
     end
 end
 
-fprintf('✅ All gap babble subject CSVs saved to: %s\n', gap_dir);
+fprintf('✅ All STM  subject CSVs saved to: %s\n', stm_dir);
 
-%% Part 2: Analyze gap babble results
-% Analyzes gap data, fits logistic functions, and generates threshold estimates
+%% Part 2: Analyze STM  results
+% Analyzes STM data, fits logistic functions, and generates threshold estimates
 
 % Set up directories
-input_dir = fullfile(data_save_dir, 'gap_data');
-plot_dir = fullfile(data_save_dir, 'gap_Plots');
+input_dir = fullfile(data_save_dir, 'STM_data');
+plot_dir = fullfile(data_save_dir, 'STM_Plots');
 if ~exist(plot_dir, 'dir')
     mkdir(plot_dir);
 end
 
 % Load all subject files
-files = dir(fullfile(input_dir, '*_gapDetection.csv'));
-gap_results = {};
+files = dir(fullfile(input_dir, '*_STM.csv'));
+stm_results = {};
 
 for f = 1:length(files)
     data = readtable(fullfile(input_dir, files(f).name));
@@ -125,46 +123,46 @@ for f = 1:length(files)
     data.condname = string(data.condname);
     data.Subject = string(data.Subject);
 
-    % Extract gap duration from condname
-    gap_ms = zeros(height(data), 1);
+    % Extract depth from condname
+    depth_dB = zeros(height(data), 1);
     for i = 1:height(data)
         tokens = regexp(char(data.condname(i)), '(\d+(?:\.\d+)?)', 'tokens');
         if ~isempty(tokens)
-            gap_ms(i) = str2double(tokens{1}{1});
+            depth_dB(i) = -1.*str2double(tokens{1}{1});
         else
-            gap_ms(i) = NaN;
+            depth_dB(i) = NaN;
         end
     end
-    data.gap_ms = gap_ms;
+    data.depth_dB = depth_dB;
 
     % Logistic function
     logistic = @(params, x) 1 ./ (1 + exp(-(params(1) + params(2) * x)));
 
-    % Threshold criterion (d' = 2.0 for 3AFC)
+    % Threshold criterion (d' = 2.0 for 6AFC)
     threshold_pc = 0.825;
 
     % Initialize results
     results(f).subject = data.Subject(1);
 
     % Calculate average by SNR
-    gap_list = unique(data.gap_ms);
-    avg_by_gap = [];
+    depth_list = unique(data.depth_dB);
+    avg_by_depth = [];
 
-    for i = 1:length(gap_list)
-        gap_val = gap_list(i);
-        correct_vals = data.correct(data.gap_ms == gap_val);
+    for i = 1:length(depth_list)
+        depth_val = depth_list(i);
+        correct_vals = data.correct(data.depth_dB == depth_val);
         avg_correct = mean(correct_vals);
-        avg_by_gap = [avg_by_gap; gap_val, avg_correct];
+        avg_by_depth = [avg_by_depth; depth_val, avg_correct];
     end
 
     % Need at least 4 data points to fit
-    if size(avg_by_gap, 1) >= 4
-        x_vals = avg_by_gap(:, 1);
-        y_vals = avg_by_gap(:, 2);
+    if size(avg_by_depth, 1) >= 4
+        x_vals = avg_by_depth(:, 1);
+        y_vals = avg_by_depth(:, 2);
 
         try
             % Fit logistic function using nonlinear least squares
-            initial_params = [0, .1];
+            initial_params = [0, .05];
             options = optimset('Display', 'off');
             params = lsqcurvefit(logistic, initial_params, x_vals, y_vals, ...
                 [], [], options);
@@ -173,40 +171,43 @@ for f = 1:length(files)
             b = params(2);
 
             % Calculate threshold SNR
-            gap_thresh = (log(threshold_pc / (1 - threshold_pc)) - a) / b;
+            thresh = (log(threshold_pc / (1 - threshold_pc)) - a) / b;
 
             % Store basic results
-            results(f).threshold = gap_thresh;
+            results(f).threshold = thresh;
 
-            % Store raw % correct for each gap
-            for i = 1:size(avg_by_gap, 1)
-                gap_val = avg_by_gap(i, 1);
-                % Replace decimal point with underscore
-                gap_label = sprintf('Gap_%sms', strrep(num2str(gap_val), '.', '_'));
-                results(f).(gap_label) = avg_by_gap(i, 2);
+            % Store raw % correct for each SNR
+            for i = 1:size(avg_by_depth, 1)
+                depth_val = round(avg_by_depth(i, 1));
+                if depth_val < 0
+                    depth_label = sprintf('depth_neg%ddB', abs(depth_val));
+                else
+                    depth_label = sprintf('depth_%ddB', depth_val);
+                end
+                results(f).(depth_label) = avg_by_depth(i, 2);
             end
 
             % Plotting
             x_fit = linspace(min(x_vals), max(x_vals), 200);
             y_fit = logistic(params, x_fit);
 
-            figure('Visible', 'off');
+            figure('Visible', 'on');
             plot(x_fit, y_fit, 'b-', 'LineWidth', 2, 'DisplayName', 'Logistic Fit');
             hold on;
             scatter(x_vals, y_vals, 100, 'k', 'filled', 'DisplayName', 'Observed Data');
             yline(threshold_pc, '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 1, ...
                 'HandleVisibility', 'off');
-            xline(gap_thresh, '--r', 'LineWidth', 1.5, ...
-                'DisplayName', sprintf('Threshold = %.2f ms', gap_thresh));
+            xline(thresh, '--r', 'LineWidth', 1.5, ...
+                'DisplayName', sprintf('Threshold = %.2f dB', thresh));
 
-            title(sprintf('Psychometric Function: %s', data.Subject(1)));
-            xlabel('Gap Duration (ms)');
+            title(sprintf('Psychometric Function: %s', char(data.Subject(1))));
+            xlabel('Depth (dB)');
             ylabel('Proportion Correct');
             ylim([0, 1]);
             legend('Location', 'best');
             grid on;
 
-            plot_path = fullfile(plot_dir, sprintf('%s_psychometric.png', data.Subject(1)));
+            plot_path = fullfile(plot_dir, sprintf('%s_psychometric.png', char(data.Subject(1))));
             saveas(gcf, plot_path);
             close(gcf);
 
@@ -222,19 +223,21 @@ for f = 1:length(files)
     end
 
     % Build result row
-    result_row = {results(f).subject, results(f).threshold, results(f).Gap_1ms, results(f).Gap_2ms, ...
-        results(f).Gap_4ms, results(f).Gap_5_66ms, results(f).Gap_8ms, results(f).Gap_11_3ms, results(f).Gap_16ms, results(f).Gap_32ms};
-    gap_results = [gap_results; result_row];
+    result_row = {results(f).subject, results(f).threshold, results(f).depth_neg24dB, ...
+        results(f).depth_neg20dB, results(f).depth_neg16dB, results(f).depth_neg12dB, ...
+        results(f).depth_neg8dB, results(f).depth_neg4dB, results(f).depth_0dB};
+
+    stm_results = [stm_results; result_row];
 
 end
 
 % Reorder columns: subject, threshold, then sorted SNR columns
-col_names = {'subject', 'threshold', 'Gap_1ms', 'Gap_2ms', 'Gap_4ms', ...
-    'Gap_5_66ms', 'Gap_8ms', 'Gap_11_3ms', 'Gap_16ms', 'Gap_32ms'};
-gap_table = cell2table(gap_results, 'VariableNames',col_names);
+col_names = {'subject', 'threshold', 'pc_neg24dB', 'pc_neg20dB', 'pc_neg16dB', ...
+    'pc_neg12dB', 'pc_neg8dB', 'pc_neg4dB', 'pc_0dB'};
+stm_table = cell2table(stm_results, 'VariableNames',col_names);
 % Save final output
-output_path = fullfile(group_data_dir, 'gap_threshold_estimates.csv');
-writetable(gap_table, output_path);
+output_path = fullfile(group_data_dir, 'STM_threshold_estimates.csv');
+writetable(stm_table, output_path);
 
 fprintf('✅ Threshold estimates with raw %% correct saved to: %s\n', output_path);
 fprintf('✅ Psychometric plots saved to folder: %s\n', plot_dir);
